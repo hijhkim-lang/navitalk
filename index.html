@@ -464,6 +464,101 @@
             flex-wrap: wrap;
         }
 
+        /* 시나리오 상단 컨트롤 버튼 그룹 */
+        .scenario-top-controls {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 16px;
+            padding: 16px;
+            background: white;
+            border-radius: 12px;
+        }
+
+        .scenario-top-controls button {
+            padding: 14px 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            cursor: pointer;
+            font-weight: 700;
+            color: white;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .scenario-top-controls .btn-listen {
+            background: linear-gradient(135deg, #00C2A8 0%, #00D4B5 100%);
+            box-shadow: 0 4px 12px rgba(0, 194, 168, 0.3);
+        }
+
+        .scenario-top-controls .btn-repeat-top {
+            background: linear-gradient(135deg, #F59E0B 0%, #F97316 100%);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        }
+
+        .scenario-top-controls .btn-navigate {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .scenario-top-controls button:hover {
+            transform: translateY(-2px);
+        }
+
+        .scenario-top-controls button:active {
+            transform: translateY(0);
+        }
+
+        /* 음성 재생 컨트롤 */
+        .audio-controls {
+            display: none;
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.9);
+            padding: 16px 24px;
+            border-radius: 50px;
+            z-index: 10000;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            gap: 12px;
+            align-items: center;
+        }
+
+        .audio-controls.active {
+            display: flex;
+        }
+
+        .audio-controls button {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            font-weight: 700;
+            color: white;
+            transition: all 0.2s ease;
+        }
+
+        .audio-controls .btn-pause {
+            background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+        }
+
+        .audio-controls .btn-stop {
+            background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+        }
+
+        .audio-controls button:hover {
+            transform: scale(1.05);
+        }
+
+        .audio-controls .audio-status {
+            color: white;
+            font-size: 14px;
+            margin-right: 12px;
+        }
+
         .btn-repeat {
             padding: 12px 16px;
             border: none;
@@ -588,12 +683,62 @@
         }
 
         .vocab-section {
-            padding: 24px;
-            background: linear-gradient(135deg, #FFF9E6 0%, #FFFAED 100%);
+            padding: 0;
+            background: transparent;
             border-radius: 16px;
             margin-top: 30px;
+            border: none;
+            box-shadow: none;
+        }
+
+        .vocab-header {
+            background: linear-gradient(135deg, #F59E0B 0%, #F97316 100%);
+            color: white;
+            padding: 16px 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+            transition: all 0.2s ease;
+        }
+
+        .vocab-header:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+        }
+
+        .vocab-header-title {
+            font-size: 17px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .vocab-toggle {
+            font-size: 16px;
+            transition: transform 0.3s ease;
+        }
+
+        .vocab-toggle.open {
+            transform: rotate(180deg);
+        }
+
+        .vocab-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+            background: linear-gradient(135deg, #FFF9E6 0%, #FFFAED 100%);
+        }
+
+        .vocab-content.open {
+            max-height: 10000px;
+            padding: 24px;
             border: 3px solid #FFB800;
-            box-shadow: 0 4px 12px rgba(255, 184, 0, 0.2);
+            border-top: none;
+            border-radius: 0 0 12px 12px;
         }
 
         .vocab-title {
@@ -670,6 +815,16 @@
                 width: 100%;
             }
 
+            /* 시나리오 상단 버튼도 세로로 */
+            .scenario-top-controls {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .scenario-top-controls button {
+                width: 100%;
+            }
+
             .transport-buttons {
                 grid-template-columns: 1fr;
                 gap: 10px;
@@ -698,6 +853,18 @@
 
             .place-grid {
                 grid-template-columns: repeat(2, 1fr);
+            }
+
+            /* 음성 컨트롤도 모바일 최적화 */
+            .audio-controls {
+                flex-wrap: wrap;
+                padding: 12px 16px;
+            }
+
+            .audio-controls .audio-status {
+                width: 100%;
+                text-align: center;
+                margin-bottom: 8px;
             }
         }
 
@@ -790,8 +957,14 @@
             <div class="conversation-content" id="conversationContent">
                 <div id="scenarioList"></div>
                 <div class="vocab-section">
-                    <div class="vocab-title">📝 자주사용하는 단어</div>
-                    <div class="vocab-grid" id="vocabList"></div>
+                    <div class="vocab-header" onclick="toggleVocab()">
+                        <div class="vocab-header-title">📝 자주사용하는 단어</div>
+                        <div class="vocab-toggle" id="vocabToggle">▼</div>
+                    </div>
+                    <div class="vocab-content" id="vocabContent">
+                        <div class="vocab-buttons" id="vocabButtons"></div>
+                        <div class="vocab-grid" id="vocabList"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -836,6 +1009,8 @@
         let currentVocabulary = [];
         let currentDialoguesText = '';
         let currentDialoguesTranslation = '';
+        let isPaused = false;
+        let currentUtterance = null;
 
         // Log available voices for debugging
         window.speechSynthesis.onvoiceschanged = function() {
@@ -2574,11 +2749,22 @@
                 const scenarioDiv = document.createElement('div');
                 scenarioDiv.className = 'scenario';
                 
+                // Prepare texts for buttons
+                const allTexts = scenario.dialogues.map(d => d.text).join('。');
+                const allTranslations = scenario.dialogues.map(d => d.translation).join('. ');
+                
                 let html = '<div class="scenario-header" onclick="toggleScenario(event)">';
                 html += '<div class="scenario-title">' + scenario.title + '</div>';
                 html += '<div class="scenario-toggle">▼</div>';
                 html += '</div>';
                 html += '<div class="scenario-content">';
+                
+                // 상단 컨트롤 버튼 (대화듣기, 반복듣기, 찾아가기)
+                html += '<div class="scenario-top-controls">';
+                html += '<button class="btn-listen" onclick="speakScenarioOnce(event, \'' + allTexts.replace(/'/g, "\\'").replace(/。/g, '。 ') + '\', \'' + allTranslations.replace(/'/g, "\\'") + '\')">🔊 대화듣기</button>';
+                html += '<button class="btn-repeat-top" onclick="speakScenarioRepeat(event, \'' + allTexts.replace(/'/g, "\\'").replace(/。/g, '。 ') + '\', \'' + allTranslations.replace(/'/g, "\\'") + '\')">🔁 반복듣기</button>';
+                html += '<button class="btn-navigate" onclick="goToNavigation(); return false;">🗺️ 찾아가기</button>';
+                html += '</div>';
                 
                 scenario.dialogues.forEach((dialogue, dialogueIndex) => {
                     html += '<div class="dialogue">';
@@ -2591,14 +2777,6 @@
                     html += '</div>';
                 });
                 
-                // Add listen buttons for entire scenario - 한국어로 변경
-                const allTexts = scenario.dialogues.map(d => d.text).join('。');
-                const allTranslations = scenario.dialogues.map(d => d.translation).join('. ');
-                html += '<div class="button-group">';
-                html += '<button class="btn-speak-all" onclick="speakScenarioOnce(event, \'' + allTexts.replace(/'/g, "\\'").replace(/。/g, '。 ') + '\', \'' + allTranslations.replace(/'/g, "\\'") + '\')">🔊 대화듣기</button>';
-                html += '<button class="btn-repeat" onclick="speakScenarioRepeat(event, \'' + allTexts.replace(/'/g, "\\'").replace(/。/g, '。 ') + '\', \'' + allTranslations.replace(/'/g, "\\'") + '\')">🔁 반복해서 듣기</button>';
-                html += '<button class="btn-back-inline" onclick="goToNavigation(); return false;">🗺️ 찾아가기</button>';
-                html += '</div>';
                 html += '</div>'; // Close scenario-content
                 
                 scenarioDiv.innerHTML = html;
@@ -2619,23 +2797,12 @@
             // Store vocabulary globally
             currentVocabulary = data.vocabulary;
 
-            // Add listen buttons at the top
-            const vocabSection = document.querySelector('.vocab-section');
-            const existingButtons = vocabSection.querySelector('.vocab-buttons');
-            if (existingButtons) {
-                existingButtons.remove();
-            }
-
-            const vocabTitle = vocabSection.querySelector('.vocab-title');
-            const vocabButtonsDiv = document.createElement('div');
-            vocabButtonsDiv.className = 'vocab-buttons';
-            
+            // Add listen buttons in vocab-buttons div
+            const vocabButtonsDiv = document.getElementById('vocabButtons');
             vocabButtonsDiv.innerHTML = `
                 <button class="btn-vocab-listen" onclick="speakVocabOnce(event)">🔊 단어듣기</button>
                 <button class="btn-vocab-repeat" onclick="speakVocabRepeat(event)">🔁 반복해서 듣기</button>
             `;
-            
-            vocabTitle.parentNode.insertBefore(vocabButtonsDiv, vocabTitle.nextSibling);
 
             data.vocabulary.forEach(vocab => {
                 const item = document.createElement('div');
@@ -2646,19 +2813,21 @@
                 vocabList.appendChild(item);
             });
 
-            // Add navigation button at the end of vocabulary
-            const backButton = document.createElement('button');
-            backButton.className = 'btn-back';
-            backButton.innerHTML = '🗺️ 찾아가기';
-            backButton.onclick = (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                goToNavigation();
-                return false;
-            };
-            vocabSection.appendChild(backButton);
-
             console.log('Vocabulary loaded successfully');
+        }
+
+        // Toggle vocabulary section
+        function toggleVocab() {
+            const content = document.getElementById('vocabContent');
+            const toggle = document.getElementById('vocabToggle');
+            
+            if (content.classList.contains('open')) {
+                content.classList.remove('open');
+                toggle.classList.remove('open');
+            } else {
+                content.classList.add('open');
+                toggle.classList.add('open');
+            }
         }
 
         // Toggle conversation
@@ -2697,6 +2866,9 @@
             if (synth.speaking) {
                 synth.cancel();
             }
+
+            // Show audio controls
+            showAudioControls();
 
             // Get available voices
             const voices = synth.getVoices();
@@ -2773,14 +2945,24 @@
                             console.log('✅ 사용 한국어 음성:', koreanVoice.name);
                         }
                         
-                        if (callback) {
-                            koreanUtterance.onend = callback;
-                        }
+                        koreanUtterance.onend = () => {
+                            if (!isRepeating) {
+                                hideAudioControls();
+                            }
+                            if (callback) {
+                                callback();
+                            }
+                        };
                         
                         synth.speak(koreanUtterance);
                     }, 500);
-                } else if (callback) {
-                    callback();
+                } else {
+                    if (!isRepeating) {
+                        hideAudioControls();
+                    }
+                    if (callback) {
+                        callback();
+                    }
                 }
             };
 
@@ -3082,6 +3264,51 @@
             const koreanVoices = voices.filter(v => v.lang.includes('ko'));
             console.log('Korean voices:', koreanVoices.map(v => v.name));
         }
+
+        // 음성 재생 컨트롤 함수
+        function showAudioControls() {
+            const controls = document.getElementById('audioControls');
+            controls.classList.add('active');
+            isPaused = false;
+            updatePauseButton();
+        }
+
+        function hideAudioControls() {
+            const controls = document.getElementById('audioControls');
+            controls.classList.remove('active');
+            isPaused = false;
+        }
+
+        function pauseAudio() {
+            if (synth.speaking && !isPaused) {
+                synth.pause();
+                isPaused = true;
+                updatePauseButton();
+            } else if (isPaused) {
+                synth.resume();
+                isPaused = false;
+                updatePauseButton();
+            }
+        }
+
+        function stopAudio() {
+            synth.cancel();
+            isRepeating = false;
+            if (repeatTimer) {
+                clearTimeout(repeatTimer);
+                repeatTimer = null;
+            }
+            hideAudioControls();
+        }
+
+        function updatePauseButton() {
+            const btn = document.getElementById('btnPause');
+            if (isPaused) {
+                btn.innerHTML = '▶️ 재생';
+            } else {
+                btn.innerHTML = '⏸️ 일시중지';
+            }
+        }
         
         // Load voices when available
         if (synth.onvoiceschanged !== undefined) {
@@ -3091,5 +3318,12 @@
         // Trigger initial voice loading
         setTimeout(loadVoices, 100);
     </script>
+
+    <!-- 음성 재생 컨트롤 -->
+    <div class="audio-controls" id="audioControls">
+        <span class="audio-status" id="audioStatus">🔊 재생 중...</span>
+        <button class="btn-pause" id="btnPause" onclick="pauseAudio()">⏸️ 일시중지</button>
+        <button class="btn-stop" onclick="stopAudio()">⏹️ 정지</button>
+    </div>
 </body>
 </html>
