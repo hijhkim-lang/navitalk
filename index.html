@@ -1071,25 +1071,6 @@
         </div>
     </div>
 
-    <script>
-        // Populate place selector on page load
-        window.addEventListener('DOMContentLoaded', () => {
-            const placeGrid = document.getElementById('placeGrid');
-            placeGrid.innerHTML = '';
-            
-            for (const type in placeKeywords) {
-                const data = placeKeywords[type];
-                const placeCard = document.createElement('div');
-                placeCard.className = 'place-card';
-                placeCard.onclick = () => selectPlace(type);
-                placeCard.innerHTML = `
-                    <div class="place-emoji">${data.emoji}</div>
-                    <div class="place-name">${data.name}</div>
-                `;
-                placeGrid.appendChild(placeCard);
-            }
-        });
-    </script>
 
     <script>
         let currentDestination = '';
@@ -2700,6 +2681,8 @@
         // Go to destination - MAIN FUNCTION
         // Handle main go button - directly opens navigation
         function handleMainGoButton() {
+            console.log('🚀 handleMainGoButton 호출됨!');
+            
             const dest = document.getElementById('destination').value.trim();
             console.log('🔍 목적지 입력:', dest);
             
@@ -2711,6 +2694,7 @@
             // First detect place type to validate
             currentDestination = dest;
             const placeType = detectPlaceType(dest);
+            console.log('🏢 감지된 장소 타입:', placeType);
             
             if (!placeType) {
                 alert('죄송합니다. 해당 장소의 회화 데이터가 없습니다.\n\n지원하는 장소: 병원, 식당, 골프장, 공안국, 은행, 안마원, KTV, 경기장, 영화관, 백화점, 호텔, 공원, 슈퍼마켓, 극장 등');
@@ -2726,6 +2710,8 @@
 
         // Handle main conversation button - shows conversation
         function handleMainConversationButton() {
+            console.log('💬 handleMainConversationButton 호출됨!');
+            
             const dest = document.getElementById('destination').value.trim();
             console.log('💬 회화보기 클릭, 목적지:', dest);
             
@@ -3688,21 +3674,49 @@
         // Trigger initial voice loading
         setTimeout(loadVoices, 100);
 
-        // Add event listener for stop button
+        // 페이지 로드 완료 후 초기화
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('✅ DOM 로드 완료');
+            
+            // 정지 버튼 이벤트
             const stopBtn = document.getElementById('btnStopAudio');
             if (stopBtn) {
                 stopBtn.addEventListener('click', stopAudio);
+                console.log('✅ 정지 버튼 초기화');
             }
 
+            // 계속 듣기 버튼 이벤트
             const resumeBtn = document.getElementById('btnResume');
             if (resumeBtn) {
                 resumeBtn.addEventListener('click', resumePlayback);
+                console.log('✅ 계속 듣기 버튼 초기화');
             }
+            
+            // Populate place selector
+            const placeGrid = document.getElementById('placeGrid');
+            if (placeGrid) {
+                placeGrid.innerHTML = '';
+                for (const type in placeKeywords) {
+                    const data = placeKeywords[type];
+                    const placeCard = document.createElement('div');
+                    placeCard.className = 'place-card';
+                    placeCard.onclick = () => selectPlace(type);
+                    placeCard.innerHTML = `
+                        <div class="place-emoji">${data.emoji}</div>
+                        <div class="place-name">${data.name}</div>
+                    `;
+                    placeGrid.appendChild(placeCard);
+                }
+                console.log('✅ 장소 선택 그리드 초기화');
+            }
+            
+            // 페이지 가시성 변경 감지
+            document.addEventListener('visibilitychange', handleVisibilityChange);
+            console.log('✅ visibilitychange 이벤트 등록');
         });
 
-        // 페이지 가시성 변경 감지 (네비게이션 전환 감지)
-        document.addEventListener('visibilitychange', function() {
+        // 페이지 가시성 변경 핸들러
+        function handleVisibilityChange() {
             if (document.hidden) {
                 // 페이지가 백그라운드로 감 (네비게이션으로 전환)
                 console.log('📱 페이지가 백그라운드로 전환됨');
@@ -3740,7 +3754,7 @@
                     showResumeControls();
                 }
             }
-        });
+        }
 
         // 계속 듣기 컨트롤 표시
         function showResumeControls() {
