@@ -111,6 +111,31 @@
             transform: scale(0.98);
         }
 
+        .btn-secondary {
+            background: linear-gradient(135deg, #00C2A8 0%, #00D4B5 100%);
+            color: white;
+            box-shadow: 0 6px 20px rgba(0, 194, 168, 0.4);
+        }
+
+        .btn-secondary:active {
+            transform: scale(0.98);
+        }
+
+        /* 메인 버튼 그리드 */
+        .main-buttons-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 480px) {
+            .main-buttons-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+        }
+
         .nav-section {
             background: white;
             border-radius: 20px;
@@ -957,7 +982,10 @@
                 <input type="text" id="destination" placeholder="예: 盐城市人民医院、麦当劳、公安局" autofocus>
             </div>
 
-            <button class="btn btn-primary" id="mainGoButton" onclick="handleMainGoButton()">🗺️ 찾아가기</button>
+            <div class="main-buttons-grid">
+                <button class="btn btn-primary" id="mainGoButton" onclick="handleMainGoButton()">🗺️찾아가기</button>
+                <button class="btn btn-secondary" id="mainConversationButton" onclick="handleMainConversationButton()">💬 회화보기</button>
+            </div>
         </div>
 
         <div class="image-showcase">
@@ -2616,7 +2644,7 @@
         }
 
         // Go to destination - MAIN FUNCTION
-        // Handle main go button - first click shows conversation, second click opens navigation
+        // Handle main go button - directly opens navigation
         function handleMainGoButton() {
             const dest = document.getElementById('destination').value.trim();
             console.log('🔍 목적지 입력:', dest);
@@ -2626,15 +2654,34 @@
                 return;
             }
 
-            // If conversation already shown, go to navigation
-            if (conversationShown) {
-                console.log('✅ 대화 이미 표시됨, 네비게이션으로');
-                openNavigation();
+            // First detect place type to validate
+            currentDestination = dest;
+            const placeType = detectPlaceType(dest);
+            
+            if (!placeType) {
+                alert('죄송합니다. 해당 장소의 회화 데이터가 없습니다.\n\n지원하는 장소: 병원, 식당, 골프장, 공안국, 은행, 안마원, KTV, 경기장, 영화관, 백화점, 호텔, 공원, 슈퍼마켓, 극장 등');
                 return;
             }
 
-            // First click - show conversation
-            console.log('🎯 첫 클릭, 대화 표시 시작');
+            currentPlaceType = placeType;
+            
+            // Directly go to navigation
+            console.log('🗺️ 바로 네비게이션 열기');
+            openNavigation();
+        }
+
+        // Handle main conversation button - shows conversation
+        function handleMainConversationButton() {
+            const dest = document.getElementById('destination').value.trim();
+            console.log('💬 회화보기 클릭, 목적지:', dest);
+            
+            if (!dest) {
+                alert('请输入目的地！');
+                return;
+            }
+
+            // Show conversation
+            console.log('💬 회화 표시 시작');
             goToDestination();
         }
 
