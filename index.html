@@ -2829,39 +2829,79 @@
                 return;
             }
 
-            console.log('Loading vocabulary:', data.vocabulary.length, 'words');
+            console.log('📚 Loading vocabulary:', data.vocabulary.length, 'words');
 
             // Store vocabulary globally
             currentVocabulary = data.vocabulary;
 
             // Add listen buttons in vocab-buttons div
             const vocabButtonsDiv = document.getElementById('vocabButtons');
+            
+            // Remove existing event listeners by recreating buttons
             vocabButtonsDiv.innerHTML = `
                 <button class="btn-vocab-listen" id="btnVocabListen">🔊 단어듣기</button>
                 <button class="btn-vocab-repeat" id="btnVocabRepeat">🔁 반복해서 듣기</button>
             `;
 
-            // Add event listeners for vocab buttons
-            document.getElementById('btnVocabListen').addEventListener('click', speakVocabOnce);
-            document.getElementById('btnVocabRepeat').addEventListener('click', speakVocabRepeat);
+            // Wait for DOM update, then add event listeners
+            setTimeout(() => {
+                const listenBtn = document.getElementById('btnVocabListen');
+                const repeatBtn = document.getElementById('btnVocabRepeat');
+                
+                if (listenBtn) {
+                    listenBtn.addEventListener('click', function(e) {
+                        console.log('🔊 단어듣기 클릭됨');
+                        e.preventDefault();
+                        e.stopPropagation();
+                        speakVocabOnce(e);
+                    });
+                    console.log('✅ 단어듣기 버튼 이벤트 리스너 추가됨');
+                } else {
+                    console.error('❌ btnVocabListen을 찾을 수 없음');
+                }
+                
+                if (repeatBtn) {
+                    repeatBtn.addEventListener('click', function(e) {
+                        console.log('🔁 반복듣기 클릭됨');
+                        e.preventDefault();
+                        e.stopPropagation();
+                        speakVocabRepeat(e);
+                    });
+                    console.log('✅ 반복듣기 버튼 이벤트 리스너 추가됨');
+                } else {
+                    console.error('❌ btnVocabRepeat을 찾을 수 없음');
+                }
+            }, 100);
 
-            data.vocabulary.forEach(vocab => {
+            // Render all vocabulary items
+            console.log('📝 렌더링 시작:', data.vocabulary.length, '개 단어');
+            let renderCount = 0;
+            data.vocabulary.forEach((vocab, index) => {
                 const item = document.createElement('div');
                 item.className = 'vocab-item';
                 item.innerHTML = '<div class="vocab-word">' + vocab.word + '</div>' +
                                 '<div class="vocab-pinyin">' + vocab.pinyin + '</div>' +
                                 '<div class="vocab-meaning">' + vocab.meaning + '</div>';
                 vocabList.appendChild(item);
+                renderCount++;
             });
+            console.log('✅ 렌더링 완료:', renderCount, '개 단어');
 
             // Add event listener for vocab header toggle
             const vocabHeader = document.getElementById('vocabHeader');
             if (vocabHeader) {
-                vocabHeader.addEventListener('click', function(e) {
+                // Remove existing listener by cloning
+                const newVocabHeader = vocabHeader.cloneNode(true);
+                vocabHeader.parentNode.replaceChild(newVocabHeader, vocabHeader);
+                
+                // Add new listener
+                newVocabHeader.addEventListener('click', function(e) {
                     e.preventDefault();
                     e.stopPropagation();
+                    console.log('📝 단어 헤더 클릭');
                     toggleVocab();
                 });
+                console.log('✅ 단어 헤더 이벤트 리스너 추가됨');
             }
 
             console.log('Vocabulary loaded successfully');
@@ -3285,14 +3325,23 @@
 
         // Speak vocabulary once
         function speakVocabOnce(event) {
+            console.log('🎯 speakVocabOnce 실행');
             event.preventDefault();
             event.stopPropagation();
             
             isRepeating = false;
+            isStopped = false; // 재생 시작 시 플래그 리셋
             if (repeatTimer) {
                 clearTimeout(repeatTimer);
             }
             
+            if (!currentVocabulary || currentVocabulary.length === 0) {
+                console.log('❌ 단어 데이터 없음');
+                alert('단어 데이터가 없습니다.');
+                return false;
+            }
+            
+            console.log('✅ 단어 재생 시작:', currentVocabulary.length, '개');
             speakVocabularyPaired(currentVocabulary);
             return false;
         }
