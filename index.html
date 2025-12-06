@@ -2711,10 +2711,68 @@
 
         // Open navigation
         function openNavigation() {
-            // Open Baidu Maps with destination using iframe to keep audio playing
+            // Check if audio is currently playing
+            if (synth.speaking) {
+                const userChoice = confirm(
+                    '🔊 회화 음성이 재생 중입니다.\n\n' +
+                    '네비게이션 앱으로 전환하면 음성이 중단됩니다.\n\n' +
+                    '【확인】: 음성 중단하고 지금 네비게이션 열기\n' +
+                    '【취소】: 음성이 끝난 후 자동으로 네비게이션 열기'
+                );
+                
+                if (!userChoice) {
+                    // User chose to wait - open navigation after audio finishes
+                    console.log('⏳ 음성 종료 대기 중...');
+                    
+                    // Save current state
+                    const wasRepeating = isRepeating;
+                    
+                    // Stop repeating if active
+                    if (isRepeating) {
+                        isRepeating = false;
+                        if (repeatTimer) {
+                            clearTimeout(repeatTimer);
+                        }
+                    }
+                    
+                    // Wait for speech to finish, then open navigation
+                    const checkInterval = setInterval(() => {
+                        if (!synth.speaking) {
+                            clearInterval(checkInterval);
+                            console.log('✅ 음성 종료, 네비게이션 열기');
+                            
+                            // Show notification
+                            alert('음성 재생이 완료되었습니다. 네비게이션을 엽니다.');
+                            
+                            // Open navigation
+                            actuallyOpenNavigation();
+                        }
+                    }, 500);
+                    
+                    return;
+                }
+                
+                // User chose to open now - stop audio
+                console.log('⏹️ 사용자가 즉시 네비게이션 선택, 음성 중단');
+                synth.cancel();
+                isRepeating = false;
+                if (repeatTimer) {
+                    clearTimeout(repeatTimer);
+                }
+                hideAudioControls();
+            }
+            
+            // Open navigation
+            actuallyOpenNavigation();
+        }
+        
+        function actuallyOpenNavigation() {
+            // Open Baidu Maps with destination
             const url = 'baidumap://map/direction?destination=name:' + encodeURIComponent(currentDestination) + '&coord_type=bd09ll&src=webapp.navi.NaviTalk';
             
-            // Try to open app using iframe (keeps current page and audio)
+            console.log('🗺️ 네비게이션 열기:', currentDestination);
+            
+            // Try to open app using iframe
             const iframe = document.createElement('iframe');
             iframe.style.display = 'none';
             iframe.src = url;
