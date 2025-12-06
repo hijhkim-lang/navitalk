@@ -564,6 +564,67 @@
             animation: pulse 1.5s ease-in-out infinite;
         }
 
+        /* 계속 듣기 컨트롤 */
+        .resume-controls {
+            display: none;
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #F59E0B 0%, #F97316 100%);
+            padding: 16px 24px;
+            border-radius: 50px;
+            z-index: 10001;
+            box-shadow: 0 8px 24px rgba(245, 158, 11, 0.5);
+            gap: 12px;
+            align-items: center;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateX(-50%) translateY(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(-50%) translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .resume-controls.active {
+            display: flex;
+        }
+
+        .resume-message {
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            margin-right: 12px;
+        }
+
+        .btn-resume {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            cursor: pointer;
+            font-weight: 700;
+            color: white;
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            transition: all 0.2s ease;
+        }
+
+        .btn-resume:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-resume:active {
+            transform: scale(0.95);
+        }
+
         .btn-repeat {
             padding: 12px 16px;
             border: none;
@@ -877,6 +938,27 @@
             .audio-controls button {
                 width: 100%;
             }
+
+            /* 계속 듣기 컨트롤도 모바일 최적화 */
+            .resume-controls {
+                flex-direction: column;
+                padding: 12px 16px;
+                gap: 8px;
+                width: 90%;
+                max-width: 400px;
+            }
+
+            .resume-message {
+                width: 100%;
+                text-align: center;
+                margin-right: 0;
+                margin-bottom: 4px;
+                font-size: 13px;
+            }
+
+            .btn-resume {
+                width: 100%;
+            }
         }
 
         .place-selector {
@@ -1020,6 +1102,11 @@
         let currentDialoguesText = '';
         let currentDialoguesTranslation = '';
         let isStopped = false; // 음성 재생 중단 플래그
+        
+        // 재생 위치 추적 변수
+        let pausedByNavigation = false; // 네비게이션 전환으로 일시정지되었는지
+        let resumePlaybackData = null; // 재개할 재생 데이터
+        let wasPlayingBeforeHidden = false; // 백그라운드 가기 전 재생 중이었는지
 
         // Log available voices for debugging
         window.speechSynthesis.onvoiceschanged = function() {
@@ -2715,8 +2802,9 @@
             if (synth.speaking) {
                 const userChoice = confirm(
                     '🔊 회화 음성이 재생 중입니다.\n\n' +
-                    '네비게이션 앱으로 전환하면 음성이 중단됩니다.\n\n' +
-                    '【확인】: 음성 중단하고 지금 네비게이션 열기\n' +
+                    '네비게이션으로 전환하면 음성이 일시정지됩니다.\n' +
+                    '(돌아오면 "계속 듣기" 버튼으로 이어서 들을 수 있습니다)\n\n' +
+                    '【확인】: 네비게이션 열기 (일시정지)\n' +
                     '【취소】: 음성이 끝난 후 자동으로 네비게이션 열기'
                 );
                 
@@ -2724,10 +2812,8 @@
                     // User chose to wait - open navigation after audio finishes
                     console.log('⏳ 음성 종료 대기 중...');
                     
-                    // Save current state
-                    const wasRepeating = isRepeating;
-                    
                     // Stop repeating if active
+                    const wasRepeating = isRepeating;
                     if (isRepeating) {
                         isRepeating = false;
                         if (repeatTimer) {
@@ -2752,15 +2838,13 @@
                     return;
                 }
                 
-                // User chose to open now - stop audio
-                console.log('⏹️ 사용자가 즉시 네비게이션 선택, 음성 중단');
-                synth.cancel();
-                isRepeating = false;
-                if (repeatTimer) {
-                    clearTimeout(repeatTimer);
-                }
-                hideAudioControls();
+                // User chose to open now - audio will be auto-paused by visibilitychange
+                console.log('✅ 사용자가 네비게이션 선택, 일시정지 후 계속 듣기 가능');
             }
+            
+            // Open navigation
+            actuallyOpenNavigation();
+        }
             
             // Open navigation
             actuallyOpenNavigation();
@@ -3610,13 +3694,126 @@
             if (stopBtn) {
                 stopBtn.addEventListener('click', stopAudio);
             }
+
+            const resumeBtn = document.getElementById('btnResume');
+            if (resumeBtn) {
+                resumeBtn.addEventListener('click', resumePlayback);
+            }
         });
+
+        // 페이지 가시성 변경 감지 (네비게이션 전환 감지)
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                // 페이지가 백그라운드로 감 (네비게이션으로 전환)
+                console.log('📱 페이지가 백그라운드로 전환됨');
+                
+                if (synth.speaking) {
+                    console.log('⏸️ 음성 재생 중이었음, 일시정지 상태 저장');
+                    wasPlayingBeforeHidden = true;
+                    pausedByNavigation = true;
+                    
+                    // 현재 재생 중인 데이터 저장
+                    resumePlaybackData = {
+                        vocabulary: currentVocabulary,
+                        dialoguesText: currentDialoguesText,
+                        dialoguesTranslation: currentDialoguesTranslation,
+                        isRepeating: isRepeating
+                    };
+                    
+                    // 음성 중단
+                    synth.cancel();
+                    if (repeatTimer) {
+                        clearTimeout(repeatTimer);
+                    }
+                    
+                    // 컨트롤 숨기기
+                    hideAudioControls();
+                } else {
+                    wasPlayingBeforeHidden = false;
+                }
+            } else {
+                // 페이지가 다시 보임 (앱으로 돌아옴)
+                console.log('📱 페이지가 다시 보임');
+                
+                if (pausedByNavigation && wasPlayingBeforeHidden && resumePlaybackData) {
+                    console.log('⏯️ 계속 듣기 버튼 표시');
+                    showResumeControls();
+                }
+            }
+        });
+
+        // 계속 듣기 컨트롤 표시
+        function showResumeControls() {
+            const resumeControls = document.getElementById('resumeControls');
+            resumeControls.classList.remove('hidden');
+            resumeControls.classList.add('active');
+        }
+
+        // 계속 듣기 컨트롤 숨기기
+        function hideResumeControls() {
+            const resumeControls = document.getElementById('resumeControls');
+            resumeControls.classList.remove('active');
+            setTimeout(() => {
+                resumeControls.classList.add('hidden');
+            }, 300);
+        }
+
+        // 재생 재개
+        function resumePlayback() {
+            console.log('▶️ 재생 재개');
+            
+            if (!resumePlaybackData) {
+                console.error('❌ 재개할 데이터 없음');
+                hideResumeControls();
+                return;
+            }
+
+            // 계속 듣기 버튼 숨기기
+            hideResumeControls();
+
+            // 저장된 데이터로 재생 재개
+            pausedByNavigation = false;
+            wasPlayingBeforeHidden = false;
+            isStopped = false;
+
+            if (resumePlaybackData.isRepeating) {
+                // 반복 재생이었으면 반복 재생 재개
+                isRepeating = true;
+                
+                function repeatSpeak() {
+                    if (!isRepeating || isStopped) {
+                        hideAudioControls();
+                        return;
+                    }
+                    
+                    speakWithTranslation(resumePlaybackData.dialoguesText, resumePlaybackData.dialoguesTranslation, () => {
+                        if (isRepeating && !isStopped) {
+                            repeatTimer = setTimeout(repeatSpeak, 1000);
+                        } else {
+                            hideAudioControls();
+                        }
+                    });
+                }
+                
+                repeatSpeak();
+            } else {
+                // 일반 재생이었으면 일반 재생 재개
+                isRepeating = false;
+                speakWithTranslation(resumePlaybackData.dialoguesText, resumePlaybackData.dialoguesTranslation);
+            }
+        }
     </script>
 
     <!-- 음성 재생 컨트롤 -->
     <div class="audio-controls" id="audioControls">
         <span class="audio-status" id="audioStatus">재생 중...</span>
         <button class="btn-stop" id="btnStopAudio">⏹️ 정지</button>
+    </div>
+
+    <!-- 계속 듣기 컨트롤 (네비게이션에서 돌아왔을 때) -->
+    <div class="resume-controls hidden" id="resumeControls">
+        <span class="resume-message">⏸️ 네비게이션 전환으로 일시정지됨</span>
+        <button class="btn-resume" id="btnResume">⏯️ 계속 듣기</button>
     </div>
 </body>
 </html>
