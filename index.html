@@ -1036,8 +1036,8 @@
             </div>
 
             <div class="main-buttons-grid">
-                <button class="btn btn-primary" id="mainGoButton" onclick="handleMainGoButton()">🗺️찾아가기</button>
-                <button class="btn btn-secondary" id="mainConversationButton" onclick="handleMainConversationButton()">💬 회화보기</button>
+                <button class="btn btn-primary" id="mainGoButton">🗺️ 찾아가기</button>
+                <button class="btn btn-secondary" id="mainConversationButton">💬 회화보기</button>
             </div>
         </div>
 
@@ -3677,6 +3677,24 @@
         // 페이지 로드 완료 후 초기화
         document.addEventListener('DOMContentLoaded', function() {
             console.log('✅ DOM 로드 완료');
+            
+            // 메인 찾아가기 버튼 이벤트
+            const mainGoButton = document.getElementById('mainGoButton');
+            if (mainGoButton) {
+                mainGoButton.addEventListener('click', handleMainGoButton);
+                console.log('✅ 메인 찾아가기 버튼 초기화');
+            } else {
+                console.error('❌ mainGoButton을 찾을 수 없음');
+            }
+
+            // 메인 회화보기 버튼 이벤트
+            const mainConversationButton = document.getElementById('mainConversationButton');
+            if (mainConversationButton) {
+                mainConversationButton.addEventListener('click', handleMainConversationButton);
+                console.log('✅ 메인 회화보기 버튼 초기화');
+            } else {
+                console.error('❌ mainConversationButton을 찾을 수 없음');
+            }
             
             // 정지 버튼 이벤트
             const stopBtn = document.getElementById('btnStopAudio');
