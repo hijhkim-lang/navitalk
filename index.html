@@ -296,36 +296,31 @@
             font-size: 14px;
         }
 
-        .showcase {
+        .showcase-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
             margin-bottom: 30px;
         }
 
-        .showcase-item {
-            background: white;
+        .showcase-image {
             border-radius: 15px;
             overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
             transition: all 0.3s;
+            aspect-ratio: 1;
         }
 
-        .showcase-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        .showcase-image:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
         }
 
-        .showcase-item img {
+        .showcase-image img {
             width: 100%;
-            height: 200px;
+            height: 100%;
             object-fit: cover;
-        }
-
-        .showcase-item h3 {
-            padding: 15px;
-            color: #667eea;
-            font-size: 18px;
+            display: block;
         }
 
         @media (max-width: 768px) {
@@ -336,6 +331,17 @@
             .scenario-card {
                 padding: 20px;
                 font-size: 16px;
+            }
+
+            .showcase-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .showcase-grid {
+                grid-template-columns: repeat(2, 1fr);
             }
         }
 
@@ -376,18 +382,33 @@
         </div>
 
         <!-- 이미지 쇼케이스 -->
-        <div id="imageShowcase" class="showcase">
-            <div class="showcase-item">
+        <div id="imageShowcase" class="showcase-grid">
+            <div class="showcase-image">
                 <img src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=400" alt="병원">
-                <h3>🏥 병원</h3>
             </div>
-            <div class="showcase-item">
+            <div class="showcase-image">
                 <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400" alt="식당">
-                <h3>🍽️ 식당</h3>
             </div>
-            <div class="showcase-item">
-                <img src="https://images.unsplash.com/photo-1541544181051-e46607bc22a4?w=400" alt="공항">
-                <h3>✈️ 공항</h3>
+            <div class="showcase-image">
+                <img src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=400" alt="공항">
+            </div>
+            <div class="showcase-image">
+                <img src="https://images.unsplash.com/photo-1541354329998-f4d9a9f9297f?w=400" alt="은행">
+            </div>
+            <div class="showcase-image">
+                <img src="https://images.unsplash.com/photo-1604719312566-8912e9227c6a?w=400" alt="슈퍼마켓">
+            </div>
+            <div class="showcase-image">
+                <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400" alt="호텔">
+            </div>
+            <div class="showcase-image">
+                <img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400" alt="카페">
+            </div>
+            <div class="showcase-image">
+                <img src="https://images.unsplash.com/photo-1519331379826-f10be5486c6f?w=400" alt="공원">
+            </div>
+            <div class="showcase-image">
+                <img src="https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=400" alt="쇼핑몰">
             </div>
         </div>
 
