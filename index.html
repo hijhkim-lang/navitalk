@@ -375,10 +375,20 @@
             <div class="loading">데이터를 불러오는 중...</div>
         </div>
 
-        <!-- 모든 장소 목록 -->
-        <div id="imageShowcase" class="card">
-            <h2 style="margin-bottom: 20px; color: #667eea;">모든 장소 보기</h2>
-            <div id="allPlacesGrid" class="scenarios-grid"></div>
+        <!-- 이미지 쇼케이스 -->
+        <div id="imageShowcase" class="showcase">
+            <div class="showcase-item">
+                <img src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=400" alt="병원">
+                <h3>🏥 병원</h3>
+            </div>
+            <div class="showcase-item">
+                <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400" alt="식당">
+                <h3>🍽️ 식당</h3>
+            </div>
+            <div class="showcase-item">
+                <img src="https://images.unsplash.com/photo-1541544181051-e46607bc22a4?w=400" alt="공항">
+                <h3>✈️ 공항</h3>
+            </div>
         </div>
 
         <!-- 선택 버튼 (회화 or 네비게이션) -->
@@ -585,9 +595,10 @@
             
             if (matchedPlace) {
                 currentPlaceType = matchedPlace.placeType;
-                showChoiceButtons();
+                // 바로 시나리오 목록으로 이동
+                showScenarios();
             } else {
-                loadPlaces();
+                alert('해당 장소를 찾을 수 없습니다. 다시 검색해주세요.');
             }
         }
 
@@ -704,14 +715,16 @@
                 return;
             }
 
-            // 시나리오별로 그룹화
-            const scenarios = {};
+            // 시나리오 목록 추출 (중복 제거)
+            const scenariosSet = new Set();
             conversations.forEach(conv => {
-                if (!scenarios[conv.시나리오]) {
-                    scenarios[conv.시나리오] = [];
+                if (conv.시나리오 && conv.시나리오.trim()) {
+                    scenariosSet.add(conv.시나리오.trim());
                 }
-                scenarios[conv.시나리오].push(conv);
             });
+
+            // 배열로 변환 후 정렬
+            const scenariosArray = Array.from(scenariosSet).sort();
 
             // 장소 이름 가져오기
             const place = placesData.find(p => p.placeType === currentPlaceType);
@@ -722,7 +735,7 @@
             const scenariosList = document.getElementById('scenariosList');
             scenariosList.innerHTML = '';
 
-            Object.keys(scenarios).sort().forEach(scenario => {
+            scenariosArray.forEach(scenario => {
                 const scenarioCard = document.createElement('div');
                 scenarioCard.className = 'scenario-card';
                 scenarioCard.textContent = scenario;
@@ -783,7 +796,10 @@
 
         function backToChoice() {
             document.getElementById('scenariosSection').classList.add('hidden');
-            document.getElementById('choiceSection').classList.remove('hidden');
+            document.getElementById('conversationsSection').classList.add('hidden');
+            document.getElementById('placesSection').classList.add('hidden');
+            document.getElementById('choiceSection').classList.add('hidden');
+            document.getElementById('imageShowcase').classList.remove('hidden');
             document.getElementById('searchCard').classList.remove('hidden');
         }
 
@@ -885,38 +901,10 @@
 
         // 초기 로드
         window.addEventListener('DOMContentLoaded', () => {
-            loadData().then(() => {
-                displayAllPlaces();
-            }).catch(err => {
+            loadData().catch(err => {
                 console.error('초기 데이터 로드 실패:', err);
-                document.getElementById('allPlacesGrid').innerHTML = 
-                    `<div class="error">데이터 로드 실패: ${err.message}<br>places.csv와 dialogues.csv 파일이 같은 폴더에 있는지 확인해주세요.</div>`;
             });
         });
-
-        function displayAllPlaces() {
-            const allPlacesGrid = document.getElementById('allPlacesGrid');
-            if (!allPlacesGrid) return;
-            
-            allPlacesGrid.innerHTML = '';
-
-            if (placesData.length === 0) {
-                allPlacesGrid.innerHTML = '<p>장소 데이터를 불러오는 중...</p>';
-                return;
-            }
-
-            placesData.forEach(place => {
-                const placeCard = document.createElement('div');
-                placeCard.className = 'scenario-card';
-                placeCard.textContent = `${getPlaceEmoji(place.placeType)} ${place.name}`;
-                placeCard.onclick = () => {
-                    currentPlaceType = place.placeType;
-                    currentSearchKeyword = place.name;
-                    showChoiceButtons();
-                };
-                allPlacesGrid.appendChild(placeCard);
-            });
-        }
     </script>
 </body>
 </html>
