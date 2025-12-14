@@ -600,18 +600,20 @@
         }
 
         function processSearch() {
-            const keyword = currentSearchKeyword;
+            const keyword = currentSearchKeyword.toLowerCase();
             
             const matchedPlace = placesData.find(place => {
-                if (place.placeKeywords.toLowerCase().includes(keyword.toLowerCase()) ||
-                    place.name.includes(keyword)) {
+                // 장소 이름이 검색어에 포함되어 있는지
+                if (keyword.includes(place.name.toLowerCase())) {
                     return true;
                 }
                 
+                // 각 키워드가 검색어에 포함되어 있는지 확인
                 const keywords = place.placeKeywords.split(',');
-                return keywords.some(kw => 
-                    keyword.toLowerCase().includes(kw.trim().toLowerCase())
-                );
+                return keywords.some(kw => {
+                    const trimmedKw = kw.trim().toLowerCase();
+                    return trimmedKw && keyword.includes(trimmedKw);
+                });
             });
             
             if (matchedPlace) {
