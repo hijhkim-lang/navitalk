@@ -1103,7 +1103,7 @@
                     <div class="speaker">${dialogue.화자}</div>
                     <div class="chinese">${dialogue.중국어}</div>
                     <div class="korean">${dialogue.한국어}</div>
-                    <div class="pinyin">${pinyin}</div>
+                    ${pinyin ? `<div class="pinyin">${pinyin}</div>` : ''}
                     ${dialogue.단어 ? `<div class="vocab-section">
                         <div class="vocab-title">핵심 단어:</div>
                         <span class="vocab-item">${dialogue.단어}</span>
