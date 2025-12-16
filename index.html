@@ -604,39 +604,47 @@
         }
 
         function processSearch() {
-            const keyword = currentSearchKeyword.toLowerCase();
+            const keyword = currentSearchKeyword.trim();
             console.log('검색 시작:', keyword);
+            console.log('로드된 장소 수:', placesData.length);
             
             const matchedPlace = placesData.find(place => {
-                // 장소 이름이 검색어에 포함되어 있는지
-                if (keyword.includes(place.name.toLowerCase())) {
-                    console.log('이름으로 매칭:', place.name);
+                const placeName = place.name || '';
+                const placeKeywords = place.placeKeywords || '';
+                
+                console.log('장소 체크:', place.placeType, placeName, placeKeywords);
+                
+                // 1. 검색어에 장소명이 포함되어 있는지
+                if (keyword.includes(placeName)) {
+                    console.log('✓ 이름 매칭:', placeName);
                     return true;
                 }
                 
-                // 각 키워드가 검색어에 포함되어 있는지 확인
-                const keywords = place.placeKeywords.split(',');
-                const matched = keywords.some(kw => {
-                    const trimmedKw = kw.trim().toLowerCase();
-                    if (trimmedKw && keyword.includes(trimmedKw)) {
-                        console.log('키워드 매칭:', trimmedKw, 'in', keyword);
+                // 2. 키워드 체크 (양방향)
+                const keywords = placeKeywords.split(',');
+                for (let kw of keywords) {
+                    const trimmedKw = kw.trim();
+                    if (!trimmedKw) continue;
+                    
+                    // 검색어에 키워드가 포함되어 있거나
+                    // 키워드에 검색어가 포함되어 있으면 매칭
+                    if (keyword.includes(trimmedKw) || trimmedKw.includes(keyword)) {
+                        console.log('✓ 키워드 매칭:', trimmedKw);
                         return true;
                     }
-                    return false;
-                });
+                }
                 
-                return matched;
+                return false;
             });
             
             console.log('매칭 결과:', matchedPlace);
             
             if (matchedPlace) {
                 currentPlaceType = matchedPlace.placeType;
-                console.log('장소 타입:', currentPlaceType);
-                // 바로 시나리오 목록으로 이동
+                console.log('→ 장소 타입:', currentPlaceType);
                 showScenarios();
             } else {
-                alert('해당 장소를 찾을 수 없습니다.\n검색어: ' + currentSearchKeyword + '\n\n다른 검색어를 시도해보세요:\n- 병원, 医院, hospital\n- 식당, 餐厅, restaurant');
+                alert('해당 장소를 찾을 수 없습니다.\n\n검색어: ' + keyword + '\n\n다른 검색어를 시도해보세요:\n• 병원, 医院, hospital\n• 식당, 餐厅, restaurant\n• 은행, 银行, bank');
             }
         }
 
