@@ -318,35 +318,86 @@
         }
 
         .place-item {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 25px;
-            border-radius: 15px;
+            padding: 30px 20px;
+            border-radius: 20px;
             cursor: pointer;
             transition: all 0.3s;
             text-align: center;
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+            position: relative;
+            overflow: hidden;
+            min-height: 140px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .place-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+            pointer-events: none;
         }
 
         .place-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
         }
 
+        /* 각 장소별 색상 테마 */
+        .place-hospital { background: linear-gradient(135deg, #4FC3F7 0%, #29B6F6 50%, #03A9F4 100%); }
+        .place-restaurant { background: linear-gradient(135deg, #FF6B6B 0%, #FF5252 50%, #F44336 100%); }
+        .place-police { background: linear-gradient(135deg, #5C6BC0 0%, #3F51B5 50%, #303F9F 100%); }
+        .place-bank { background: linear-gradient(135deg, #FFD54F 0%, #FFC107 50%, #FFA000 100%); }
+        .place-busstation { background: linear-gradient(135deg, #FFB74D 0%, #FF9800 50%, #F57C00 100%); }
+        .place-airport { background: linear-gradient(135deg, #81D4FA 0%, #4FC3F7 50%, #29B6F6 100%); }
+        .place-trainstation { background: linear-gradient(135deg, #78909C 0%, #607D8B 50%, #455A64 100%); }
+        .place-market { background: linear-gradient(135deg, #81C784 0%, #66BB6A 50%, #4CAF50 100%); }
+        .place-apartment { background: linear-gradient(135deg, #90A4AE 0%, #78909C 50%, #607D8B 100%); }
+        .place-cinema { background: linear-gradient(135deg, #E57373 0%, #EF5350 50%, #F44336 100%); }
+        .place-theater { background: linear-gradient(135deg, #BA68C8 0%, #AB47BC 50%, #9C27B0 100%); }
+        .place-stadium { background: linear-gradient(135deg, #AED581 0%, #9CCC65 50%, #8BC34A 100%); }
+        .place-park { background: linear-gradient(135deg, #A5D6A7 0%, #81C784 50%, #66BB6A 100%); }
+        .place-department { background: linear-gradient(135deg, #F48FB1 0%, #EC407A 50%, #E91E63 100%); }
+        .place-golf { background: linear-gradient(135deg, #C5E1A5 0%, #AED581 50%, #9CCC65 100%); }
+        .place-massage { background: linear-gradient(135deg, #CE93D8 0%, #BA68C8 50%, #AB47BC 100%); }
+        .place-ktv { background: linear-gradient(135deg, #F06292 0%, #EC407A 50%, #E91E63 100%); }
+        .place-hotel { background: linear-gradient(135deg, #FFD54F 0%, #FFCA28 50%, #FFC107 100%); }
+        .place-scenic { background: linear-gradient(135deg, #4DD0E1 0%, #26C6DA 50%, #00BCD4 100%); }
+        .place-oldtown { background: linear-gradient(135deg, #FFB74D 0%, #FFA726 50%, #FF9800 100%); }
+        .place-company { background: linear-gradient(135deg, #64B5F6 0%, #42A5F5 50%, #2196F3 100%); }
+        .place-salon { background: linear-gradient(135deg, #FF80AB 0%, #FF4081 50%, #F50057 100%); }
+        .place-bakery { background: linear-gradient(135deg, #FFCC80 0%, #FFB74D 50%, #FFA726 100%); }
+
         .place-item .place-icon {
-            font-size: 32px;
-            margin-bottom: 10px;
+            font-size: 48px;
+            margin-bottom: 12px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+            animation: floatIcon 3s ease-in-out infinite;
+        }
+
+        @keyframes floatIcon {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
         }
 
         .place-item .place-name {
-            font-size: 18px;
+            font-size: 19px;
             font-weight: bold;
-            margin-bottom: 5px;
+            margin-bottom: 6px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
         .place-item .place-keywords {
             font-size: 13px;
-            opacity: 0.9;
+            opacity: 0.95;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
         }
 
         .place-card {
@@ -624,7 +675,7 @@
         <!-- 전체 장소 목록 -->
         <div id="allPlacesSection" class="card hidden">
             <button class="back-btn" onclick="backToSearch()">← 검색으로 돌아가기</button>
-            <h2 style="margin-bottom: 20px; color: #667eea;">전체 장소 목록</h2>
+            <h2 style="margin-bottom: 20px; color: #2196F3; font-size: 28px;">🌈 전체 장소 목록</h2>
             <div id="allPlacesList" class="places-grid"></div>
         </div>
 
@@ -1224,7 +1275,7 @@
             
             placesData.forEach(place => {
                 const placeDiv = document.createElement('div');
-                placeDiv.className = 'place-item';
+                placeDiv.className = `place-item place-${place.placeType}`;
                 placeDiv.onclick = () => selectPlace(place.placeType);
                 
                 const icon = placeIcons[place.placeType] || '📍';
