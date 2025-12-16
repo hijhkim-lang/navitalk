@@ -607,7 +607,10 @@
 
         <!-- 시나리오 목록 -->
         <div id="scenariosSection" class="card hidden">
-            <button class="back-btn" onclick="backToChoice()">← 뒤로가기</button>
+            <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                <button class="back-btn" onclick="backToPlacesList()" style="display: none;" id="backToPlacesBtn">← 장소 목록으로</button>
+                <button class="back-btn" onclick="backToChoice()">← 검색으로</button>
+            </div>
             <h2 style="margin-bottom: 20px; color: #667eea;" id="scenariosSectionTitle">시나리오 선택</h2>
             <div id="scenariosList" class="scenarios-grid"></div>
             
@@ -650,7 +653,7 @@
             </p>
             <div style="display: flex; gap: 15px;">
                 <button class="modal-btn modal-btn-primary" onclick="showAllPlaces()">
-                    📍 비슷한 목적지 찾기
+                    📚 비슷한 회화예제 보기
                 </button>
                 <button class="modal-btn modal-btn-secondary" onclick="navigateDirectly()">
                     🧭 바로 네비게이션
@@ -859,6 +862,10 @@
             if (matchedPlace) {
                 currentPlaceType = matchedPlace.placeType;
                 console.log('→ 장소 타입:', currentPlaceType);
+                
+                // 정상 검색에서는 "← 장소 목록으로" 버튼 숨기기
+                document.getElementById('backToPlacesBtn').style.display = 'none';
+                
                 showScenarios();
             } else {
                 // 모달 표시
@@ -1064,6 +1071,11 @@
             document.getElementById('conversationsSection').classList.add('hidden');
             document.getElementById('placesSection').classList.add('hidden');
             document.getElementById('choiceSection').classList.add('hidden');
+            document.getElementById('allPlacesSection').classList.add('hidden');
+            
+            // "← 장소 목록으로" 버튼 숨기기
+            document.getElementById('backToPlacesBtn').style.display = 'none';
+            
             document.getElementById('imageShowcase').classList.remove('hidden');
             document.getElementById('searchCard').classList.remove('hidden');
         }
@@ -1231,7 +1243,27 @@
         // 장소 선택
         function selectPlace(placeType) {
             currentPlaceType = placeType;
+            
+            // 장소 목록 숨기기
+            document.getElementById('allPlacesSection').classList.add('hidden');
+            
+            // "← 장소 목록으로" 버튼 표시
+            document.getElementById('backToPlacesBtn').style.display = 'inline-block';
+            
+            // 시나리오 표시
             showScenarios();
+        }
+
+        // 장소 목록으로 돌아가기
+        function backToPlacesList() {
+            // 시나리오 섹션 숨기기
+            document.getElementById('scenariosSection').classList.add('hidden');
+            
+            // "← 장소 목록으로" 버튼 숨기기
+            document.getElementById('backToPlacesBtn').style.display = 'none';
+            
+            // 장소 목록 표시
+            document.getElementById('allPlacesSection').classList.remove('hidden');
         }
 
         // 바로 네비게이션
