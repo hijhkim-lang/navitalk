@@ -164,7 +164,7 @@
 
         /* 전체 듣기 버튼 */
         .play-all-btn {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             color: white;
             padding: 18px 30px;
             border: none;
@@ -175,12 +175,178 @@
             width: 100%;
             margin-top: 30px;
             transition: all 0.3s;
-            box-shadow: 0 5px 15px rgba(245, 87, 108, 0.3);
+            box-shadow: 0 5px 15px rgba(30, 60, 114, 0.3);
         }
 
         .play-all-btn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(245, 87, 108, 0.4);
+            box-shadow: 0 8px 25px rgba(30, 60, 114, 0.4);
+        }
+
+        /* 새로운 액션 버튼 스타일 */
+        .action-btn {
+            flex: 1;
+            padding: 18px;
+            border: none;
+            border-radius: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: white;
+        }
+
+        .action-btn-primary {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            box-shadow: 0 5px 15px rgba(30, 60, 114, 0.3);
+        }
+
+        .action-btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(30, 60, 114, 0.4);
+        }
+
+        .action-btn-navy {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            box-shadow: 0 5px 15px rgba(30, 60, 114, 0.3);
+        }
+
+        .action-btn-navy:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(30, 60, 114, 0.4);
+        }
+
+        .action-btn-secondary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .action-btn-secondary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        /* 모달 스타일 */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 28px;
+            color: #999;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .modal-close:hover {
+            color: #333;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 18px;
+            border: none;
+            border-radius: 15px;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: white;
+        }
+
+        .modal-btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .modal-btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .modal-btn-secondary {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            box-shadow: 0 5px 15px rgba(30, 60, 114, 0.3);
+        }
+
+        .modal-btn-secondary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(30, 60, 114, 0.4);
+        }
+
+        /* 장소 그리드 */
+        .places-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .place-item {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .place-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .place-item .place-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .place-item .place-name {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .place-item .place-keywords {
+            font-size: 13px;
+            opacity: 0.9;
         }
 
         .place-card {
@@ -337,11 +503,23 @@
                 grid-template-columns: repeat(2, 1fr);
                 gap: 10px;
             }
+
+            .places-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .modal-content {
+                padding: 30px 20px;
+            }
         }
 
         @media (max-width: 480px) {
             .showcase-grid {
                 grid-template-columns: repeat(2, 1fr);
+            }
+
+            .places-grid {
+                grid-template-columns: 1fr;
             }
         }
 
@@ -432,6 +610,19 @@
             <button class="back-btn" onclick="backToChoice()">← 뒤로가기</button>
             <h2 style="margin-bottom: 20px; color: #667eea;" id="scenariosSectionTitle">시나리오 선택</h2>
             <div id="scenariosList" class="scenarios-grid"></div>
+            
+            <!-- 추가 버튼들 -->
+            <div style="display: flex; gap: 15px; margin-top: 30px;">
+                <button class="action-btn action-btn-primary" onclick="playAllScenarios()">🔊 모든 시나리오 듣기</button>
+                <button class="action-btn action-btn-secondary" onclick="navigateToDestination()">🧭 바로 찾아가기</button>
+            </div>
+        </div>
+
+        <!-- 전체 장소 목록 -->
+        <div id="allPlacesSection" class="card hidden">
+            <button class="back-btn" onclick="backToSearch()">← 검색으로 돌아가기</button>
+            <h2 style="margin-bottom: 20px; color: #667eea;">전체 장소 목록</h2>
+            <div id="allPlacesList" class="places-grid"></div>
         </div>
 
         <!-- 회화 내용 -->
@@ -439,7 +630,33 @@
             <button class="back-btn" onclick="backToScenarios()">← 시나리오 목록으로</button>
             <h2 style="margin-bottom: 20px; color: #667eea;" id="conversationTitle"></h2>
             <div id="conversationsList"></div>
-            <button id="playAllBtn" class="play-all-btn" onclick="playAllConversations()">🔊 전체 듣기</button>
+            
+            <!-- 하단 버튼들 -->
+            <div style="display: flex; gap: 15px; margin-top: 30px;">
+                <button id="playAllBtn" class="action-btn action-btn-navy" onclick="playAllConversations()">🔊 전체 듣기</button>
+                <button class="action-btn action-btn-secondary" onclick="backToScenarios()">📋 시나리오 목록으로</button>
+                <button class="action-btn action-btn-secondary" onclick="navigateToDestination()">🧭 바로 찾아가기</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 커스텀 모달 -->
+    <div id="customModal" class="modal hidden">
+        <div class="modal-content">
+            <h3 style="color: #667eea; margin-bottom: 20px;">❓ 장소를 찾을 수 없습니다</h3>
+            <p style="color: #666; margin-bottom: 30px; line-height: 1.6;">
+                "<span id="searchKeywordDisplay" style="color: #1e3c72; font-weight: bold;"></span>" 장소가 목록에 없습니다.<br>
+                어떻게 하시겠어요?
+            </p>
+            <div style="display: flex; gap: 15px;">
+                <button class="modal-btn modal-btn-primary" onclick="showAllPlaces()">
+                    📍 비슷한 목적지 찾기
+                </button>
+                <button class="modal-btn modal-btn-secondary" onclick="navigateDirectly()">
+                    🧭 바로 네비게이션
+                </button>
+            </div>
+            <button class="modal-close" onclick="closeModal()">✕</button>
         </div>
     </div>
 
@@ -644,7 +861,9 @@
                 console.log('→ 장소 타입:', currentPlaceType);
                 showScenarios();
             } else {
-                alert('해당 장소를 찾을 수 없습니다.\n\n검색어: ' + keyword + '\n\n다른 검색어를 시도해보세요:\n• 병원, 医院, hospital\n• 식당, 餐厅, restaurant\n• 은행, 银行, bank');
+                // 모달 표시
+                document.getElementById('searchKeywordDisplay').textContent = currentSearchKeyword;
+                document.getElementById('customModal').classList.remove('hidden');
             }
         }
 
@@ -943,6 +1162,130 @@
             };
 
             window.speechSynthesis.speak(utterance);
+        }
+
+        // 모달 닫기
+        function closeModal() {
+            document.getElementById('customModal').classList.add('hidden');
+        }
+
+        // 전체 장소 목록 표시
+        function showAllPlaces() {
+            closeModal();
+            
+            // 모든 섹션 숨기기
+            document.querySelectorAll('.card').forEach(card => card.classList.add('hidden'));
+            
+            // 전체 장소 목록 섹션 표시
+            document.getElementById('allPlacesSection').classList.remove('hidden');
+            
+            // 장소 목록 생성
+            const placesList = document.getElementById('allPlacesList');
+            placesList.innerHTML = '';
+            
+            // 장소별 아이콘 매핑
+            const placeIcons = {
+                'hospital': '🏥',
+                'restaurant': '🍽️',
+                'police': '👮',
+                'bank': '🏦',
+                'busstation': '🚌',
+                'airport': '✈️',
+                'trainstation': '🚄',
+                'market': '🛒',
+                'apartment': '🏢',
+                'cinema': '🎬',
+                'theater': '🎭',
+                'stadium': '🏟️',
+                'park': '🌳',
+                'department': '🏬',
+                'golf': '⛳',
+                'massage': '💆',
+                'ktv': '🎤',
+                'hotel': '🏨',
+                'scenic': '🗿',
+                'oldtown': '🏛️',
+                'company': '🏢',
+                'salon': '💇',
+                'bakery': '🍞'
+            };
+            
+            placesData.forEach(place => {
+                const placeDiv = document.createElement('div');
+                placeDiv.className = 'place-item';
+                placeDiv.onclick = () => selectPlace(place.placeType);
+                
+                const icon = placeIcons[place.placeType] || '📍';
+                const keywords = place.placeKeywords.split(',').slice(0, 3).join(', ');
+                
+                placeDiv.innerHTML = `
+                    <div class="place-icon">${icon}</div>
+                    <div class="place-name">${place.name}</div>
+                    <div class="place-keywords">${keywords}</div>
+                `;
+                
+                placesList.appendChild(placeDiv);
+            });
+        }
+
+        // 장소 선택
+        function selectPlace(placeType) {
+            currentPlaceType = placeType;
+            showScenarios();
+        }
+
+        // 바로 네비게이션
+        function navigateDirectly() {
+            closeModal();
+            navigateToDestination();
+        }
+
+        // 검색으로 돌아가기
+        function backToSearch() {
+            document.getElementById('allPlacesSection').classList.add('hidden');
+            document.getElementById('searchCard').classList.remove('hidden');
+            document.getElementById('imageShowcase').classList.remove('hidden');
+        }
+
+        // 모든 시나리오 듣기 함수
+        function playAllScenarios() {
+            if (!currentPlaceType) {
+                alert('장소가 선택되지 않았습니다.');
+                return;
+            }
+
+            // 현재 장소의 모든 시나리오 가져오기
+            const conversations = dialoguesData.filter(d => d.placeType === currentPlaceType);
+            
+            if (conversations.length === 0) {
+                alert('재생할 대화가 없습니다.');
+                return;
+            }
+
+            // 모든 중국어 문장 수집
+            allSentences = [];
+            conversations.forEach(conv => {
+                if (conv.chinese) {
+                    allSentences.push(conv.chinese);
+                }
+            });
+
+            if (allSentences.length === 0) {
+                alert('재생할 대화가 없습니다.');
+                return;
+            }
+
+            // 이미 재생 중이면 중지
+            if (window.speechSynthesis.speaking) {
+                window.speechSynthesis.cancel();
+                alert('재생이 중지되었습니다.');
+                return;
+            }
+
+            // 재생 시작
+            currentSentenceIndex = 0;
+            alert(`총 ${allSentences.length}개 대화를 재생합니다. (약 ${Math.ceil(allSentences.length * 3 / 60)}분 소요)`);
+            playNextSentence();
         }
 
         // 초기 로드
