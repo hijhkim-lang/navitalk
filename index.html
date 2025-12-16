@@ -681,7 +681,10 @@
 
         <!-- 회화 내용 -->
         <div id="conversationsSection" class="card hidden">
-            <button class="back-btn" onclick="backToScenarios()">← 시나리오 목록으로</button>
+            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                <button class="back-btn" onclick="backToScenarios()">← 시나리오 목록으로</button>
+                <button class="back-btn" onclick="nextScenario()" style="margin-left: auto; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">다음 시나리오 →</button>
+            </div>
             <h2 style="margin-bottom: 20px; color: #667eea;" id="conversationTitle"></h2>
             <div id="conversationsList"></div>
             
@@ -729,6 +732,7 @@
         let dialoguesData = [];
         let currentPlaceType = '';
         let currentScenario = '';
+        let currentScenarioIndex = 0;
         let currentSearchKeyword = '';
 
         function resetApp() {
@@ -1068,19 +1072,30 @@
         function showScenarioDialogues(scenario) {
             currentScenario = scenario;
             
+            // 현재 시나리오의 인덱스 저장
+            const conversations = dialoguesData.filter(d => d.장소타입 === currentPlaceType);
+            const scenariosSet = new Set();
+            conversations.forEach(conv => {
+                if (conv.시나리오 && conv.시나리오.trim()) {
+                    scenariosSet.add(conv.시나리오.trim());
+                }
+            });
+            const scenariosArray = Array.from(scenariosSet).sort();
+            currentScenarioIndex = scenariosArray.indexOf(scenario);
+            
             document.getElementById('scenariosSection').classList.add('hidden');
             document.getElementById('conversationsSection').classList.remove('hidden');
 
             document.getElementById('conversationTitle').textContent = scenario;
 
-            const conversations = dialoguesData.filter(d => 
+            const scenarioConversations = dialoguesData.filter(d => 
                 d.장소타입 === currentPlaceType && d.시나리오 === scenario
             );
 
             const conversationsList = document.getElementById('conversationsList');
             conversationsList.innerHTML = '';
 
-            const dialogues = conversations.sort((a, b) => 
+            const dialogues = scenarioConversations.sort((a, b) => 
                 parseInt(a.대화순서) - parseInt(b.대화순서)
             );
 
@@ -1132,6 +1147,30 @@
         function backToScenarios() {
             document.getElementById('conversationsSection').classList.add('hidden');
             document.getElementById('scenariosSection').classList.remove('hidden');
+        }
+
+        function nextScenario() {
+            // 현재 장소의 모든 시나리오 가져오기
+            const conversations = dialoguesData.filter(d => d.장소타입 === currentPlaceType);
+            const scenariosSet = new Set();
+            conversations.forEach(conv => {
+                if (conv.시나리오 && conv.시나리오.trim()) {
+                    scenariosSet.add(conv.시나리오.trim());
+                }
+            });
+            const scenariosArray = Array.from(scenariosSet).sort();
+            
+            // 다음 시나리오 인덱스 계산 (순환)
+            let nextIndex = currentScenarioIndex + 1;
+            if (nextIndex >= scenariosArray.length) {
+                nextIndex = 0; // 마지막이면 첫 번째로
+            }
+            
+            // 다음 시나리오 표시
+            const nextScenario = scenariosArray[nextIndex];
+            if (nextScenario) {
+                showScenarioDialogues(nextScenario);
+            }
         }
 
         function generatePinyin(chinese) {
