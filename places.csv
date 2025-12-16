@@ -1,24 +1,24 @@
 placeType,name,placeKeywords
-hospital,병원,병원,医院,hospital,clinic,의원,보건소
-restaurant,식당,식당,餐厅,饭店,restaurant,음식점,맛집
-police,경찰서,경찰서,警察局,公安局,police,파출소
-bank,은행,은행,银行,bank,atm,금융
-busstation,버스터미널,버스터미널,汽车站,长途汽车站,bus station,버스정류장
-airport,공항,공항,机场,airport
-trainstation,기차역,기차역,火车站,train station,railway,역
-market,슈퍼마켓,슈퍼마켓,超市,商店,supermarket,마트,편의점
-apartment,아파트,아파트,小区,公寓,apartment,주택,빌라
-cinema,영화관,영화관,电影院,cinema,movie theater,극장
-theater,극장,극장,剧院,theater,공연장
-stadium,경기장,경기장,体育场,运动场,stadium,스포츠,체육관
-park,공원,공원,公园,park,산책로
-department,백화점,백화점,百货商店,商场,department store,쇼핑몰,mall
-golf,골프장,골프장,高尔夫球场,golf course,골프
-massage,마사지,마사지,按摩店,massage,spa,안마
-ktv,노래방,노래방,KTV,歌厅,karaoke,가라오케
-hotel,호텔,호텔,酒店,宾馆,hotel,숙소,모텔
-scenic,관광지,관광지,景点,旅游景点,scenic spot,tourist attraction,명소
-oldtown,고진,고진,古镇,老街,old town,전통마을
-company,회사,회사,公司,company,office,사무실
-salon,미용실,미용실,美发店,理发店,salon,hair salon,미용원
-bakery,제과점,제과점,面包店,蛋糕店,bakery,빵집,베이커리
+hospital,병원,"병원,医院,hospital,clinic,의원,보건소"
+restaurant,식당,"식당,餐厅,饭店,restaurant,음식점,맛집"
+police,경찰서,"경찰서,警察局,公安局,police,파출소"
+bank,은행,"은행,银行,bank,atm,금융"
+busstation,버스터미널,"버스터미널,汽车站,长途汽车站,bus station,버스정류장"
+airport,공항,"공항,机场,airport"
+trainstation,기차역,"기차역,火车站,train station,railway,역"
+market,슈퍼마켓,"슈퍼마켓,超市,商店,supermarket,마트,편의점"
+apartment,아파트,"아파트,小区,公寓,apartment,주택,빌라"
+cinema,영화관,"영화관,电影院,cinema,movie theater,극장"
+theater,극장,"극장,剧院,theater,공연장"
+stadium,경기장,"경기장,体育场,运动场,stadium,스포츠,체육관"
+park,공원,"공원,公园,park,산책로"
+department,백화점,"백화점,百货商店,商场,department store,쇼핑몰,mall"
+golf,골프장,"골프장,高尔夫球场,golf course,골프"
+massage,마사지,"마사지,按摩店,massage,spa,안마"
+ktv,노래방,"노래방,KTV,歌厅,karaoke,가라오케"
+hotel,호텔,"호텔,酒店,宾馆,hotel,숙소,모텔"
+scenic,관광지,"관광지,景点,旅游景点,scenic spot,tourist attraction,명소"
+oldtown,고진,"고진,古镇,老街,old town,전통마을"
+company,회사,"회사,公司,company,office,사무실"
+salon,미용실,"미용실,美发店,理发店,salon,hair salon,미용원"
+bakery,제과점,"제과점,面包店,蛋糕店,bakery,빵집,베이커리"
