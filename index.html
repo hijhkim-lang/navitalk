@@ -371,7 +371,7 @@
         <!-- 검색 섹션 -->
         <div id="searchCard" class="card">
             <div class="search-box">
-                <input type="text" id="searchInput" placeholder="목적지를 입력하세요 (예: 병원, 식당, 은행...)" />
+                <input type="text" id="searchInput" placeholder="목적지를 입력하세요 (예: 병원, 医院, hospital...)" onkeypress="if(event.key==='Enter') searchDestination()" />
             </div>
             <button class="btn btn-primary" onclick="searchDestination()">🗺️ 찾아가기</button>
         </div>
@@ -585,43 +585,58 @@
 
             currentSearchKeyword = keyword;
 
+            // 데이터 로딩 확인
             if (placesData.length === 0) {
                 document.getElementById('loadingSection').classList.remove('hidden');
                 loadData().then(() => {
                     document.getElementById('loadingSection').classList.add('hidden');
+                    console.log('데이터 로드 완료. 장소 개수:', placesData.length);
                     processSearch();
                 }).catch(err => {
                     document.getElementById('loadingSection').classList.add('hidden');
                     alert('데이터 로드 실패: ' + err.message);
                 });
             } else {
+                console.log('검색어:', keyword);
+                console.log('로드된 장소:', placesData.length);
                 processSearch();
             }
         }
 
         function processSearch() {
             const keyword = currentSearchKeyword.toLowerCase();
+            console.log('검색 시작:', keyword);
             
             const matchedPlace = placesData.find(place => {
                 // 장소 이름이 검색어에 포함되어 있는지
                 if (keyword.includes(place.name.toLowerCase())) {
+                    console.log('이름으로 매칭:', place.name);
                     return true;
                 }
                 
                 // 각 키워드가 검색어에 포함되어 있는지 확인
                 const keywords = place.placeKeywords.split(',');
-                return keywords.some(kw => {
+                const matched = keywords.some(kw => {
                     const trimmedKw = kw.trim().toLowerCase();
-                    return trimmedKw && keyword.includes(trimmedKw);
+                    if (trimmedKw && keyword.includes(trimmedKw)) {
+                        console.log('키워드 매칭:', trimmedKw, 'in', keyword);
+                        return true;
+                    }
+                    return false;
                 });
+                
+                return matched;
             });
+            
+            console.log('매칭 결과:', matchedPlace);
             
             if (matchedPlace) {
                 currentPlaceType = matchedPlace.placeType;
+                console.log('장소 타입:', currentPlaceType);
                 // 바로 시나리오 목록으로 이동
                 showScenarios();
             } else {
-                alert('해당 장소를 찾을 수 없습니다. 다시 검색해주세요.');
+                alert('해당 장소를 찾을 수 없습니다.\n검색어: ' + currentSearchKeyword + '\n\n다른 검색어를 시도해보세요:\n- 병원, 医院, hospital\n- 식당, 餐厅, restaurant');
             }
         }
 
