@@ -118,6 +118,34 @@
             letter-spacing: 3px;
         }
 
+        /* 내부 페이지용 헤더 */
+        .header-new {
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .header-new:hover {
+            opacity: 0.85;
+            transform: scale(1.02);
+        }
+
+        .header-title {
+            color: #008B8B;
+            font-size: 32px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            margin-bottom: 2px;
+        }
+
+        .header-subtitle {
+            color: #E07A5F;
+            font-size: 18px;
+            font-style: italic;
+        }
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
@@ -693,9 +721,10 @@
 </head>
 <body>
     <div class="container">
-        <div class="header" id="mainHeader" style="display: none;">
-            <h1 onclick="resetApp()">🗺️ NaviTalk</h1>
-            <p>네비게이션과 회화를 한 번에! 목적지에서 바로 대화하기</p>
+        <!-- 새 스타일 헤더 (내부 페이지용) -->
+        <div class="header-new" id="mainHeader" style="display: none;" onclick="resetApp()">
+            <div class="header-title">NAVIGATION</div>
+            <div class="header-subtitle">for Foreigners</div>
         </div>
 
         <!-- 검색 섹션 (새 디자인) -->
@@ -1105,9 +1134,9 @@
         }
 
         function showScenarios() {
-            // 헤더 표시 및 배경 변경
+            // 헤더 표시 및 배경 변경 (밝은 톤)
             document.getElementById('mainHeader').style.display = 'block';
-            document.body.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+            document.body.style.background = 'linear-gradient(180deg, #e8ecf1 0%, #dde3eb 100%)';
             
             // document.getElementById('imageShowcase').classList.add('hidden');
             document.getElementById('searchCard').classList.add('hidden');
@@ -1361,9 +1390,9 @@
         function showAllPlaces() {
             closeModal();
             
-            // 헤더 표시 및 배경 변경
+            // 헤더 표시 및 배경 변경 (밝은 톤)
             document.getElementById('mainHeader').style.display = 'block';
-            document.body.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+            document.body.style.background = 'linear-gradient(180deg, #e8ecf1 0%, #dde3eb 100%)';
             
             // 모든 섹션 숨기기
             document.querySelectorAll('.card').forEach(card => card.classList.add('hidden'));
