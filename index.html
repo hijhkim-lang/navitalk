@@ -14,9 +14,108 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(180deg, #f5f7fa 0%, #e8ecf1 100%);
             min-height: 100vh;
             padding: 20px;
+        }
+
+        /* 첫 페이지 전용 스타일 */
+        .landing-page {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 85vh;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .landing-title {
+            color: #008B8B;
+            font-size: 42px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+        }
+
+        .landing-subtitle {
+            color: #E07A5F;
+            font-size: 24px;
+            font-style: italic;
+            margin-bottom: 40px;
+        }
+
+        .landing-description {
+            color: #555;
+            font-size: 18px;
+            margin-bottom: 35px;
+            line-height: 1.6;
+        }
+
+        .landing-input-wrapper {
+            width: 100%;
+            max-width: 400px;
+            margin-bottom: 20px;
+        }
+
+        .landing-input {
+            width: 100%;
+            padding: 18px 25px;
+            font-size: 16px;
+            border: 2px solid #008B8B;
+            border-radius: 50px;
+            outline: none;
+            text-align: center;
+            color: #333;
+            background: white;
+        }
+
+        .landing-input::placeholder {
+            color: #999;
+        }
+
+        .landing-input:focus {
+            border-color: #006666;
+            box-shadow: 0 0 15px rgba(0, 139, 139, 0.2);
+        }
+
+        .landing-hint {
+            color: #777;
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+
+        .landing-go-btn {
+            background: linear-gradient(135deg, #E07A5F 0%, #D4644A 100%);
+            color: white;
+            border: none;
+            padding: 18px 80px;
+            font-size: 24px;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 20px rgba(224, 122, 95, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .landing-go-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(224, 122, 95, 0.5);
+        }
+
+        .landing-go-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .landing-brand {
+            margin-top: 60px;
+            color: #008B8B;
+            font-size: 20px;
+            font-weight: bold;
+            letter-spacing: 3px;
         }
 
         .container {
@@ -594,17 +693,26 @@
 </head>
 <body>
     <div class="container">
-        <div class="header">
+        <div class="header" id="mainHeader" style="display: none;">
             <h1 onclick="resetApp()">🗺️ NaviTalk</h1>
             <p>네비게이션과 회화를 한 번에! 목적지에서 바로 대화하기</p>
         </div>
 
-        <!-- 검색 섹션 -->
-        <div id="searchCard" class="card">
-            <div class="search-box">
-                <input type="text" id="searchInput" placeholder="목적지를 입력하세요" onkeypress="if(event.key==='Enter') searchDestination()" />
+        <!-- 검색 섹션 (새 디자인) -->
+        <div id="searchCard" class="landing-page">
+            <div class="landing-title">NAVIGATION</div>
+            <div class="landing-subtitle">for Foreigners</div>
+            <div class="landing-description">
+                목적지에서 예상되는 대화를<br>미리 연습해보세요
             </div>
-            <button class="btn btn-primary" onclick="searchDestination()">🗺️ 찾아가기</button>
+            <div class="landing-input-wrapper">
+                <input type="text" id="searchInput" class="landing-input" placeholder="Enter destination" onkeypress="if(event.key==='Enter') searchDestination()" />
+            </div>
+            <div class="landing-hint">Go를 클릭하시면 회화예제가 나타납니다</div>
+            <button class="landing-go-btn" onclick="searchDestination()">
+                Go <span style="font-size: 20px;">›</span>
+            </button>
+            <div class="landing-brand">NAVITALK</div>
         </div>
 
         <!-- 로딩 -->
@@ -997,6 +1105,10 @@
         }
 
         function showScenarios() {
+            // 헤더 표시 및 배경 변경
+            document.getElementById('mainHeader').style.display = 'block';
+            document.body.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+            
             // document.getElementById('imageShowcase').classList.add('hidden');
             document.getElementById('searchCard').classList.add('hidden');
             document.getElementById('placesSection').classList.add('hidden');
@@ -1102,6 +1214,10 @@
         }
 
         function backToChoice() {
+            // 헤더 숨기기 및 배경 원래대로
+            document.getElementById('mainHeader').style.display = 'none';
+            document.body.style.background = 'linear-gradient(180deg, #f5f7fa 0%, #e8ecf1 100%)';
+            
             document.getElementById('scenariosSection').classList.add('hidden');
             document.getElementById('conversationsSection').classList.add('hidden');
             document.getElementById('placesSection').classList.add('hidden');
@@ -1245,8 +1361,13 @@
         function showAllPlaces() {
             closeModal();
             
+            // 헤더 표시 및 배경 변경
+            document.getElementById('mainHeader').style.display = 'block';
+            document.body.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+            
             // 모든 섹션 숨기기
             document.querySelectorAll('.card').forEach(card => card.classList.add('hidden'));
+            document.getElementById('searchCard').classList.add('hidden');
             
             // 전체 장소 목록 섹션 표시
             document.getElementById('allPlacesSection').classList.remove('hidden');
@@ -1362,6 +1483,10 @@
 
         // 검색으로 돌아가기
         function backToSearch() {
+            // 헤더 숨기기 및 배경 원래대로
+            document.getElementById('mainHeader').style.display = 'none';
+            document.body.style.background = 'linear-gradient(180deg, #f5f7fa 0%, #e8ecf1 100%)';
+            
             document.getElementById('allPlacesSection').classList.add('hidden');
             document.getElementById('searchCard').classList.remove('hidden');
             // document.getElementById('imageShowcase').classList.remove('hidden');
