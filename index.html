@@ -375,6 +375,7 @@
         .place-company { background: linear-gradient(135deg, #64B5F6 0%, #42A5F5 50%, #2196F3 100%); }
         .place-salon { background: linear-gradient(135deg, #FF80AB 0%, #FF4081 50%, #F50057 100%); }
         .place-bakery { background: linear-gradient(135deg, #FFCC80 0%, #FFB74D 50%, #FFA726 100%); }
+        .place-zhangjiajie { background: linear-gradient(135deg, #4DB6AC 0%, #26A69A 50%, #009688 100%); }
 
         .place-item .place-icon {
             font-size: 48px;
@@ -1282,7 +1283,34 @@
                 'zhangjiajie': '🏔️'
             };
             
+            // 검색어로 관련 카테고리 찾기
+            const searchKeyword = currentSearchKeyword.toLowerCase();
+            let matchedCategories = new Set();
+            
             placesData.forEach(place => {
+                // categoryKeywords에서 검색어 매칭 확인
+                if (place.categoryKeywords) {
+                    const catKeywords = place.categoryKeywords.toLowerCase();
+                    if (catKeywords.includes(searchKeyword) || searchKeyword.includes(place.category)) {
+                        matchedCategories.add(place.category);
+                    }
+                }
+                // placeKeywords에서도 확인
+                if (place.placeKeywords) {
+                    const placeKw = place.placeKeywords.toLowerCase();
+                    if (placeKw.includes(searchKeyword)) {
+                        matchedCategories.add(place.category);
+                    }
+                }
+            });
+            
+            // 매칭된 카테고리가 있으면 해당 카테고리만, 없으면 전체 표시
+            let filteredPlaces = placesData;
+            if (matchedCategories.size > 0) {
+                filteredPlaces = placesData.filter(place => matchedCategories.has(place.category));
+            }
+            
+            filteredPlaces.forEach(place => {
                 const placeDiv = document.createElement('div');
                 placeDiv.className = `place-item place-${place.placeType}`;
                 placeDiv.onclick = () => selectPlace(place.placeType);
