@@ -42,7 +42,17 @@
             color: #E07A5F;
             font-size: 24px;
             font-style: italic;
+        }
+
+        .landing-header-clickable {
+            cursor: pointer;
+            transition: all 0.3s;
             margin-bottom: 40px;
+        }
+
+        .landing-header-clickable:hover {
+            opacity: 0.8;
+            transform: scale(1.02);
         }
 
         .landing-description {
@@ -729,8 +739,10 @@
 
         <!-- 검색 섹션 (새 디자인) -->
         <div id="searchCard" class="landing-page">
-            <div class="landing-title">NAVIGATION</div>
-            <div class="landing-subtitle">for Foreigners</div>
+            <div class="landing-header-clickable" onclick="resetApp()">
+                <div class="landing-title">NAVIGATION</div>
+                <div class="landing-subtitle">for Foreigners</div>
+            </div>
             <div class="landing-description">
                 목적지에서 예상되는 대화를<br>미리 연습해보세요
             </div>
