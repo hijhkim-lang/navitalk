@@ -285,13 +285,13 @@
         .back-btn {
             background: #f5f5f5;
             color: #333;
-            padding: 12px 20px;
+            padding: 8px 14px;
             border: none;
-            border-radius: 10px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 11px;
             font-weight: 600;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             transition: all 0.3s;
         }
 
@@ -323,10 +323,10 @@
         /* 새로운 액션 버튼 스타일 */
         .action-btn {
             flex: 1;
-            padding: 18px;
+            padding: 12px;
             border: none;
-            border-radius: 15px;
-            font-size: 18px;
+            border-radius: 10px;
+            font-size: 12px;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s;
@@ -379,13 +379,14 @@
 
         .modal-content {
             background: white;
-            border-radius: 20px;
-            padding: 40px;
-            max-width: 500px;
+            border-radius: 15px;
+            padding: 25px;
+            max-width: 400px;
             width: 90%;
             position: relative;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
             animation: modalSlideIn 0.3s ease-out;
+            font-size: 14px;
         }
 
         @keyframes modalSlideIn {
@@ -401,11 +402,11 @@
 
         .modal-close {
             position: absolute;
-            top: 15px;
-            right: 15px;
+            top: 10px;
+            right: 10px;
             background: none;
             border: none;
-            font-size: 28px;
+            font-size: 22px;
             color: #999;
             cursor: pointer;
             transition: color 0.3s;
@@ -417,10 +418,10 @@
 
         .modal-btn {
             flex: 1;
-            padding: 18px;
+            padding: 12px;
             border: none;
-            border-radius: 15px;
-            font-size: 17px;
+            border-radius: 12px;
+            font-size: 12px;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s;
@@ -577,23 +578,23 @@
         .dialogue-item {
             background: #f8f9fa;
             border-left: 4px solid #667eea;
-            padding: 15px;
-            margin-bottom: 15px;
-            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 8px;
             position: relative;
-            padding-left: 60px;
+            padding-left: 45px;
         }
 
         .play-btn {
             position: absolute;
-            left: 15px;
-            top: 15px;
+            left: 10px;
+            top: 10px;
             background: #667eea;
             border: none;
             border-radius: 50%;
-            width: 35px;
-            height: 35px;
-            font-size: 16px;
+            width: 28px;
+            height: 28px;
+            font-size: 12px;
             cursor: pointer;
             transition: all 0.3s;
         }
@@ -606,50 +607,50 @@
         .speaker {
             color: #667eea;
             font-weight: 700;
-            margin-bottom: 8px;
-            font-size: 16px;
+            margin-bottom: 5px;
+            font-size: 11px;
         }
 
         .chinese {
-            font-size: 20px;
+            font-size: 14px;
             font-weight: 600;
             color: #2c3e50;
-            margin-bottom: 8px;
-            line-height: 1.6;
+            margin-bottom: 5px;
+            line-height: 1.5;
         }
 
         .korean {
             color: #7f8c8d;
-            font-size: 16px;
-            margin-bottom: 8px;
-            line-height: 1.5;
+            font-size: 11px;
+            margin-bottom: 5px;
+            line-height: 1.4;
         }
 
         .pinyin {
             color: #95a5a6;
-            font-size: 14px;
+            font-size: 10px;
             font-style: italic;
-            margin-bottom: 8px;
+            margin-bottom: 5px;
         }
 
         .vocab-section {
             background: #fff3cd;
-            padding: 10px;
-            border-radius: 5px;
-            margin-top: 10px;
+            padding: 8px;
+            border-radius: 4px;
+            margin-top: 8px;
             border-left: 3px solid #ffc107;
         }
 
         .vocab-title {
             font-weight: 600;
             color: #856404;
-            margin-bottom: 5px;
-            font-size: 14px;
+            margin-bottom: 3px;
+            font-size: 10px;
         }
 
         .vocab-item {
             color: #856404;
-            font-size: 14px;
+            font-size: 10px;
         }
 
         .showcase-grid {
@@ -801,15 +802,15 @@
 
         <!-- 회화 내용 -->
         <div id="conversationsSection" class="card hidden">
-            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+            <div style="display: flex; gap: 8px; margin-bottom: 10px;">
                 <button class="back-btn" onclick="backToScenarios()">← 시나리오 목록으로</button>
                 <button class="back-btn" onclick="nextScenario()" style="margin-left: auto; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">다음 시나리오 →</button>
             </div>
-            <h2 style="margin-bottom: 20px; color: #667eea;" id="conversationTitle"></h2>
+            <h2 style="margin-bottom: 15px; color: #667eea; font-size: 16px;" id="conversationTitle"></h2>
             <div id="conversationsList"></div>
             
             <!-- 하단 버튼들 -->
-            <div style="display: flex; gap: 15px; margin-top: 30px;">
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
                 <button id="playAllBtn" class="action-btn action-btn-navy" onclick="playAllConversations()">🔊 전체 듣기</button>
                 <button class="action-btn action-btn-secondary" onclick="backToScenarios()">📋 시나리오 목록으로</button>
                 <button class="action-btn action-btn-secondary" onclick="navigateToDestination()">🧭 바로 찾아가기</button>
