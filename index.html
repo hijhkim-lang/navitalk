@@ -1446,26 +1446,42 @@
                 'zhangjiajie': '🏔️'
             };
             
-            // 검색어로 관련 카테고리 찾기
+            // 검색어로 관련 카테고리 찾기 (개선된 로직)
             const searchKeyword = currentSearchKeyword.toLowerCase();
             let matchedCategories = new Set();
             
             placesData.forEach(place => {
-                // categoryKeywords에서 검색어 매칭 확인
+                // categoryKeywords에서 검색어 매칭 확인 (키워드 단위로 비교)
                 if (place.categoryKeywords) {
-                    const catKeywords = place.categoryKeywords.toLowerCase();
-                    if (catKeywords.includes(searchKeyword) || searchKeyword.includes(place.category)) {
-                        matchedCategories.add(place.category);
+                    const catKeywordsArray = place.categoryKeywords.toLowerCase().split(',');
+                    for (let kw of catKeywordsArray) {
+                        const trimmedKw = kw.trim();
+                        if (trimmedKw.length >= 2) {
+                            // 검색어에 키워드가 포함되어 있거나
+                            // 키워드에 검색어가 포함되어 있으면 매칭
+                            if (searchKeyword.includes(trimmedKw) || trimmedKw.includes(searchKeyword)) {
+                                matchedCategories.add(place.category);
+                                break;
+                            }
+                        }
                     }
                 }
                 // placeKeywords에서도 확인
                 if (place.placeKeywords) {
-                    const placeKw = place.placeKeywords.toLowerCase();
-                    if (placeKw.includes(searchKeyword)) {
-                        matchedCategories.add(place.category);
+                    const placeKwArray = place.placeKeywords.toLowerCase().split(',');
+                    for (let kw of placeKwArray) {
+                        const trimmedKw = kw.trim();
+                        if (trimmedKw.length >= 2) {
+                            if (searchKeyword.includes(trimmedKw) || trimmedKw.includes(searchKeyword)) {
+                                matchedCategories.add(place.category);
+                                break;
+                            }
+                        }
                     }
                 }
             });
+            
+            console.log('검색어:', searchKeyword, '매칭된 카테고리:', Array.from(matchedCategories));
             
             // 매칭된 카테고리가 있으면 해당 카테고리만, 없으면 전체 표시
             let filteredPlaces = placesData;
