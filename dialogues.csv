@@ -1513,3 +1513,135 @@ zhangjiajie,9.问路(길묻기),4,导游,步行就可以，不远。但是山路
 zhangjiajie,9.问路(길묻기),5,游人,那里需要另外买门票吗？,거기는 따로 입장권을 사야 하나요?,nà lǐ xū yào lìng wài mǎi mén piào ma ？,"另外(lìngwài,따로)"
 zhangjiajie,9.问路(길묻기),6,导游,门票已经包含了黄石寨。但是里面的索道要另外收费。,입장권에 이미 황석채가 포함되어 있습니다. 하지만 안에 있는 케이블카는 별도 요금을 내야 합니다.,mén piào yǐ jīng bāo hán le huáng shí zhài 。 dàn shì lǐ miàn de suǒ dào yào lìng wài shōu fèi 。,"包含(bāohán,포함), 收费(shōufèi,요금)"
 zhangjiajie,9.问路(길묻기),7,游人,明白了，非常感谢！,"알겠습니다, 정말 감사합니다!",míng bái le ， fēi cháng gǎn xiè ！,"非常感谢(fēichánggǎnxiè,정말감사합니다)"
+elementary,1. 学生接送 (등하교),1,家长,老师您好，我来送孩子上学。,선생님 안녕하세요. 아이 등교시키러 왔어요.,lǎoshī nín hǎo, wǒ lái sòng háizi shàngxué,送=보내다 | 上学=등교
+elementary,1. 学生接送 (등하교),2,老师,早上好！小明今天很早啊。,안녕하세요! 소명이 오늘 일찍 왔네요.,zǎoshang hǎo! Xiǎomíng jīntiān hěn zǎo a,早=일찍
+elementary,1. 学生接送 (등하교),3,家长,是的，今天几点放学？,네. 오늘 몇 시에 하교해요?,shì de, jīntiān jǐ diǎn fàngxué,放学=하교
+elementary,1. 学生接送 (등하교),4,老师,下午三点半放学。,오후 3시 반에 하교해요.,xiàwǔ sān diǎn bàn fàngxué,下午=오후
+elementary,1. 学生接送 (등하교),5,家长,好的，我会准时来接他。,네. 제시간에 데리러 올게요.,hǎo de, wǒ huì zhǔnshí lái jiē tā,准时=정시에 | 接=데리러가다
+elementary,1. 学生接送 (등하교),6,老师,请在校门口等候。,교문 앞에서 기다려주세요.,qǐng zài xiàoménkǒu děnghòu,校门口=교문앞 | 等候=기다리다
+elementary,2. 与班主任沟通 (담임상담),1,家长,老师，我想了解一下孩子的学习情况。,선생님. 아이 학습 상황을 알고 싶어요.,lǎoshī, wǒ xiǎng liǎojiě yīxià háizi de xuéxí qíngkuàng,了解=알다 | 学习=학습 | 情况=상황
+elementary,2. 与班主任沟通 (담임상담),2,老师,小明最近进步很大，特别是数学。,소명이가 요즘 많이 발전했어요. 특히 수학이요.,Xiǎomíng zuìjìn jìnbù hěn dà, tèbié shì shùxué,进步=발전 | 特别=특히 | 数学=수학
+elementary,2. 与班主任沟通 (담임상담),3,家长,那语文怎么样？,국어는 어때요?,nà yǔwén zěnmeyàng,语文=국어
+elementary,2. 与班主任沟通 (담임상담),4,老师,语文还需要加强，建议多读课外书。,국어는 보강이 필요해요. 과외 독서를 많이 하세요.,yǔwén hái xūyào jiāqiáng, jiànyì duō dú kèwàishū,加强=보강 | 建议=권하다 | 课外书=과외도서
+elementary,2. 与班主任沟通 (담임상담),5,家长,好的，我会在家辅导他的。,네. 집에서 지도할게요.,hǎo de, wǒ huì zài jiā fǔdǎo tā de,辅导=지도하다
+elementary,2. 与班主任沟通 (담임상담),6,老师,有问题随时联系我。,문제 있으면 언제든 연락주세요.,yǒu wèntí suíshí liánxì wǒ,随时=언제든지 | 联系=연락하다
+elementary,3. 请假 (결석신고),1,家长,老师您好，我是金小明的妈妈。,선생님 안녕하세요. 김소명 엄마입니다.,lǎoshī nín hǎo, wǒ shì Jīn Xiǎomíng de māma,妈妈=엄마
+elementary,3. 请假 (결석신고),2,老师,您好，有什么事吗？,안녕하세요. 무슨 일이세요?,nín hǎo, yǒu shénme shì ma,事=일
+elementary,3. 请假 (결석신고),3,家长,孩子今天发烧了，想请一天假。,아이가 오늘 열이 나서 하루 결석하려고요.,háizi jīntiān fāshāo le, xiǎng qǐng yī tiān jià,发烧=발열 | 请假=휴가내다
+elementary,3. 请假 (결석신고),4,老师,好的，让孩子好好休息。,알겠어요. 아이 푹 쉬게 하세요.,hǎo de, ràng háizi hǎohāo xiūxi,休息=쉬다
+elementary,3. 请假 (결석신고),5,家长,今天的作业怎么办？,오늘 숙제는 어떻게 해요?,jīntiān de zuòyè zěnme bàn,作业=숙제
+elementary,3. 请假 (결석신고),6,老师,我会让同学把作业带给他。,친구한테 숙제 전달하게 할게요.,wǒ huì ràng tóngxué bǎ zuòyè dài gěi tā,同学=친구/동급생 | 带=가져가다
+elementary,4. 食堂用餐 (급식),1,食堂阿姨,小朋友，今天想吃什么？,꼬마야. 오늘 뭐 먹을래?,xiǎopéngyou, jīntiān xiǎng chī shénme,小朋友=꼬마
+elementary,4. 食堂用餐 (급식),2,学生,阿姨，我想要鸡腿和米饭。,이모. 닭다리랑 밥 주세요.,āyí, wǒ xiǎng yào jītuǐ hé mǐfàn,阿姨=이모 | 鸡腿=닭다리
+elementary,4. 食堂用餐 (급식),3,食堂阿姨,要不要汤？,국 줄까?,yào bu yào tāng,汤=국
+elementary,4. 食堂用餐 (급식),4,学生,要的，谢谢阿姨。,네. 감사합니다 이모.,yào de, xièxie āyí,谢谢=감사합니다
+elementary,4. 食堂用餐 (급식),5,食堂阿姨,慢慢吃，不要浪费。,천천히 먹어. 남기지 마.,mànman chī, búyào làngfèi,浪费=낭비하다
+elementary,4. 食堂用餐 (급식),6,学生,好的，我会吃干净的。,네. 다 먹을게요.,hǎo de, wǒ huì chī gānjìng de,干净=깨끗이
+elementary,5. 课堂提问 (수업질문),1,学生,老师，这道题我不会。,선생님. 이 문제 모르겠어요.,lǎoshī, zhè dào tí wǒ bú huì,题=문제
+elementary,5. 课堂提问 (수업질문),2,老师,没关系，我来教你。,괜찮아. 내가 가르쳐줄게.,méi guānxi, wǒ lái jiāo nǐ,教=가르치다
+elementary,5. 课堂提问 (수업질문),3,学生,谢谢老师。,감사합니다 선생님.,xièxie lǎoshī,
+elementary,5. 课堂提问 (수업질문),4,老师,你看，先算括号里的。,봐. 먼저 괄호 안을 계산해.,nǐ kàn, xiān suàn kuòhào lǐ de,算=계산하다 | 括号=괄호
+elementary,5. 课堂提问 (수업질문),5,学生,哦，我明白了！,아. 알겠어요!,ó, wǒ míngbai le,明白=이해하다
+elementary,5. 课堂提问 (수업질문),6,老师,很好，有问题随时问。,좋아. 질문 있으면 언제든 물어봐.,hěn hǎo, yǒu wèntí suíshí wèn,问=묻다
+elementary,6. 运动会 (운동회),1,家长,请问运动会几点开始？,실례지만 운동회 몇 시에 시작해요?,qǐngwèn yùndònghuì jǐ diǎn kāishǐ,运动会=운동회 | 开始=시작하다
+elementary,6. 运动会 (운동회),2,老师,上午九点开始，欢迎家长观看。,오전 9시에 시작하고. 학부모님들 관람 환영해요.,shàngwǔ jiǔ diǎn kāishǐ, huānyíng jiāzhǎng guānkàn,欢迎=환영 | 家长=학부모 | 观看=관람
+elementary,6. 运动会 (운동회),3,家长,家长可以在哪里坐？,학부모는 어디에 앉아요?,jiāzhǎng kěyǐ zài nǎlǐ zuò,坐=앉다
+elementary,6. 运动会 (운동회),4,老师,家长区在操场西边。,학부모석은 운동장 서쪽이에요.,jiāzhǎng qū zài cāochǎng xībiān,操场=운동장 | 西边=서쪽
+elementary,6. 运动会 (운동회),5,家长,我的孩子参加什么项目？,제 아이는 어떤 종목에 참가해요?,wǒ de háizi cānjiā shénme xiàngmù,参加=참가 | 项目=종목
+elementary,6. 运动会 (운동회),6,老师,小明参加100米跑和接力赛。,소명이는 100미터 달리기와 계주에 참가해요.,Xiǎomíng cānjiā yībǎi mǐ pǎo hé jiēlìsài,跑=달리기 | 接力赛=계주
+highschool,1. 新生报到 (신입생등록),1,学生,老师您好，我是新生，来报到的。,선생님 안녕하세요. 신입생인데 등록하러 왔어요.,lǎoshī nín hǎo, wǒ shì xīnshēng, lái bàodào de,新生=신입생 | 报到=등록
+highschool,1. 新生报到 (신입생등록),2,老师,欢迎！请出示录取通知书。,환영해요! 입학통지서 보여주세요.,huānyíng! qǐng chūshì lùqǔ tōngzhīshū,录取通知书=입학통지서
+highschool,1. 新生报到 (신입생등록),3,学生,给您。我分到哪个班？,여기요. 어느 반이에요?,gěi nín. wǒ fēn dào nǎge bān,分=배정하다 | 班=반
+highschool,1. 新生报到 (신입생등록),4,老师,你在高一三班，班主任是李老师。,고1 3반이야. 담임은 이 선생님이야.,nǐ zài gāo yī sān bān, bānzhǔrèn shì Lǐ lǎoshī,高一=고1 | 班主任=담임
+highschool,1. 新生报到 (신입생등록),5,学生,教室在哪里？,교실은 어디예요?,jiàoshì zài nǎlǐ,教室=교실
+highschool,1. 新生报到 (신입생등록),6,老师,三楼右转第二间。,3층 우회전해서 두 번째 교실이야.,sān lóu yòu zhuǎn dì èr jiān,楼=층 | 右转=우회전
+highschool,2. 课堂学习 (수업),1,老师,同学们，今天我们学习第三课。,여러분. 오늘 3과를 배울 거예요.,tóngxuémen, jīntiān wǒmen xuéxí dì sān kè,课=과
+highschool,2. 课堂学习 (수업),2,学生,老师，这个公式能再讲一遍吗？,선생님. 이 공식 한 번 더 설명해주실 수 있나요?,lǎoshī, zhège gōngshì néng zài jiǎng yī biàn ma,公式=공식 | 讲=설명하다
+highschool,2. 课堂学习 (수업),3,老师,好的，大家注意看黑板。,좋아요. 다들 칠판 봐요.,hǎo de, dàjiā zhùyì kàn hēibǎn,注意=주목 | 黑板=칠판
+highschool,2. 课堂学习 (수업),4,老师,这个公式是用来计算速度的。,이 공식은 속도를 계산하는 데 쓰는 거예요.,zhège gōngshì shì yònglái jìsuàn sùdù de,计算=계산 | 速度=속도
+highschool,2. 课堂学习 (수업),5,学生,老师，有例题吗？,선생님. 예제가 있나요?,lǎoshī, yǒu lìtí ma,例题=예제
+highschool,2. 课堂学习 (수업),6,老师,翻到课本第45页。,교과서 45페이지 펴봐요.,fān dào kèběn dì sìshíwǔ yè,课本=교과서 | 页=페이지
+highschool,3. 同学交流 (친구대화),1,学生A,你是哪国人？,너 어느 나라 사람이야?,nǐ shì nǎ guó rén,国=나라
+highschool,3. 同学交流 (친구대화),2,学生B,我是韩国人。你呢？,나는 한국 사람이야. 너는?,wǒ shì Hánguó rén. nǐ ne,韩国=한국
+highschool,3. 同学交流 (친구대화),3,学生A,我是本地人。你来中国多久了？,나는 현지 사람이야. 중국 온 지 얼마나 됐어?,wǒ shì běndì rén. nǐ lái Zhōngguó duōjiǔ le,本地=현지
+highschool,3. 同学交流 (친구대화),4,学生B,刚来半年，还在适应中。,반년 됐어. 아직 적응 중이야.,gāng lái bàn nián, hái zài shìyìng zhōng,适应=적응하다
+highschool,3. 同学交流 (친구대화),5,学生A,有什么不懂的可以问我。,모르는 거 있으면 나한테 물어봐.,yǒu shénme bù dǒng de kěyǐ wèn wǒ,懂=이해하다
+highschool,3. 同学交流 (친구대화),6,学生B,太好了，谢谢你！,좋다. 고마워!,tài hǎo le, xièxie nǐ,
+highschool,4. 食堂吃饭 (급식),1,学生A,今天食堂有什么好吃的？,오늘 급식실에 맛있는 거 뭐 있어?,jīntiān shítáng yǒu shénme hǎochī de,食堂=급식실
+highschool,4. 食堂吃饭 (급식),2,学生B,听说今天有红烧肉。,오늘 홍샤오러우 있다던데.,tīngshuō jīntiān yǒu hóngshāoròu,听说=듣다 | 红烧肉=홍샤오러우
+highschool,4. 食堂吃饭 (급식),3,学生A,太好了，我们快去排队吧。,좋다. 빨리 줄 서러 가자.,tài hǎo le, wǒmen kuài qù páiduì ba,排队=줄서다
+highschool,4. 食堂吃饭 (급식),4,学生B,好，晚了就没了。,그래. 늦으면 없어져.,hǎo, wǎn le jiù méi le,晚=늦다
+highschool,4. 食堂吃饭 (급식),5,食堂员工,两位同学，要什么？,두 학생. 뭐 먹을래요?,liǎng wèi tóngxué, yào shénme,
+highschool,4. 食堂吃饭 (급식),6,学生A,红烧肉套餐，两份。,홍샤오러우 세트 2인분이요.,hóngshāoròu tàocān, liǎng fèn,套餐=세트 | 份=인분
+highschool,5. 自习室 (자습실),1,学生,请问自习室在哪里？,실례지만 자습실이 어디예요?,qǐngwèn zìxíshì zài nǎlǐ,自习室=자습실
+highschool,5. 自习室 (자습실),2,老师,在三楼，上楼梯左转就到了。,3층에 있어. 계단 올라가서 왼쪽으로 가면 돼.,zài sān lóu, shàng lóutī zuǒ zhuǎn jiù dào le,楼梯=계단 | 左转=좌회전
+highschool,5. 自习室 (자습실),3,学生,自习室几点关门？,자습실 몇 시에 닫아요?,zìxíshì jǐ diǎn guānmén,关门=닫다
+highschool,5. 自习室 (자습실),4,老师,晚上十点关门。,밤 10시에 닫아.,wǎnshang shí diǎn guānmén,晚上=밤
+highschool,5. 自习室 (자습실),5,学生,需要登记吗？,등록해야 해요?,xūyào dēngjì ma,登记=등록
+highschool,5. 自习室 (자습室),6,老师,是的，在门口刷学生证。,네. 입구에서 학생증 찍어.,shì de, zài ménkǒu shuā xuéshēngzhèng,学生证=학생증
+highschool,6. 升学咨询 (진로상담),1,学生,老师，我想问一下关于高考的事。,선생님. 대입시험에 대해 여쭤볼게요.,lǎoshī, wǒ xiǎng wèn yīxià guānyú gāokǎo de shì,高考=대입시험
+highschool,6. 升学咨询 (진로상담),2,老师,好的，你想报考什么专业？,좋아. 어떤 전공 지원하고 싶어?,hǎo de, nǐ xiǎng bàokǎo shénme zhuānyè,报考=지원 | 专业=전공
+highschool,6. 升学咨询 (진로상담),3,学生,我想学计算机，但不知道哪个大学好。,컴퓨터 배우고 싶은데. 어느 대학이 좋은지 모르겠어요.,wǒ xiǎng xué jìsuànjī, dàn bù zhīdào nǎge dàxué hǎo,计算机=컴퓨터 | 大学=대학
+highschool,6. 升学咨询 (진로상담),4,老师,以你的成绩，可以考虑这几所学校。,네 성적이면 이 몇 개 학교 고려해봐.,yǐ nǐ de chéngjì, kěyǐ kǎolǜ zhè jǐ suǒ xuéxiào,成绩=성적 | 考虑=고려하다
+highschool,6. 升学咨询 (진로상담),5,学生,需要准备什么材料？,어떤 서류를 준비해야 해요?,xūyào zhǔnbèi shénme cáiliào,准备=준비 | 材料=서류
+highschool,6. 升学咨询 (진로상담),6,老师,成绩单、推荐信和个人陈述。,성적표. 추천서. 자기소개서.,chéngjìdān, tuījiànxìn hé gèrén chénshù,成绩单=성적표 | 推荐信=추천서 | 个人陈述=자기소개서
+highschool,7. 宿舍生活 (기숙사),1,学生,请问怎么申请住宿舍？,실례지만 기숙사 신청은 어떻게 해요?,qǐngwèn zěnme shēnqǐng zhù sùshè,申请=신청 | 宿舍=기숙사
+highschool,7. 宿舍生活 (기숙사),2,老师,去学生处填表格就可以。,학생처 가서 양식 작성하면 돼.,qù xuéshēngchù tián biǎogé jiù kěyǐ,学生处=학생처 | 表格=양식
+highschool,7. 宿舍生活 (기숙사),3,学生,宿舍是几人间的？,기숙사는 몇 인실이에요?,sùshè shì jǐ rén jiān de,几人间=몇인실
+highschool,7. 宿舍生活 (기숙사),4,老师,四人间和六人间都有。,4인실과 6인실 다 있어.,sì rén jiān hé liù rén jiān dōu yǒu,
+highschool,7. 宿舍生活 (기숙사),5,学生,有空调吗？,에어컨 있어요?,yǒu kōngtiáo ma,空调=에어컨
+highschool,7. 宿舍生活 (기숙사),6,老师,有的，还有独立卫生间。,있어. 개인 화장실도 있어.,yǒu de, hái yǒu dúlì wèishēngjiān,独立=개인 | 卫生间=화장실
+highschool,8. 晚自习 (야자),1,老师,同学们，晚自习开始了，请安静。,여러분. 야자 시작했어요. 조용히 해주세요.,tóngxuémen, wǎn zìxí kāishǐ le, qǐng ānjìng,晚自习=야자 | 安静=조용히
+highschool,8. 晚自习 (야자),2,学生,老师，可以去上厕所吗？,선생님. 화장실 가도 될까요?,lǎoshī, kěyǐ qù shàng cèsuǒ ma,厕所=화장실
+highschool,8. 晚自习 (야자),3,老师,可以，快去快回。,가도 돼. 빨리 다녀와.,kěyǐ, kuài qù kuài huí,快=빨리
+highschool,8. 晚自习 (야자),4,学生,老师，这道题怎么做？,선생님. 이 문제 어떻게 풀어요?,lǎoshī, zhè dào tí zěnme zuò,做=풀다
+highschool,8. 晚自习 (야자),5,老师,自习时间自己先想想，下课后来问我。,자습시간이니까 먼저 생각해봐. 끝나고 물어봐.,zìxí shíjiān zìjǐ xiān xiǎngxiang, xiàkè hòu lái wèn wǒ,想=생각하다 | 下课=수업끝
+highschool,8. 晚自习 (야자),6,学生,好的，谢谢老师。,네. 감사합니다 선생님.,hǎo de, xièxie lǎoshī,
+university,1. 选课咨询 (수강신청),1,学生,老师，我想问一下选课的事。,선생님. 수강신청에 대해 여쭤볼게요.,lǎoshī, wǒ xiǎng wèn yīxià xuǎnkè de shì,选课=수강신청
+university,1. 选课咨询 (수강신청),2,老师,好的，选课系统明天早上八点开放。,네. 수강신청 시스템이 내일 아침 8시에 열려요.,hǎo de, xuǎnkè xìtǒng míngtiān zǎoshang bā diǎn kāifàng,系统=시스템 | 开放=열리다
+university,1. 选课咨询 (수강신청),3,学生,这门课需要多少学分？,이 과목은 몇 학점이에요?,zhè mén kè xūyào duōshao xuéfēn,学分=학점
+university,1. 选课咨询 (수강신청),4,老师,这门课是三个学分。,이 과목은 3학점이에요.,zhè mén kè shì sān ge xuéfēn,
+university,1. 选课咨询 (수강신청),5,学生,有先修课程要求吗？,선수과목 요구사항이 있나요?,yǒu xiānxiū kèchéng yāoqiú ma,先修课程=선수과목 | 要求=요구
+university,1. 选课咨询 (수강신청),6,老师,需要先修完高等数学。,고등수학을 먼저 이수해야 해요.,xūyào xiān xiūwán gāoděng shùxué,修完=이수하다 | 高等数学=고등수학
+university,2. 图书馆 (도서관),1,学生,请问图书馆几点开门？,실례지만 도서관 몇 시에 열어요?,qǐngwèn túshūguǎn jǐ diǎn kāimén,图书馆=도서관 | 开门=열다
+university,2. 图书馆 (도서관),2,工作人员,早上八点开门，晚上十点关门。,아침 8시에 열고. 밤 10시에 닫아요.,zǎoshang bā diǎn kāimén, wǎnshang shí diǎn guānmén,
+university,2. 图书馆 (도서관),3,学生,怎么借书？,책은 어떻게 빌려요?,zěnme jiè shū,借=빌리다 | 书=책
+university,2. 图书馆 (도서관),4,工作人员,用学生证在自助借书机上借就可以。,학생증으로 셀프 대출기에서 빌리면 돼요.,yòng xuéshēngzhèng zài zìzhù jièshūjī shang jiè jiù kěyǐ,自助=셀프 | 借书机=대출기
+university,2. 图书馆 (도서관),5,学生,可以借多少本？借多长时间？,몇 권 빌릴 수 있어요? 얼마나요?,kěyǐ jiè duōshao běn? jiè duō cháng shíjiān,本=권
+university,2. 图书馆 (도서관),6,工作人员,最多借十本，借期30天。,최대 10권. 대출기간 30일이에요.,zuìduō jiè shí běn, jièqī sānshí tiān,最多=최대 | 借期=대출기간
+university,3. 教授面谈 (교수면담),1,学生,教授您好，我想请教一些问题。,교수님 안녕하세요. 몇 가지 여쭤보고 싶어요.,jiàoshòu nín hǎo, wǒ xiǎng qǐngjiào yīxiē wèntí,教授=교수 | 请教=여쭙다
+university,3. 教授面谈 (교수면담),2,教授,好的，请进来坐。有什么问题？,그래. 들어와 앉아. 무슨 문제 있어?,hǎo de, qǐng jìnlái zuò. yǒu shénme wèntí,
+university,3. 教授面谈 (교수면담),3,学生,关于论文选题，我还没确定方向。,논문 주제에 대해서. 아직 방향을 못 정했어요.,guānyú lùnwén xuǎntí, wǒ hái méi quèdìng fāngxiàng,论文=논문 | 选题=주제선정 | 方向=방향
+university,3. 教授面谈 (교수면담),4,教授,你对什么领域感兴趣？,어떤 분야에 관심 있어?,nǐ duì shénme lǐngyù gǎn xìngqù,领域=분야 | 感兴趣=관심있다
+university,3. 教授面谈 (교수면담),5,学生,我对人工智能比较感兴趣。,인공지능에 좀 관심이 있어요.,wǒ duì réngōng zhìnéng bǐjiào gǎn xìngqù,人工智能=인공지능
+university,3. 教授面谈 (교수면담),6,教授,我建议你先看看最近的研究趋势。,먼저 최근 연구 동향을 살펴보는 게 좋겠어.,wǒ jiànyì nǐ xiān kànkan zuìjìn de yánjiū qūshì,建议=권하다 | 研究=연구 | 趋势=동향
+university,4. 宿舍入住 (기숙사입주),1,学生,您好，我是新生，来办理入住。,안녕하세요. 신입생인데 입주 절차 밟으러 왔어요.,nín hǎo, wǒ shì xīnshēng, lái bànlǐ rùzhù,办理=처리 | 入住=입주
+university,4. 宿舍入住 (기숙사입주),2,宿管,好的，请出示录取通知书和身份证。,네. 입학통지서와 신분증 보여주세요.,hǎo de, qǐng chūshì lùqǔ tōngzhīshū hé shēnfènzhèng,宿管=기숙사관리인
+university,4. 宿舍入住 (기숙사입주),3,学生,这是我的证件。我住几号房间？,여기 제 증명서예요. 몇 호실에 살아요?,zhè shì wǒ de zhèngjiàn. wǒ zhù jǐ hào fángjiān,证件=증명서 | 房间=방
+university,4. 宿舍入住 (기숙사입주),4,宿管,你住三楼305房间，这是钥匙。,3층 305호실이야. 여기 열쇠.,nǐ zhù sān lóu 305 fángjiān, zhè shì yàoshi,钥匙=열쇠
+university,4. 宿舍入住 (기숙사입주),5,学生,宿舍有Wi-Fi吗？,기숙사에 와이파이 있어요?,sùshè yǒu Wi-Fi ma,
+university,4. 宿舍入住 (기숙사입주),6,宿管,有的，密码在房间里贴着。,있어. 비밀번호는 방에 붙어있어.,yǒu de, mìmǎ zài fángjiān lǐ tiēzhe,密码=비밀번호 | 贴=붙이다
+university,5. 食堂用餐 (학생식당),1,学生A,这里的饭菜好吃吗？,여기 밥 맛있어?,zhèlǐ de fàncài hǎochī ma,饭菜=밥/음식
+university,5. 食堂用餐 (학생식당),2,学生B,还不错，而且很便宜。,괜찮아. 그리고 되게 싸.,hái búcuò, érqiě hěn piányi,便宜=싸다
+university,5. 食堂用餐 (학생식당),3,学生A,推荐什么菜？,뭐 추천해?,tuījiàn shénme cài,推荐=추천
+university,5. 食堂用餐 (학생식당),4,学生B,红烧肉和麻婆豆腐都很好吃。,홍샤오러우랑 마파두부 다 맛있어.,hóngshāoròu hé mápó dòufu dōu hěn hǎochī,麻婆豆腐=마파두부
+university,5. 食堂用餐 (학생식당),5,学生A,一顿饭大概多少钱？,한 끼에 대략 얼마야?,yī dùn fàn dàgài duōshao qián,一顿饭=한끼
+university,5. 食堂用餐 (학생식당),6,学生B,十块到十五块左右。,10위안에서 15위안 정도.,shí kuài dào shíwǔ kuài zuǒyòu,块=위안 | 左右=정도
+university,6. 社团活动 (동아리),1,学生,你好，我想加入这个社团。,안녕하세요. 이 동아리에 가입하고 싶어요.,nǐ hǎo, wǒ xiǎng jiārù zhège shètuán,加入=가입 | 社团=동아리
+university,6. 社团活动 (동아리),2,社团成员,欢迎！请先填一下这个表格。,환영해요! 먼저 이 양식 작성해주세요.,huānyíng! qǐng xiān tián yīxià zhège biǎogé,填=작성하다
+university,6. 社团活动 (동아리),3,学生,社团活动是什么时候？,동아리 활동은 언제예요?,shètuán huódòng shì shénme shíhou,活动=활동
+university,6. 社团活动 (동아리),4,社团成员,每周三下午四点到六点。,매주 수요일 오후 4시부터 6시까지요.,měi zhōu sān xiàwǔ sì diǎn dào liù diǎn,每周=매주
+university,6. 社团活动 (동아리),5,学生,有会费吗？,회비 있어요?,yǒu huìfèi ma,会费=회비
+university,6. 社团活动 (동아리),6,社团成员,每学期50元。,매 학기 50위안이에요.,měi xuéqī wǔshí yuán,学期=학기
+university,7. 奖学金申请 (장학금),1,学生,老师，我想申请奖学金。,선생님. 장학금 신청하고 싶어요.,lǎoshī, wǒ xiǎng shēnqǐng jiǎngxuéjīn,奖学金=장학금
+university,7. 奖学金申请 (장학금),2,老师,好的，你需要准备成绩单和申请表。,네. 성적표와 신청서를 준비해야 해요.,hǎo de, nǐ xūyào zhǔnbèi chéngjìdān hé shēnqǐngbiǎo,成绩单=성적표 | 申请表=신청서
+university,7. 奖学金申请 (장학금),3,学生,申请截止日期是什么时候？,신청 마감일이 언제예요?,shēnqǐng jiézhǐ rìqī shì shénme shíhou,截止日期=마감일
+university,7. 奖学金申请 (장학금),4,老师,下个月十五号之前。,다음 달 15일 전이에요.,xià ge yuè shíwǔ hào zhīqián,之前=전에
+university,7. 奖学金申请 (장학금),5,学生,对成绩有要求吗？,성적 요구사항이 있어요?,duì chéngjì yǒu yāoqiú ma,
+university,7. 奖学金申请 (장학금),6,老师,GPA需要3.5以上。,GPA 3.5 이상이어야 해요.,GPA xūyào sān diǎn wǔ yǐshàng,以上=이상
+university,8. 毕业论文 (졸업논문),1,学生,导师，我的论文初稿写完了。,지도교수님. 논문 초고 다 썼어요.,dǎoshī, wǒ de lùnwén chūgǎo xiě wán le,导师=지도교수 | 初稿=초고
+university,8. 毕业论文 (졸업논문),2,教授,好的，我看一下。下周来讨论修改意见。,좋아. 한번 볼게. 다음 주에 와서 수정 의견 논의하자.,hǎo de, wǒ kàn yīxià. xià zhōu lái tǎolùn xiūgǎi yìjiàn,讨论=논의 | 修改=수정 | 意见=의견
+university,8. 毕业论文 (졸업논문),3,学生,答辩大概什么时候？,논문심사는 대략 언제쯤이에요?,dábiàn dàgài shénme shíhou,答辩=논문심사
+university,8. 毕业论文 (졸업논문),4,教授,六月初，你还有两个月准备。,6월 초야. 아직 두 달 준비 시간 있어.,liù yuè chū, nǐ hái yǒu liǎng ge yuè zhǔnbèi,月初=월초
+university,8. 毕业论文 (졸업논문),5,学生,答辩需要准备PPT吗？,심사 때 PPT 준비해야 해요?,dábiàn xūyào zhǔnbèi PPT ma,
+university,8. 毕业论文 (졸업논문),6,教授,是的，大概15到20分钟的演示。,그래. 15분에서 20분 정도 발표.,shì de, dàgài shíwǔ dào èrshí fēnzhōng de yǎnshì,演示=발표
