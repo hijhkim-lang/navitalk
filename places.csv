@@ -1,4 +1,4 @@
-placeType,name,placeKeywords,category,categoryKeywords
+﻿placeType,name,placeKeywords,category,categoryKeywords
 hospital,병원,"병원,医院,hospital,clinic,의원,보건소,诊所,卫生院",medical,"医院,hospital,clinic,诊所,药店,pharmacy,急诊,体检,牙科,眼科,皮肤科,中医,内科,外科,儿科,妇科"
 restaurant,식당,"식당,餐厅,饭店,restaurant,음식점,맛집,饭馆,餐馆,食堂,酒楼,菜馆",food,"餐厅,饭店,restaurant,咖啡,cafe,小吃,美食,面包,蛋糕,火锅,烧烤,海鲜,面馆,饺子,拉面,炸鸡,披萨,汉堡,寿司,烤肉,串串,米线,粥,早餐,午餐,晚餐,宵夜"
 police,경찰서,"경찰서,警察局,公安局,police,파출소,派出所,公安",service,"银行,bank,警察,police,公司,office,政府,邮局,派出所,交警,出入境,签证"
@@ -26,3 +26,4 @@ zhangjiajie,장가계,"장가계,张家界,Zhangjiajie,천문산,天门山,아�
 elementary,초등학교,"초등학교,小学,elementary school,primary school,국민학교,小学校",education,"学校,school,幼儿园,小学,中学,高中,大学,培训,教育,老师,学生,教室,操场,图书馆,食堂,班级,年级,学期,考试,作业,家长,放学,上学"
 highschool,고등학교,"고등학교,高中,high school,고교,高级中学,普通高中",education,"学校,school,幼儿园,小学,中学,高中,大学,培训,教育,老师,学生,教室,操场,图书馆,食堂,班级,年级,学期,考试,作业,高考,自习,宿舍,补习"
 university,대학교,"대학교,大学,university,college,대학,高校,学院,本科,研究生",education,"学校,school,幼儿园,小学,中学,高中,大学,培训,教育,教授,学生,教室,图书馆,食堂,宿舍,学分,选课,论文,毕业,专业,社团,奖学金,留学"
+changcheng,만리장성,"만리장성, 长城,",tourism,"八达岭,慕田峪,居庸关,司马台,金山岭,山海关,嘉峪关,风景区"
