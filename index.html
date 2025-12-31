@@ -845,16 +845,19 @@
         const CONFIG = {
             GOOGLE_SHEETS: {
                 PLACES_URL: './places.csv',
-                DIALOGUES_URL: './dialogues.csv'
+                DIALOGUES_URL: './dialogues.csv',
+                CATEGORIES_URL: './categories.csv'
             },
             CACHE_DURATION: 24 * 60 * 60 * 1000 // 24시간
         };
 
         const CACHE_KEY_PLACES = 'navitalk_places';
         const CACHE_KEY_DIALOGUES = 'navitalk_dialogues';
+        const CACHE_KEY_CATEGORIES = 'navitalk_categories';
         
         let placesData = [];
         let dialoguesData = [];
+        let categoriesData = [];
         let currentPlaceType = '';
         let currentScenario = '';
         let currentScenarioIndex = 0;
@@ -864,6 +867,7 @@
             // 캐시 삭제
             localStorage.removeItem(CACHE_KEY_PLACES);
             localStorage.removeItem(CACHE_KEY_DIALOGUES);
+            localStorage.removeItem(CACHE_KEY_CATEGORIES);
             location.reload();
         }
 
@@ -951,6 +955,7 @@
             try {
                 let places = getCache(CACHE_KEY_PLACES);
                 let dialogues = getCache(CACHE_KEY_DIALOGUES);
+                let categories = getCache(CACHE_KEY_CATEGORIES);
 
                 if (!places) {
                     places = await fetchCSV(CONFIG.GOOGLE_SHEETS.PLACES_URL);
@@ -962,10 +967,16 @@
                     setCache(CACHE_KEY_DIALOGUES, dialogues);
                 }
 
+                if (!categories) {
+                    categories = await fetchCSV(CONFIG.GOOGLE_SHEETS.CATEGORIES_URL);
+                    setCache(CACHE_KEY_CATEGORIES, categories);
+                }
+
                 placesData = places;
                 dialoguesData = dialogues;
+                categoriesData = categories;
                 
-                console.log('데이터 로드 완료:', { places: places.length, dialogues: dialogues.length });
+                console.log('데이터 로드 완료:', { places: places.length, dialogues: dialogues.length, categories: categories.length });
             } catch (error) {
                 console.error('데이터 로드 실패:', error);
                 throw error;
@@ -1460,23 +1471,24 @@
             const searchKeyword = currentSearchKeyword.toLowerCase();
             let matchedCategories = new Set();
             
-            placesData.forEach(place => {
-                // categoryKeywords에서 검색어 매칭 확인 (키워드 단위로 비교)
-                if (place.categoryKeywords) {
-                    const catKeywordsArray = place.categoryKeywords.toLowerCase().split(',');
+            // categoriesData에서 categoryKeywords 검색
+            categoriesData.forEach(cat => {
+                if (cat.categoryKeywords) {
+                    const catKeywordsArray = cat.categoryKeywords.toLowerCase().split(',');
                     for (let kw of catKeywordsArray) {
                         const trimmedKw = kw.trim();
                         if (trimmedKw.length >= 2) {
-                            // 검색어에 키워드가 포함되어 있거나
-                            // 키워드에 검색어가 포함되어 있으면 매칭
                             if (searchKeyword.includes(trimmedKw) || trimmedKw.includes(searchKeyword)) {
-                                matchedCategories.add(place.category);
+                                matchedCategories.add(cat.category);
                                 break;
                             }
                         }
                     }
                 }
-                // placeKeywords에서도 확인
+            });
+            
+            // placeKeywords에서도 확인
+            placesData.forEach(place => {
                 if (place.placeKeywords) {
                     const placeKwArray = place.placeKeywords.toLowerCase().split(',');
                     for (let kw of placeKwArray) {
