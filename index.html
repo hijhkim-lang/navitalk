@@ -517,6 +517,9 @@
         .place-elementary { background: linear-gradient(135deg, #81D4FA 0%, #4FC3F7 50%, #29B6F6 100%); }
         .place-highschool { background: linear-gradient(135deg, #A5D6A7 0%, #81C784 50%, #66BB6A 100%); }
         .place-university { background: linear-gradient(135deg, #7986CB 0%, #5C6BC0 50%, #3F51B5 100%); }
+        .place-communication { background: linear-gradient(135deg, #4FC3F7 0%, #29B6F6 50%, #03A9F4 100%); }
+        .place-asset { background: linear-gradient(135deg, #FFB74D 0%, #FFA726 50%, #FF9800 100%); }
+        .place-electronics { background: linear-gradient(135deg, #90A4AE 0%, #78909C 50%, #607D8B 100%); }
 
         .place-item .place-icon {
             font-size: 28px;
@@ -1118,7 +1121,8 @@
                 'police': '🚔', 'restaurant': '🍽️', 'salon': '💇', 'scenic': '🏞️',
                 'stadium': '⚽', 'theater': '🎭', 'trainstation': '🚄',
                 'zhangjiajie': '🏔️', 'thegreatwall': '🧱',
-                'elementary': '🏫', 'highschool': '🎒', 'university': '🎓'
+                'elementary': '🏫', 'highschool': '🎒', 'university': '🎓',
+                'communication': '📱', 'asset': '🏠', 'electronics': '💻'
             };
             return emojiMap[placeType] || '📍';
         }
@@ -1464,7 +1468,10 @@
                 'thegreatwall': '🧱',
                 'elementary': '🏫',
                 'highschool': '🎒',
-                'university': '🎓'
+                'university': '🎓',
+                'communication': '📱',
+                'asset': '🏠',
+                'electronics': '💻'
             };
             
             // 검색어로 관련 카테고리 찾기 (개선된 로직)
