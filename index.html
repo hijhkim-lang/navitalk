@@ -899,6 +899,13 @@
             }));
         }
 
+        // 시나리오 숫자 기준 정렬 함수
+        function sortScenariosByNumber(a, b) {
+            const numA = parseInt(a.match(/^\d+/)?.[0] || '999');
+            const numB = parseInt(b.match(/^\d+/)?.[0] || '999');
+            return numA - numB;
+        }
+
         async function fetchCSV(url) {
             const response = await fetch(url);
             const text = await response.text();
@@ -1194,8 +1201,8 @@
                 }
             });
 
-            // 배열로 변환 후 정렬
-            const scenariosArray = Array.from(scenariosSet).sort();
+            // 배열로 변환 후 숫자 기준 정렬
+            const scenariosArray = Array.from(scenariosSet).sort(sortScenariosByNumber);
 
             // 장소 이름 가져오기
             const place = placesData.find(p => p.placeType === currentPlaceType);
@@ -1226,7 +1233,7 @@
                     scenariosSet.add(conv.시나리오.trim());
                 }
             });
-            const scenariosArray = Array.from(scenariosSet).sort();
+            const scenariosArray = Array.from(scenariosSet).sort(sortScenariosByNumber);
             currentScenarioIndex = scenariosArray.indexOf(scenario);
             
             document.getElementById('scenariosSection').classList.add('hidden');
@@ -1308,7 +1315,7 @@
                     scenariosSet.add(conv.시나리오.trim());
                 }
             });
-            const scenariosArray = Array.from(scenariosSet).sort();
+            const scenariosArray = Array.from(scenariosSet).sort(sortScenariosByNumber);
             
             // 다음 시나리오 인덱스 계산 (순환)
             let nextIndex = currentScenarioIndex + 1;
