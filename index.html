@@ -977,24 +977,20 @@
             // 지정된 음성 찾기
             for (const voice of chineseVoices) {
                 const nameLower = voice.name.toLowerCase();
-                // 여자: Microsoft HiuGaai
-                if (!chineseFemaleVoice && nameLower.includes('hiugaai')) {
+                // 여자: Microsoft Xiaobei (동북 방언)
+                if (!chineseFemaleVoice && nameLower.includes('xiaobei')) {
                     chineseFemaleVoice = voice;
                 }
-                // 남자: Microsoft WanLung
-                if (!chineseMaleVoice && nameLower.includes('wanlung')) {
+                // 남자: Microsoft Yunjian
+                if (!chineseMaleVoice && nameLower.includes('yunjian')) {
                     chineseMaleVoice = voice;
                 }
             }
             
-            // 못 찾으면 첫 번째/세 번째 중국어 음성 사용 (fallback)
+            // 못 찾으면 fallback
             if (chineseVoices.length > 0) {
                 if (!chineseFemaleVoice) chineseFemaleVoice = chineseVoices[0];
-                if (!chineseMaleVoice && chineseVoices.length >= 3) {
-                    chineseMaleVoice = chineseVoices[2];
-                } else if (!chineseMaleVoice) {
-                    chineseMaleVoice = chineseVoices[0];
-                }
+                if (!chineseMaleVoice) chineseMaleVoice = chineseVoices[0];
             }
             
             console.log('선택된 남성 음성:', chineseMaleVoice?.name);
