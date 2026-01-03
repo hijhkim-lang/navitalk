@@ -1455,14 +1455,14 @@
             utterance.lang = 'zh-CN';
             utterance.rate = 0.9;
             
-            // 화자 역할로 목소리 구분 (customer vs staff)
+            // 화자 역할로 목소리 구분 (고객=남자, 직원=여자)
             const isCustomerRole = isCustomer(speakerName);
             
-            // 실제 음성 선택 (고객=VoiceA, 직원=VoiceB)
-            if (isCustomerRole && chineseFemaleVoice) {
-                utterance.voice = chineseFemaleVoice;
-            } else if (!isCustomerRole && chineseMaleVoice) {
+            // 실제 음성 선택 (고객=남자Yunyang, 직원=여자Xiaobei)
+            if (isCustomerRole && chineseMaleVoice) {
                 utterance.voice = chineseMaleVoice;
+            } else if (!isCustomerRole && chineseFemaleVoice) {
+                utterance.voice = chineseFemaleVoice;
             }
             
             if (button) {
@@ -1519,21 +1519,21 @@
             utterance.lang = 'zh-CN';
             utterance.rate = 0.9;
             
-            // 화자 역할로 목소리 구분 (customer vs staff)
+            // 화자 역할로 목소리 구분 (고객=남자, 직원=여자)
             const isCustomerRole = isCustomer(speakerName);
             
-            // 실제 음성 선택 (고객=VoiceA, 직원=VoiceB)
-            if (isCustomerRole && chineseFemaleVoice) {
-                utterance.voice = chineseFemaleVoice;
-            } else if (!isCustomerRole && chineseMaleVoice) {
+            // 실제 음성 선택 (고객=남자Yunyang, 직원=여자Xiaobei)
+            if (isCustomerRole && chineseMaleVoice) {
                 utterance.voice = chineseMaleVoice;
+            } else if (!isCustomerRole && chineseFemaleVoice) {
+                utterance.voice = chineseFemaleVoice;
             }
 
             utterance.onend = () => {
                 setTimeout(() => {
                     currentSentenceIndex++;
                     playNextSentence();
-                }, 200);
+                }, 50);
             };
 
             utterance.onerror = () => {
