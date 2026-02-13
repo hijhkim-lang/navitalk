@@ -1,0 +1,9 @@
+{
+  "name": "NaviTalk",
+  "short_name": "NaviTalk",
+  "description": "Speak Korean at your next stop",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#f5efda",
+  "theme_color": "#d4672a"
+}
