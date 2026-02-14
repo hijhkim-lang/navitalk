@@ -238,8 +238,19 @@ html, body { height: 100%; background: #111; font-family: 'Quicksand', sans-seri
 }
 .play-btn:hover { opacity: 1; }
 
+.dial-btn-row {
+  display: flex; justify-content: center; gap: 8px;
+  margin: 10px auto 4px;
+}
+.listen-all-btn {
+  background: #4a90d9; color: #fff;
+  border: none; border-radius: 6px;
+  padding: 6px 16px; font-size: 12px; font-weight: 600;
+  cursor: pointer;
+}
+.listen-all-btn:active { opacity: 0.7; }
 .close-dial-btn {
-  display: block; margin: 8px auto 0;
+  display: block;
   background: #888; color: #fff;
   border: none; border-radius: 6px;
   padding: 6px 20px; font-size: 12px; font-weight: 600;
@@ -387,7 +398,7 @@ html, body { height: 100%; background: #111; font-family: 'Quicksand', sans-seri
       <button class="words-btn" onclick="showWords()">Words</button>
       <div class="bottom-row">
         <button onclick="playAllScenarios()">Play all Scenarios</button>
-        <button onclick="navigateToDestination()">Navigate to Destination</button>
+        <button onclick="navigateToDestination()" id="navBtn">Navigate to Destination</button>
       </div>
       <button class="request-btn" onclick="requestScenario()">Request a New Scenario</button>
     </div>
@@ -413,6 +424,7 @@ let appData = { dialogues: {}, keywords: {}, vocabulary: {} };
 let currentLang = 'en';
 let currentPlace = null;
 let currentPlaceKey = null;
+let selectedMap = 'naver';
 
 // ===== DATA LOADING =====
 async function loadData() {
@@ -541,11 +553,11 @@ function openMap(type) {
   }
   
   // No match found, just open map
-  if (type === 'naver') {
-    window.open('https://map.naver.com/v5/search/' + encodeURIComponent(dest), '_blank');
-  } else {
-    window.open('https://map.kakao.com/?q=' + encodeURIComponent(dest), '_blank');
-  }
+  const mapUrl = type === 'naver' 
+    ? 'https://map.naver.com/v5/search/' + encodeURIComponent(dest)
+    : 'https://map.kakao.com/?q=' + encodeURIComponent(dest);
+  const w = window.open(mapUrl, '_blank', 'noopener,noreferrer');
+  if (!w) window.location.href = mapUrl;
 }
 
 // ===== PAGE 3: Scenario List =====
@@ -566,12 +578,22 @@ function showScenarioPage() {
       </div>
       <div class="dialogue-box" id="dial-${i}">
         ${renderDialogue(currentPlace.scenarios[s])}
-        <button class="close-dial-btn" onclick="closeDialogue(${i})">close</button>
+        <div class="dial-btn-row">
+          <button class="listen-all-btn" onclick="listenAll(${i})">▶ Listen All</button>
+          <button class="close-dial-btn" onclick="closeDialogue(${i})">close</button>
+        </div>
       </div>
     </div>
   `).join('');
   
   showPage('page-scenario');
+  
+  // Update Navigate button to show selected map
+  const navBtn = document.getElementById('navBtn');
+  if (navBtn) {
+    const mapName = selectedMap === 'kakao' ? 'Kakao Map' : 'Naver Map';
+    navBtn.textContent = 'Navigate (' + mapName + ')';
+  }
 }
 
 function renderDialogue(lines) {
@@ -618,16 +640,59 @@ function closeDialogue(idx) {
 }
 
 // ===== TTS =====
+let koreanVoice = null;
+function loadKoreanVoice() {
+  const voices = window.speechSynthesis.getVoices();
+  // Prefer female, natural sounding Korean voices
+  const preferred = ['Google 한국의', 'Yuna', 'Heami', 'Microsoft Heami', 'Sora', 'Microsoft SunHi'];
+  for (const name of preferred) {
+    const v = voices.find(v => v.name.includes(name) && v.lang.startsWith('ko'));
+    if (v) { koreanVoice = v; return; }
+  }
+  // Fallback to any Korean voice
+  koreanVoice = voices.find(v => v.lang.startsWith('ko')) || null;
+}
+if ('speechSynthesis' in window) {
+  speechSynthesis.onvoiceschanged = loadKoreanVoice;
+  loadKoreanVoice();
+}
+
 function speak(text) {
   if ('speechSynthesis' in window) {
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'ko-KR';
-    utterance.rate = 0.85;
+    utterance.rate = 1.1;
+    utterance.pitch = 1.05;
+    if (koreanVoice) utterance.voice = koreanVoice;
     window.speechSynthesis.speak(utterance);
   } else {
     alert('TTS is not supported in this browser.');
   }
+}
+
+function listenAll(idx) {
+  if (!currentPlace) return;
+  const scenarios = Object.keys(currentPlace.scenarios);
+  const lines = currentPlace.scenarios[scenarios[idx]];
+  if (!lines) return;
+  
+  window.speechSynthesis.cancel();
+  const sorted = lines.sort((a,b) => a.order - b.order);
+  let i = 0;
+  
+  function playNext() {
+    if (i >= sorted.length) return;
+    const text = sorted[i].tts || sorted[i].korean;
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'ko-KR';
+    utterance.rate = 1.1;
+    utterance.pitch = 1.05;
+    if (koreanVoice) utterance.voice = koreanVoice;
+    utterance.onend = () => { i++; playNext(); };
+    window.speechSynthesis.speak(utterance);
+  }
+  playNext();
 }
 
 // ===== WORDS =====
@@ -663,7 +728,9 @@ function playWordsAudio() {
     if (i >= words.length) return;
     const utterance = new SpeechSynthesisUtterance(words[i].korean);
     utterance.lang = 'ko-KR';
-    utterance.rate = 0.8;
+    utterance.rate = 1.1;
+    utterance.pitch = 1.05;
+    if (koreanVoice) utterance.voice = koreanVoice;
     utterance.onend = () => { i++; setTimeout(playNext, 400); };
     window.speechSynthesis.speak(utterance);
   }
@@ -683,7 +750,8 @@ function playAllScenarios() {
   function playNext() {
     if (i >= allLines.length) return;
     const u = new SpeechSynthesisUtterance(allLines[i]);
-    u.lang = 'ko-KR'; u.rate = 0.85;
+    u.lang = 'ko-KR'; u.rate = 1.1; u.pitch = 1.05;
+    if (koreanVoice) u.voice = koreanVoice;
     u.onend = () => { i++; setTimeout(playNext, 500); };
     window.speechSynthesis.speak(u);
   }
@@ -691,17 +759,15 @@ function playAllScenarios() {
   playNext();
 }
 
-let selectedMap = 'naver'; // remember user's map choice
-
 // ===== NAVIGATE =====
 function navigateToDestination() {
   if (!currentPlaceKey) return;
   const name = currentPlace.name_kr || currentPlaceKey;
-  if (selectedMap === 'kakao') {
-    window.open('https://map.kakao.com/?q=' + encodeURIComponent(name), '_blank');
-  } else {
-    window.open('https://map.naver.com/v5/search/' + encodeURIComponent(name), '_blank');
-  }
+  const url = selectedMap === 'kakao' 
+    ? 'https://map.kakao.com/?q=' + encodeURIComponent(name)
+    : 'https://map.naver.com/v5/search/' + encodeURIComponent(name);
+  const w = window.open(url, '_blank', 'noopener,noreferrer');
+  if (!w) window.location.href = url;
 }
 
 // ===== REQUEST SCENARIO =====
