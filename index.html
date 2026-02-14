@@ -751,24 +751,23 @@ if ('speechSynthesis' in window) {
 function speak(text, speaker) {
   if ('speechSynthesis' in window) {
     window.speechSynthesis.cancel();
-    setTimeout(() => {
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'ko-KR';
-      
-      if (speaker === 'B') {
-        // B: bright, young, slightly different tone
-        utterance.rate = 1.25;
-        utterance.pitch = 1.5;
-        if (voiceB) utterance.voice = voiceB;
-      } else {
-        // A: bright, cheerful, young
-        utterance.rate = 1.25;
-        utterance.pitch = 1.5;
-        if (voiceA) utterance.voice = voiceA;
-      }
-      
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'ko-KR';
+    
+    if (speaker === 'B') {
+      utterance.rate = 1.25;
+      utterance.pitch = 1.5;
+      if (voiceB) utterance.voice = voiceB;
+    } else {
+      utterance.rate = 1.25;
+      utterance.pitch = 1.5;
+      if (voiceA) utterance.voice = voiceA;
+    }
+    
+    // Use requestAnimationFrame for faster response after cancel
+    requestAnimationFrame(() => {
       window.speechSynthesis.speak(utterance);
-    }, 80);
+    });
   } else {
     alert('TTS is not supported in this browser.');
   }
