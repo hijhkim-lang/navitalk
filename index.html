@@ -711,33 +711,36 @@ function closeDialogue(idx) {
 
 // ===== TTS =====
 let voiceA = null; // Speaker A: bright, young female
-let voiceB = null; // Speaker B: bright, young female (different voice)
+let voiceB = null; // Speaker B: male
 
 function loadKoreanVoices() {
   const voices = window.speechSynthesis.getVoices();
   const koVoices = voices.filter(v => v.lang.startsWith('ko'));
   
-  // Both speakers: prefer bright female voices
-  const preferredNames = ['Yuna', 'SunHi', 'Microsoft SunHi', 'Heami', 'Microsoft Heami', 'Google 한국의'];
+  // A: prefer female voices
+  const femaleNames = ['Yuna', 'SunHi', 'Microsoft SunHi', 'Heami', 'Microsoft Heami', 'Google 한국의'];
+  // B: prefer male voices
+  const maleNames = ['InJoon', 'Microsoft InJoon', 'Hyunsu', 'Microsoft Hyunsu'];
   
-  let found = [];
-  for (const name of preferredNames) {
+  let female = null, male = null;
+  for (const name of femaleNames) {
     const v = koVoices.find(v => v.name.includes(name));
-    if (v && !found.includes(v)) found.push(v);
-    if (found.length >= 2) break;
+    if (v) { female = v; break; }
   }
-  // Fill from remaining koVoices
-  for (const v of koVoices) {
-    if (!found.includes(v)) found.push(v);
-    if (found.length >= 2) break;
+  for (const name of maleNames) {
+    const v = koVoices.find(v => v.name.includes(name));
+    if (v) { male = v; break; }
   }
   
-  if (found.length >= 2) {
-    voiceA = found[0];
-    voiceB = found[1];
-  } else if (found.length === 1) {
-    voiceA = found[0];
-    voiceB = found[0];
+  if (female && male) {
+    voiceA = female;
+    voiceB = male;
+  } else if (koVoices.length >= 2) {
+    voiceA = koVoices[0];
+    voiceB = koVoices[1];
+  } else if (koVoices.length === 1) {
+    voiceA = koVoices[0];
+    voiceB = koVoices[0];
   }
 }
 if ('speechSynthesis' in window) {
@@ -755,11 +758,11 @@ function speak(text, speaker) {
       if (speaker === 'B') {
         // B: bright, young, slightly different tone
         utterance.rate = 1.19;
-        utterance.pitch = 1.1;
+        utterance.pitch = 0.95;
         if (voiceB) utterance.voice = voiceB;
       } else {
         // A: bright, cheerful, young
-        utterance.rate = 1.24;
+        utterance.rate = 1.32;
         utterance.pitch = 1.55;
         if (voiceA) utterance.voice = voiceA;
       }
@@ -794,10 +797,10 @@ function listenAll(idx) {
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'ko-KR';
     if (isA) {
-      utterance.rate = 1.24; utterance.pitch = 1.55;
+      utterance.rate = 1.32; utterance.pitch = 1.55;
       if (voiceA) utterance.voice = voiceA;
     } else {
-      utterance.rate = 1.19; utterance.pitch = 1.1;
+      utterance.rate = 1.19; utterance.pitch = 0.95;
       if (voiceB) utterance.voice = voiceB;
     }
     utterance.onend = () => { i++; playNext(); };
@@ -839,7 +842,7 @@ function playWordsAudio() {
     if (i >= words.length) return;
     const utterance = new SpeechSynthesisUtterance(words[i].korean);
     utterance.lang = 'ko-KR';
-    utterance.rate = 1.24;
+    utterance.rate = 1.32;
     utterance.pitch = 1.55;
     if (voiceA) utterance.voice = voiceA;
     utterance.onend = () => { i++; setTimeout(playNext, 400); };
@@ -871,10 +874,10 @@ function playAllScenarios() {
     const u = new SpeechSynthesisUtterance(item.text);
     u.lang = 'ko-KR';
     if (item.isA) {
-      u.rate = 1.24; u.pitch = 1.55;
+      u.rate = 1.32; u.pitch = 1.55;
       if (voiceA) u.voice = voiceA;
     } else {
-      u.rate = 1.19; u.pitch = 1.1;
+      u.rate = 1.19; u.pitch = 0.95;
       if (voiceB) u.voice = voiceB;
     }
     u.onend = () => { i++; setTimeout(playNext, 500); };
