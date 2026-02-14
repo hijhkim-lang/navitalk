@@ -28,11 +28,12 @@ html, body { height: 100%; background: #111; font-family: 'Quicksand', sans-seri
   position: relative;
   align-items: center;
   justify-content: flex-start;
+  background: #b8ccd8;
 }
 #page-lang .bg-img {
   position: absolute; top: 0; left: 0;
   width: 100%; height: 100%;
-  object-fit: cover; object-position: center 25%;
+  object-fit: contain; object-position: center top;
   z-index: 0;
 }
 #page-lang .overlay-buttons {
@@ -455,6 +456,10 @@ function goBack() {
 
 // ===== PAGE 1: Language Selection =====
 function selectLanguage(lang) {
+  if (lang !== 'en') {
+    alert('Coming soon! This language version is under development.');
+    return;
+  }
   currentLang = lang;
   showPage('page-map');
   document.getElementById('searchInput').focus();
@@ -556,8 +561,7 @@ function openMap(type) {
   const mapUrl = type === 'naver' 
     ? 'https://map.naver.com/v5/search/' + encodeURIComponent(dest)
     : 'https://map.kakao.com/?q=' + encodeURIComponent(dest);
-  const w = window.open(mapUrl, '_blank', 'noopener,noreferrer');
-  if (!w) window.location.href = mapUrl;
+  window.open(mapUrl, '_blank');
 }
 
 // ===== PAGE 3: Scenario List =====
@@ -823,8 +827,7 @@ function navigateToDestination() {
   const url = selectedMap === 'kakao' 
     ? 'https://map.kakao.com/?q=' + encodeURIComponent(name)
     : 'https://map.naver.com/v5/search/' + encodeURIComponent(name);
-  const w = window.open(url, '_blank', 'noopener,noreferrer');
-  if (!w) window.location.href = url;
+  window.open(url, '_blank');
 }
 
 // ===== REQUEST SCENARIO =====
