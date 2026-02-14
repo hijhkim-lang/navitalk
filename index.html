@@ -456,10 +456,7 @@ function goBack() {
 
 // ===== PAGE 1: Language Selection =====
 function selectLanguage(lang) {
-  if (lang !== 'en') {
-    alert('Coming soon! This language version is under development.');
-    return;
-  }
+  if (lang !== 'en') return;
   currentLang = lang;
   showPage('page-map');
   document.getElementById('searchInput').focus();
