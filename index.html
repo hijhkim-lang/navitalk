@@ -667,13 +667,17 @@ function showScenarioPage() {
     badge.textContent = genericName + ' (' + currentPlaceKey.replace(/_/g,' ') + ')';
   }
   
-  const scenarios = Object.keys(currentPlace.scenarios);
+  const scenarios = Object.keys(currentPlace.scenarios).sort((a, b) => {
+    const numA = parseFloat(a.match(/[\d.]+/)?.[0]) || 0;
+    const numB = parseFloat(b.match(/[\d.]+/)?.[0]) || 0;
+    if (numA !== numB) return numA - numB;
+    return a.localeCompare(b);
+  });
   const listDiv = document.getElementById('scenarioList');
   
   listDiv.innerHTML = scenarios.map((s, i) => `
     <div>
       <div class="scenario-row" onclick="toggleDialogue(${i})">
-        <span class="scenario-num">Scenario ${i+1}</span>
         <span class="scenario-title">${s}</span>
       </div>
       <div class="dialogue-box" id="dial-${i}">
