@@ -254,6 +254,26 @@ html, body { height: 100%; background: #111; font-family: 'Quicksand', sans-seri
   line-height: 1.4;
 }
 
+/* Shared category divider */
+.shared-divider {
+  margin: 16px 0 8px 0;
+  padding: 8px 12px;
+  background: linear-gradient(135deg, #3a7cb8, #2a5c88);
+  color: #fff;
+  font-size: 13px; font-weight: 700;
+  border-radius: 6px;
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+.scenario-shared {
+  border-left: 3px solid #3a7cb8;
+  padding-left: 10px;
+}
+.scenario-shared .scenario-title {
+  color: #2a5c88;
+  font-size: 14px;
+}
+
 /* Dialogue accordion (inline expand) */
 .dialogue-box {
   display: none;
@@ -496,6 +516,7 @@ let currentLang = 'en';
 let currentPlace = null;
 let currentPlaceKey = null;
 let userSearchInput = '';
+let allScenarioData = [];
 let selectedMap = 'naver';
 
 // ===== DATA LOADING =====
@@ -655,6 +676,71 @@ function openMap(type) {
   openExternal(mapUrl);
 }
 
+// ===== CATEGORY SHARED SCENARIOS =====
+const categoryMap = {
+  // 핫플/카페거리
+  'Ikseondong':'hotplace','Yongridan-gil':'hotplace','Gyeongnidan-gil':'hotplace',
+  'Jeonpo Cafe Street':'hotplace','Euljiro':'hotplace','Mullae Art Village':'hotplace',
+  'Sinsa-dong Garosu-gil':'hotplace','Yeontral Park':'hotplace','Seochon':'hotplace',
+  'Seongsudong':'hotplace','Seongsudongcafe':'hotplace','hongdae':'hotplace',
+  'gamcheon':'hotplace','Yeongdo Huinyeoul Culture':'hotplace',
+  // 궁궐
+  'Gyeongbokgung':'palace','Changdeokgung Palace':'palace','Deoksugung Palace':'palace',
+  // 한옥마을
+  'Bukchon Hanok':'hanok','Namsangol Hanok':'hanok',
+  'Jeonju Hanok Village':'hanok','Andong Hahoe Village':'hanok',
+  // 사찰
+  'Gilsangsa Temple':'temple_lm','Yonggung Temple':'temple_lm',
+  'Bulguksa Temple':'temple_lm','Seokguram Grotto':'temple_lm',
+  'Haeinsa Temple':'temple_lm','Buseoksa Temple':'temple_lm','Beopjusa Temple':'temple_lm',
+  // 전망/스카이워크
+  'Seoultower':'viewpoint','Oryukdo Skywalk':'viewpoint','Yongdusan':'viewpoint',
+  'Songdo Bay Cable':'viewpoint','Seokchon Lake':'viewpoint','Banpo':'viewpoint',
+  // 국립공원/산
+  'Seoraksan':'natpark','Jirisan':'natpark','Juwangsan':'natpark','Jusanji Pond':'natpark',
+  'hallamountain':'natpark','Namhansanseong':'natpark','1100highland':'natpark',
+  // 해변/해안
+  'Yeongjin':'coastal','Guryongpo':'coastal','tapdong':'coastal','Jungmun':'coastal',
+  'seongsanIlchulbong':'coastal',
+  // 전통시장
+  'dongmunmarket':'market_lm','dongdaemunmarket':'market_lm','Haenggung-dong':'market_lm',
+  // 관광지/테마
+  'Nami Island':'tour_lm','Petite France':'tour_lm',
+  'The Garden of Morning Calm':'tour_lm','Children Grand Park':'tour_lm',
+  'Dongdaemun Design Plaza':'tour_lm','Seodaemun Prison':'tour_lm',
+  'Naksan Park':'tour_lm','Independence Hall':'tour_lm',
+  'Suwon Hwaseong':'tour_lm','Hanbyeokdang':'tour_lm',
+  'Seongeup Folk Village':'tour_lm','Stone Wall Path':'tour_lm',
+  'yongduam':'tour_lm'
+};
+
+const categoryShared = {
+  'hotplace':   { label:'카페/맛집 회화', shared:['cafe','koreanrestaurant'] },
+  'palace':     { label:'전통문화 회화', shared:['traditional'] },
+  'hanok':      { label:'전통문화 회화', shared:['traditional'] },
+  'temple_lm':  { label:'사찰 회화', shared:['temple'] },
+  'viewpoint':  { label:'공원/관람 회화', shared:['park'] },
+  'natpark':    { label:'등산/자연 회화', shared:['mountain','park'] },
+  'coastal':    { label:'해변/관광 회화', shared:['beach'] },
+  'market_lm':  { label:'전통시장 회화', shared:['traditionalmarket'] },
+  'tour_lm':    { label:'관광/입장 회화', shared:['museum','tourinfo'] }
+};
+
+function getSharedScenarios(placeKey) {
+  const cat = categoryMap[placeKey];
+  if (!cat || !categoryShared[cat]) return {};
+  const shared = {};
+  for (const sharedKey of categoryShared[cat].shared) {
+    if (appData.dialogues[sharedKey] && appData.dialogues[sharedKey].scenarios) {
+      const srcName = appData.dialogues[sharedKey].name_kr || sharedKey;
+      for (const [sName, sLines] of Object.entries(appData.dialogues[sharedKey].scenarios)) {
+        shared[`[${srcName}] ${sName}`] = sLines;
+      }
+    }
+  }
+  return shared;
+}
+
 // ===== PAGE 3: Scenario List =====
 function showScenarioPage() {
   if (!currentPlace) return;
@@ -667,28 +753,66 @@ function showScenarioPage() {
     badge.textContent = genericName + ' (' + currentPlaceKey.replace(/_/g,' ') + ')';
   }
   
-  const scenarios = Object.keys(currentPlace.scenarios).sort((a, b) => {
+  const numSort = (a, b) => {
     const numA = parseFloat(a.match(/[\d.]+/)?.[0]) || 0;
     const numB = parseFloat(b.match(/[\d.]+/)?.[0]) || 0;
     if (numA !== numB) return numA - numB;
     return a.localeCompare(b);
-  });
-  const listDiv = document.getElementById('scenarioList');
+  };
   
-  listDiv.innerHTML = scenarios.map((s, i) => `
-    <div>
-      <div class="scenario-row" onclick="toggleDialogue(${i})">
+  // Own scenarios
+  const ownKeys = Object.keys(currentPlace.scenarios).sort(numSort);
+  allScenarioData = [];
+  
+  let html = '';
+  let idx = 0;
+  
+  // Render own scenarios
+  ownKeys.forEach(s => {
+    allScenarioData.push({ name: s, lines: currentPlace.scenarios[s] });
+    html += `<div>
+      <div class="scenario-row" onclick="toggleDialogue(${idx})">
         <span class="scenario-title">${s}</span>
       </div>
-      <div class="dialogue-box" id="dial-${i}">
+      <div class="dialogue-box" id="dial-${idx}">
         ${renderDialogue(currentPlace.scenarios[s])}
         <div class="dial-btn-row">
-          <button class="listen-all-btn" onclick="listenAll(${i})">▶ Listen All</button>
-          <button class="close-dial-btn" onclick="closeDialogue(${i})">close</button>
+          <button class="listen-all-btn" onclick="listenAll(${idx})">▶ Listen All</button>
+          <button class="close-dial-btn" onclick="closeDialogue(${idx})">close</button>
         </div>
       </div>
-    </div>
-  `).join('');
+    </div>`;
+    idx++;
+  });
+  
+  // Shared category scenarios
+  const shared = getSharedScenarios(currentPlaceKey);
+  const sharedKeys = Object.keys(shared).sort(numSort);
+  
+  if (sharedKeys.length > 0) {
+    const cat = categoryMap[currentPlaceKey];
+    const catLabel = categoryShared[cat]?.label || '관련 회화';
+    html += `<div class="shared-divider">${catLabel}</div>`;
+    
+    sharedKeys.forEach(s => {
+      allScenarioData.push({ name: s, lines: shared[s] });
+      html += `<div>
+        <div class="scenario-row scenario-shared" onclick="toggleDialogue(${idx})">
+          <span class="scenario-title">${s}</span>
+        </div>
+        <div class="dialogue-box" id="dial-${idx}">
+          ${renderDialogue(shared[s])}
+          <div class="dial-btn-row">
+            <button class="listen-all-btn" onclick="listenAll(${idx})">▶ Listen All</button>
+            <button class="close-dial-btn" onclick="closeDialogue(${idx})">close</button>
+          </div>
+        </div>
+      </div>`;
+      idx++;
+    });
+  }
+  
+  document.getElementById('scenarioList').innerHTML = html;
   
   showPage('page-scenario');
   
@@ -837,9 +961,8 @@ function speak(text, speaker) {
 }
 
 function listenAll(idx) {
-  if (!currentPlace) return;
-  const scenarios = Object.keys(currentPlace.scenarios);
-  const lines = currentPlace.scenarios[scenarios[idx]];
+  if (!allScenarioData[idx]) return;
+  const lines = allScenarioData[idx].lines;
   if (!lines) return;
   
   window.speechSynthesis.cancel();
@@ -912,10 +1035,10 @@ function playWordsAudio() {
 
 // ===== PLAY ALL SCENARIOS =====
 function playAllScenarios() {
-  if (!currentPlace) return;
+  if (!allScenarioData.length) return;
   const allItems = [];
-  for (const lines of Object.values(currentPlace.scenarios)) {
-    lines.sort((a,b) => a.order - b.order).forEach(l => {
+  for (const sd of allScenarioData) {
+    sd.lines.sort((a,b) => a.order - b.order).forEach(l => {
       const isA = isVisitorSpeaker(l.speaker);
       allItems.push({ text: l.tts || l.korean, isA });
     });
