@@ -434,7 +434,7 @@ html, body { height: 100%; background: #111; font-family: 'Quicksand', sans-seri
     <!-- PAGE 2: Select Map / Enter Destination -->
   <div class="page" id="page-map">
     <div class="map-header">
-      <h1>NaviTalk</h1>
+      <h1 onclick="goHome()" style="cursor:pointer;" title="Home (Clear Cache)">NaviTalk</h1>
       <p class="tagline">Speak Korean at your next stop</p>
       <p class="sub-tagline">Learn on the go while you travel</p>
     </div>
@@ -460,7 +460,7 @@ html, body { height: 100%; background: #111; font-family: 'Quicksand', sans-seri
   <div class="page" id="page-scenario">
     <div class="scenario-topbar">
       <button class="back-btn" onclick="goBack()">←</button>
-      <h1>NaviTalk</h1>
+      <h1 onclick="goHome()" style="cursor:pointer;" title="Home (Clear Cache)">NaviTalk</h1>
     </div>
     <div class="place-badge" id="placeBadge">Insa-dong</div>
     <div class="scenario-list" id="scenarioList"></div>
@@ -521,6 +521,24 @@ function showPage(id) {
 
 function goBack() {
   showPage('page-map');
+}
+
+function goHome() {
+  // 1. Service Worker 캐시 삭제
+  if ('caches' in window) {
+    caches.keys().then(function(names) {
+      for (let name of names) caches.delete(name);
+    });
+  }
+  // 2. Service Worker 해제
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then(function(registrations) {
+      for (let reg of registrations) reg.unregister();
+    });
+  }
+  // 3. 캐시 무시하고 새로 불러오기
+  var url = window.location.href.split('?')[0];
+  window.location.href = url + '?v=' + Date.now();
 }
 
 // ===== PAGE 1: Language Selection =====
