@@ -580,6 +580,10 @@ document.getElementById('searchInput').addEventListener('input', function() {
   const query = this.value.trim().toLowerCase();
   const sugDiv = document.getElementById('suggestions');
   
+  // Clear previous selection when user types new query
+  currentPlace = null;
+  currentPlaceKey = null;
+  
   if (query.length < 1) {
     sugDiv.classList.remove('show');
     return;
@@ -590,14 +594,23 @@ document.getElementById('searchInput').addEventListener('input', function() {
   for (const [placeType, kw] of Object.entries(appData.keywords)) {
     const enKeywords = kw.en || [];
     const koKeywords = kw.ko || [];
-    const matchedEn = enKeywords.some(k => k.toLowerCase().includes(query) || query.includes(k.toLowerCase()));
-    const matchedKo = koKeywords.some(k => k.includes(query) || query.includes(k));
-    if ((matchedEn || matchedKo) && appData.dialogues[placeType]) {
+    let score = 0;
+    for (const k of koKeywords) {
+      if (k === query || k === this.value.trim()) { score = Math.max(score, 100); }
+      else if (this.value.trim().includes(k) || k.includes(this.value.trim())) { score = Math.max(score, 50 + Math.min(k.length, this.value.trim().length)); }
+      else if (k.includes(query) || query.includes(k)) { score = Math.max(score, 30 + Math.min(k.length, query.length)); }
+    }
+    for (const k of enKeywords) {
+      if (k.toLowerCase() === query) { score = Math.max(score, 100); }
+      else if (k.toLowerCase().includes(query) || query.includes(k.toLowerCase())) { score = Math.max(score, 30 + Math.min(k.length, query.length)); }
+    }
+    if (score > 0 && appData.dialogues[placeType]) {
       const placeData = appData.dialogues[placeType];
       results.push({
         key: placeType,
         name_en: placeType.replace(/_/g,' '),
-        name_kr: placeData.name_kr
+        name_kr: placeData.name_kr,
+        score: score
       });
     }
   }
@@ -607,13 +620,21 @@ document.getElementById('searchInput').addEventListener('input', function() {
     const nameMatch = key.toLowerCase().includes(query) || 
                       (val.name_kr && val.name_kr.includes(query));
     if (nameMatch && !results.find(r => r.key === key)) {
+      let score = 0;
+      if (val.name_kr === this.value.trim() || key.toLowerCase() === query) score = 100;
+      else if (val.name_kr && this.value.trim().includes(val.name_kr)) score = 60 + val.name_kr.length;
+      else score = 30;
       results.push({
         key: key,
         name_en: key.replace(/_/g,' '),
-        name_kr: val.name_kr
+        name_kr: val.name_kr,
+        score: score
       });
     }
   }
+
+  // Sort by score (best match first)
+  results.sort((a, b) => b.score - a.score);
 
   if (results.length > 0) {
     sugDiv.innerHTML = results.slice(0, 10).map(r => `
@@ -643,30 +664,73 @@ function openMap(type) {
   const dest = document.getElementById('searchInput').value.trim();
   if (!dest) { alert('Please enter a destination first.'); return; }
   
-  // If place already selected, show scenarios
+  // If place already selected AND input matches current place, show scenarios
   if (currentPlace) {
-    showScenarioPage();
+    const curName = currentPlace.name_kr || currentPlaceKey.replace(/_/g,' ');
+    const inputMatch = dest === curName || dest === currentPlaceKey.replace(/_/g,' ') || dest === userSearchInput;
+    if (inputMatch) {
+      showScenarioPage();
+      return;
+    }
+    // Input changed - clear previous selection
+    currentPlace = null;
+    currentPlaceKey = null;
+    userSearchInput = '';
+  }
     return;
   }
   
-  // Try to find matching place from input
+  // Find BEST matching place (score-based)
   const query = dest.toLowerCase();
+  let bestMatch = null;
+  let bestScore = 0;
+  
   for (const [placeType, kw] of Object.entries(appData.keywords)) {
+    if (!appData.dialogues[placeType]) continue;
     const enKeywords = kw.en || [];
     const koKeywords = kw.ko || [];
-    const matchedEn = enKeywords.some(k => k.toLowerCase().includes(query) || query.includes(k.toLowerCase()));
-    const matchedKo = koKeywords.some(k => k.includes(dest) || dest.includes(k));
-    if ((matchedEn || matchedKo) && appData.dialogues[placeType]) {
-      selectPlace(placeType);
-      return;
+    
+    let score = 0;
+    // Korean keyword matching with scoring
+    for (const k of koKeywords) {
+      if (k === dest) { score = Math.max(score, 100); }  // exact match
+      else if (dest.includes(k)) { score = Math.max(score, 50 + k.length); }  // input contains keyword
+      else if (k.includes(dest)) { score = Math.max(score, 30 + dest.length); }  // keyword contains input
+    }
+    // English keyword matching
+    for (const k of enKeywords) {
+      if (k.toLowerCase() === query) { score = Math.max(score, 100); }
+      else if (query.includes(k.toLowerCase())) { score = Math.max(score, 50 + k.length); }
+      else if (k.toLowerCase().includes(query)) { score = Math.max(score, 30 + query.length); }
+    }
+    // Direct name match in dialogues
+    const val = appData.dialogues[placeType];
+    if (placeType.toLowerCase() === query || (val.name_kr && val.name_kr === dest)) { score = Math.max(score, 100); }
+    else if (val.name_kr && dest.includes(val.name_kr)) { score = Math.max(score, 60 + val.name_kr.length); }
+    else if (val.name_kr && val.name_kr.includes(dest)) { score = Math.max(score, 40 + dest.length); }
+    
+    if (score > bestScore) {
+      bestScore = score;
+      bestMatch = placeType;
     }
   }
-  // Also try direct name match
+  
+  // Also check direct dialogue name match
   for (const [key, val] of Object.entries(appData.dialogues)) {
-    if (key.toLowerCase().includes(query) || (val.name_kr && val.name_kr.includes(dest))) {
-      selectPlace(key);
-      return;
+    let score = 0;
+    if (key.toLowerCase() === query) { score = 100; }
+    else if (key.toLowerCase().includes(query)) { score = 40 + query.length; }
+    if (val.name_kr && val.name_kr === dest) { score = Math.max(score, 100); }
+    else if (val.name_kr && val.name_kr.includes(dest)) { score = Math.max(score, 40 + dest.length); }
+    if (score > bestScore) {
+      bestScore = score;
+      bestMatch = key;
     }
+  }
+  
+  if (bestMatch) {
+    selectPlace(bestMatch);
+    return;
   }
   
   // No match found, just open map
