@@ -567,8 +567,8 @@ document.getElementById('searchInput').addEventListener('input', function() {
   for (const [placeType, kw] of Object.entries(appData.keywords)) {
     const enKeywords = kw.en || [];
     const koKeywords = kw.ko || [];
-    const matchedEn = enKeywords.some(k => k.toLowerCase().includes(query));
-    const matchedKo = koKeywords.some(k => k.includes(query));
+    const matchedEn = enKeywords.some(k => k.toLowerCase().includes(query) || query.includes(k.toLowerCase()));
+    const matchedKo = koKeywords.some(k => k.includes(query) || query.includes(k));
     if ((matchedEn || matchedKo) && appData.dialogues[placeType]) {
       const placeData = appData.dialogues[placeType];
       results.push({
@@ -629,8 +629,8 @@ function openMap(type) {
   for (const [placeType, kw] of Object.entries(appData.keywords)) {
     const enKeywords = kw.en || [];
     const koKeywords = kw.ko || [];
-    const matchedEn = enKeywords.some(k => k.toLowerCase().includes(query));
-    const matchedKo = koKeywords.some(k => k.includes(dest));
+    const matchedEn = enKeywords.some(k => k.toLowerCase().includes(query) || query.includes(k.toLowerCase()));
+    const matchedKo = koKeywords.some(k => k.includes(dest) || dest.includes(k));
     if ((matchedEn || matchedKo) && appData.dialogues[placeType]) {
       selectPlace(placeType);
       return;
