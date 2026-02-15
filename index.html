@@ -520,10 +520,13 @@ function showPage(id) {
 }
 
 function goBack() {
+  window.speechSynthesis.cancel();
   showPage('page-map');
 }
 
 function goHome() {
+  // 0. TTS 음성 즉시 정지
+  window.speechSynthesis.cancel();
   // 1. Service Worker 캐시 삭제
   if ('caches' in window) {
     caches.keys().then(function(names) {
