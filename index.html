@@ -495,6 +495,7 @@ let appData = { dialogues: {}, keywords: {}, vocabulary: {} };
 let currentLang = 'en';
 let currentPlace = null;
 let currentPlaceKey = null;
+let userSearchInput = '';
 let selectedMap = 'naver';
 
 // ===== DATA LOADING =====
@@ -607,10 +608,12 @@ document.getElementById('searchInput').addEventListener('input', function() {
 });
 
 function selectPlace(placeKey) {
+  const inputEl = document.getElementById('searchInput');
+  userSearchInput = inputEl.value.trim() || placeKey.replace(/_/g,' ');
   currentPlaceKey = placeKey;
   currentPlace = appData.dialogues[placeKey];
   document.getElementById('suggestions').classList.remove('show');
-  document.getElementById('searchInput').value = placeKey.replace(/_/g,' ');
+  inputEl.value = placeKey.replace(/_/g,' ');
   showScenarioPage();
 }
 
@@ -657,7 +660,12 @@ function showScenarioPage() {
   if (!currentPlace) return;
   
   const badge = document.getElementById('placeBadge');
-  badge.textContent = currentPlace.name_kr + ' (' + currentPlaceKey.replace(/_/g,' ') + ')';
+  const genericName = currentPlace.name_kr || currentPlaceKey.replace(/_/g,' ');
+  if (userSearchInput && userSearchInput !== genericName && userSearchInput !== currentPlaceKey.replace(/_/g,' ')) {
+    badge.textContent = userSearchInput + ' → ' + genericName;
+  } else {
+    badge.textContent = genericName + ' (' + currentPlaceKey.replace(/_/g,' ') + ')';
+  }
   
   const scenarios = Object.keys(currentPlace.scenarios);
   const listDiv = document.getElementById('scenarioList');
@@ -943,7 +951,7 @@ function openExternal(url) {
 // ===== NAVIGATE =====
 function navigateToDestination() {
   if (!currentPlaceKey) return;
-  const name = currentPlace.name_kr || currentPlaceKey;
+  const name = userSearchInput || currentPlace.name_kr || currentPlaceKey;
   const url = selectedMap === 'kakao' 
     ? 'https://map.kakao.com/?q=' + encodeURIComponent(name)
     : 'https://map.naver.com/v5/search/' + encodeURIComponent(name);
