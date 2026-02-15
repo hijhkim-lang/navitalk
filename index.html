@@ -275,10 +275,11 @@ html, body { height: 100%; background: #111; font-family: 'Quicksand', sans-seri
 .dial-b { background: #f6eae8; border-left: 3px solid #c45040; }
 
 .dial-speaker {
-  font-size: 10px; font-weight: 700;
+  font-size: 11px; font-weight: 700;
   display: inline-block;
-  padding: 1px 6px; border-radius: 3px;
+  padding: 2px 8px; border-radius: 3px;
   margin-bottom: 3px; color: #fff;
+  min-width: 36px; text-align: center;
 }
 .spk-a { background: #3a7cb8; }
 .spk-b { background: #c45040; }
@@ -687,21 +688,50 @@ function showScenarioPage() {
   }
 }
 
+// === Speaker Korean Name Map ===
+const speakerKoMap = {
+  'customer':'손님','staff':'직원','traveler':'여행자','guest':'투숙객',
+  'patient':'환자','doctor':'의사','nurse':'간호사','dentist':'치과의사',
+  'pharmacist':'약사','driver':'기사','passenger':'승객','officer':'경찰관',
+  'vendor':'판매원','guide':'가이드','monk':'스님','teacher':'선생님',
+  'student':'학생','librarian':'사서','bartender':'바텐더','caddie':'캐디',
+  'caller':'전화자','hiker1':'등산객1','hiker2':'등산객2',
+  'therapist':'치료사','vet':'수의사','parent':'보호자','guardian':'보호자',
+  'fan':'팬','player':'선수','volunteer':'자원봉사자','korean':'한국인',
+  'seoulite':'서울시민','citizen':'시민','citiizen':'시민',
+  'passerby':'행인','buyer':'구매자','turist':'관광객','visitor':'방문객',
+  'yimo':'이모'
+};
+function speakerKo(en) {
+  if (!en) return '?';
+  const key = en.toLowerCase().trim();
+  return speakerKoMap[key] || en;
+}
+
+// === isA speaker check (visitor side) ===
+function isVisitorSpeaker(spk) {
+  const s = spk.toLowerCase();
+  return s.includes('customer') || s.includes('traveler') || s.includes('guest') ||
+         s.includes('patient') || s.includes('buyer') || s.includes('visitor') ||
+         s.includes('passenger') || s.includes('caller') || s.includes('hiker') ||
+         s.includes('turist') || s.includes('student') || s.includes('parent') ||
+         s.includes('guardian') || s.includes('fan') || s.includes('player') ||
+         s.includes('citizen') || s.includes('citiizen') || s.includes('korean') ||
+         s.includes('seoulite');
+}
+
 function renderDialogue(lines) {
   return lines.sort((a,b) => a.order - b.order).map((line, idx) => {
-    const isA = line.speaker.toLowerCase().includes('customer') || 
-                line.speaker.toLowerCase().includes('traveler') ||
-                line.speaker.toLowerCase().includes('guest') ||
-                line.speaker.toLowerCase().includes('patient') ||
-                line.speaker.toLowerCase().includes('buyer');
+    const isA = isVisitorSpeaker(line.speaker);
     const cls = isA ? 'dial-a' : 'dial-b';
     const spkCls = isA ? 'spk-a' : 'spk-b';
     const label = isA ? 'A' : 'B';
+    const labelKo = speakerKo(line.speaker);
     const ttsText = (line.tts || line.korean).replace(/"/g, '&quot;').replace(/'/g, '&#39;');
     
     return `
       <div class="dial-line ${cls}">
-        <span class="dial-speaker ${spkCls}">${label}</span>
+        <span class="dial-speaker ${spkCls}">${labelKo}</span>
         <button class="play-btn" data-tts="${ttsText}" data-spk="${label}">▶️</button>
         <div class="dial-korean">${line.korean}</div>
         <div class="dial-roman">${line.roman || ''}</div>
@@ -808,11 +838,7 @@ function listenAll(idx) {
     if (i >= sorted.length) return;
     const line = sorted[i];
     const text = line.tts || line.korean;
-    const isA = line.speaker.toLowerCase().includes('customer') || 
-                line.speaker.toLowerCase().includes('traveler') ||
-                line.speaker.toLowerCase().includes('guest') ||
-                line.speaker.toLowerCase().includes('patient') ||
-                line.speaker.toLowerCase().includes('buyer');
+    const isA = isVisitorSpeaker(line.speaker);
     
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'ko-KR';
@@ -878,11 +904,7 @@ function playAllScenarios() {
   const allItems = [];
   for (const lines of Object.values(currentPlace.scenarios)) {
     lines.sort((a,b) => a.order - b.order).forEach(l => {
-      const isA = l.speaker.toLowerCase().includes('customer') || 
-                  l.speaker.toLowerCase().includes('traveler') ||
-                  l.speaker.toLowerCase().includes('guest') ||
-                  l.speaker.toLowerCase().includes('patient') ||
-                  l.speaker.toLowerCase().includes('buyer');
+      const isA = isVisitorSpeaker(l.speaker);
       allItems.push({ text: l.tts || l.korean, isA });
     });
   }
