@@ -756,7 +756,7 @@ function speak(text, speaker) {
     
     if (speaker === 'B') {
       utterance.rate = 1.25;
-      utterance.pitch = 1.65;
+      utterance.pitch = 0.85;
       if (voiceB) utterance.voice = voiceB;
     } else {
       utterance.rate = 1.25;
@@ -799,7 +799,7 @@ function listenAll(idx) {
       utterance.rate = 1.25; utterance.pitch = 1.65;
       if (voiceA) utterance.voice = voiceA;
     } else {
-      utterance.rate = 1.25; utterance.pitch = 1.65;
+      utterance.rate = 1.25; utterance.pitch = 0.85;
       if (voiceB) utterance.voice = voiceB;
     }
     utterance.onend = () => { i++; playNext(); };
@@ -876,7 +876,7 @@ function playAllScenarios() {
       u.rate = 1.25; u.pitch = 1.65;
       if (voiceA) u.voice = voiceA;
     } else {
-      u.rate = 1.25; u.pitch = 1.65;
+      u.rate = 1.25; u.pitch = 0.85;
       if (voiceB) u.voice = voiceB;
     }
     u.onend = () => { i++; setTimeout(playNext, 500); };
