@@ -32,6 +32,8 @@ function showPage(id) {
 
 function goBack() {
   window.speechSynthesis.cancel();
+  document.getElementById('searchInput').value = '';
+  document.getElementById('suggestions').innerHTML = '';
   showPage('page-map');
 }
 
