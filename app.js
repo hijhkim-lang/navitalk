@@ -585,21 +585,18 @@ function speak(text, speaker) {
     utterance.lang = 'ko-KR';
     
     if (speaker === 'B') {
-      // B: 젊고 상냥한 남자 - 약간 느리고 낮은 톤
+      // B: 젊고 상냥한 남자 - 낮은 톤
       utterance.rate = 1.7;
       utterance.pitch = 0.8;
       if (voiceB) utterance.voice = voiceB;
     } else {
-      // A: 젊고 쾌활한 여자 - 빠르고 밝은 톤
+      // A: 젊고 쾌활한 여자 - 밝은 톤
       utterance.rate = 1.7;
-      utterance.pitch = 1.7;
+      utterance.pitch = 1.9;
       if (voiceA) utterance.voice = voiceA;
     }
     
-    // Use requestAnimationFrame for faster response after cancel
-    requestAnimationFrame(() => {
-      window.speechSynthesis.speak(utterance);
-    });
+    window.speechSynthesis.speak(utterance);
   } else {
     alert('TTS is not supported in this browser.');
   }
@@ -623,7 +620,7 @@ function listenAll(idx) {
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'ko-KR';
     if (isA) {
-      utterance.rate = 1.7; utterance.pitch = 1.7;
+      utterance.rate = 1.7; utterance.pitch = 1.9;
       if (voiceA) utterance.voice = voiceA;
     } else {
       utterance.rate = 1.7; utterance.pitch = 0.8;
@@ -674,7 +671,7 @@ function playWordsAudio() {
     const utterance = new SpeechSynthesisUtterance(words[i].korean);
     utterance.lang = 'ko-KR';
     utterance.rate = 1.7;
-    utterance.pitch = 1.7;
+    utterance.pitch = 1.9;
     if (voiceA) utterance.voice = voiceA;
     utterance.onend = () => { i++; setTimeout(playNext, 400); };
     window.speechSynthesis.speak(utterance);
@@ -701,7 +698,7 @@ function playAllScenarios() {
     const u = new SpeechSynthesisUtterance(item.text);
     u.lang = 'ko-KR';
     if (item.isA) {
-      u.rate = 1.7; u.pitch = 1.7;
+      u.rate = 1.7; u.pitch = 1.9;
       if (voiceA) u.voice = voiceA;
     } else {
       u.rate = 1.7; u.pitch = 0.8;
