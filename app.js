@@ -234,7 +234,7 @@ function selectPlace(placeKey) {
   currentPlace = appData.dialogues[placeKey];
   document.getElementById('suggestions').classList.remove('show');
   inputEl.value = placeKey.replace(/_/g,' ');
-  showScenarioPage();
+  // Don't auto-navigate — wait for user to click a map button
 }
 
 function openMap(type) {
