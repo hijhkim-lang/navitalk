@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TTS Voice Tester</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: #f5f5f5; padding: 16px; }
+h1 { font-size: 20px; text-align: center; margin-bottom: 6px; }
+.subtitle { text-align: center; font-size: 13px; color: #888; margin-bottom: 16px; }
+
+.section { background: #fff; border-radius: 12px; padding: 16px; margin-bottom: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+.section h2 { font-size: 15px; color: #333; margin-bottom: 10px; }
+
+.voice-list { display: flex; flex-direction: column; gap: 8px; }
+.voice-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; border-radius: 8px; background: #f8f8f8;
+  border: 2px solid transparent; cursor: pointer; transition: all 0.2s;
+}
+.voice-item:hover { background: #eef4ff; }
+.voice-item.selected-a { border-color: #3a7cb8; background: #eef4ff; }
+.voice-item.selected-b { border-color: #c45040; background: #fef0ee; }
+.voice-info { flex: 1; }
+.voice-name { font-size: 14px; font-weight: 600; color: #333; }
+.voice-detail { font-size: 11px; color: #999; }
+.voice-btns { display: flex; gap: 6px; }
+.voice-btns button {
+  padding: 6px 12px; border: none; border-radius: 6px; font-size: 12px;
+  font-weight: 600; cursor: pointer; transition: all 0.15s;
+}
+.btn-play { background: #4CAF50; color: #fff; }
+.btn-play:active { transform: scale(0.95); }
+.btn-a { background: #3a7cb8; color: #fff; }
+.btn-a:active { transform: scale(0.95); }
+.btn-b { background: #c45040; color: #fff; }
+.btn-b:active { transform: scale(0.95); }
+
+.control-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.control-row label { font-size: 13px; font-weight: 600; width: 50px; color: #555; }
+.control-row input[type=range] { flex: 1; }
+.control-row .val { font-size: 13px; font-weight: 700; width: 36px; text-align: right; color: #333; }
+
+.selected-voices { display: flex; gap: 12px; margin-bottom: 12px; }
+.sel-box { flex: 1; padding: 12px; border-radius: 8px; text-align: center; }
+.sel-a { background: #eef4ff; border: 2px solid #3a7cb8; }
+.sel-b { background: #fef0ee; border: 2px solid #c45040; }
+.sel-label { font-size: 12px; font-weight: 700; margin-bottom: 4px; }
+.sel-a .sel-label { color: #3a7cb8; }
+.sel-b .sel-label { color: #c45040; }
+.sel-name { font-size: 13px; font-weight: 600; color: #333; }
+.sel-params { font-size: 11px; color: #888; margin-top: 2px; }
+
+.test-area { display: flex; flex-direction: column; gap: 8px; }
+.test-row { display: flex; gap: 8px; }
+.test-row button {
+  flex: 1; padding: 14px; border: none; border-radius: 10px;
+  font-size: 14px; font-weight: 700; color: #fff; cursor: pointer; transition: all 0.15s;
+}
+.test-row button:active { transform: scale(0.97); }
+.test-a { background: linear-gradient(135deg, #3a7cb8, #5a9cd8); }
+.test-b { background: linear-gradient(135deg, #c45040, #e07060); }
+.test-both { background: linear-gradient(135deg, #6c5ce7, #a084e8); }
+
+.sample-text { font-size: 12px; color: #888; text-align: center; margin-top: 4px; }
+.no-voice { text-align: center; color: #999; padding: 20px; font-size: 14px; }
+</style>
+</head>
+<body>
+
+<h1>🎤 TTS Voice Tester</h1>
+<p class="subtitle">기기의 한국어 음성을 듣고 A/B 화자를 선택하세요</p>
+
+<!-- 현재 선택 -->
+<div class="section">
+  <div class="selected-voices">
+    <div class="sel-box sel-a">
+      <div class="sel-label">화자 A (여자)</div>
+      <div class="sel-name" id="selAName">선택 안됨</div>
+      <div class="sel-params" id="selAParams">-</div>
+    </div>
+    <div class="sel-box sel-b">
+      <div class="sel-label">화자 B (남자)</div>
+      <div class="sel-name" id="selBName">선택 안됨</div>
+      <div class="sel-params" id="selBParams">-</div>
+    </div>
+  </div>
+  
+  <div class="test-area">
+    <div class="test-row">
+      <button class="test-a" onclick="testSpeak('A')">▶ A 듣기</button>
+      <button class="test-b" onclick="testSpeak('B')">▶ B 듣기</button>
+    </div>
+    <button class="test-both" onclick="testBoth()" style="padding:14px; border:none; border-radius:10px; font-size:14px; font-weight:700; color:#fff; cursor:pointer; background:linear-gradient(135deg,#6c5ce7,#a084e8);">▶ A↔B 대화 듣기</button>
+    <div class="sample-text">A: "실례합니다, 인사동이 어디에 있어요?" → B: "여기서 직진하면 왼쪽에 보여요."</div>
+  </div>
+</div>
+
+<!-- Rate / Pitch 조절 -->
+<div class="section">
+  <h2>⚙️ 화자 A 설정</h2>
+  <div class="control-row">
+    <label>Rate</label>
+    <input type="range" id="rateA" min="0.5" max="2.0" step="0.05" value="1.5" oninput="updateVal('rateA')">
+    <span class="val" id="rateAVal">1.5</span>
+  </div>
+  <div class="control-row">
+    <label>Pitch</label>
+    <input type="range" id="pitchA" min="0.1" max="2.0" step="0.05" value="1.5" oninput="updateVal('pitchA')">
+    <span class="val" id="pitchAVal">1.5</span>
+  </div>
+</div>
+
+<div class="section">
+  <h2>⚙️ 화자 B 설정</h2>
+  <div class="control-row">
+    <label>Rate</label>
+    <input type="range" id="rateB" min="0.5" max="2.0" step="0.05" value="1.5" oninput="updateVal('rateB')">
+    <span class="val" id="rateBVal">1.5</span>
+  </div>
+  <div class="control-row">
+    <label>Pitch</label>
+    <input type="range" id="pitchB" min="0.1" max="2.0" step="0.05" value="0.8" oninput="updateVal('pitchB')">
+    <span class="val" id="pitchBVal">0.8</span>
+  </div>
+</div>
+
+<!-- 음성 목록 -->
+<div class="section">
+  <h2>📋 사용 가능한 한국어 음성</h2>
+  <div id="voiceList" class="voice-list">
+    <div class="no-voice">음성 로딩 중...</div>
+  </div>
+</div>
+
+<script>
+let voices = [];
+let selectedA = null;
+let selectedB = null;
+
+const sampleA = "실례합니다, 인사동이 어디에 있어요?";
+const sampleB = "여기서 직진하면 왼쪽에 바로 보여요.";
+
+function updateVal(id) {
+  document.getElementById(id + 'Val').textContent = document.getElementById(id).value;
+}
+
+function loadVoices() {
+  const all = window.speechSynthesis.getVoices();
+  voices = all.filter(v => v.lang.startsWith('ko'));
+  
+  const list = document.getElementById('voiceList');
+  
+  if (voices.length === 0) {
+    // 한국어 음성 없으면 전체 목록 보여주기
+    voices = all;
+    if (voices.length === 0) {
+      list.innerHTML = '<div class="no-voice">음성을 찾을 수 없습니다. 잠시 후 새로고침 해보세요.</div>';
+      return;
+    }
+  }
+  
+  list.innerHTML = '';
+  voices.forEach((v, i) => {
+    const item = document.createElement('div');
+    item.className = 'voice-item';
+    item.id = 'voice-' + i;
+    item.innerHTML = `
+      <div class="voice-info">
+        <div class="voice-name">${v.name}</div>
+        <div class="voice-detail">${v.lang} ${v.localService ? '(로컬)' : '(온라인)'}</div>
+      </div>
+      <div class="voice-btns">
+        <button class="btn-play" onclick="playVoice(${i})">듣기</button>
+        <button class="btn-a" onclick="selectVoice(${i},'A')">A</button>
+        <button class="btn-b" onclick="selectVoice(${i},'B')">B</button>
+      </div>
+    `;
+    list.appendChild(item);
+  });
+  
+  // 자동 선택: 첫번째 여성, 두번째 남성
+  const femaleNames = ['Yuna', 'SunHi', 'Heami', 'Google 한국의'];
+  const maleNames = ['InJoon', 'Hyunsu'];
+  
+  for (const name of femaleNames) {
+    const idx = voices.findIndex(v => v.name.includes(name));
+    if (idx >= 0) { selectVoice(idx, 'A'); break; }
+  }
+  for (const name of maleNames) {
+    const idx = voices.findIndex(v => v.name.includes(name));
+    if (idx >= 0) { selectVoice(idx, 'B'); break; }
+  }
+  
+  if (selectedA === null && voices.length > 0) selectVoice(0, 'A');
+  if (selectedB === null && voices.length > 1) selectVoice(1, 'B');
+  if (selectedB === null && voices.length > 0) selectVoice(0, 'B');
+}
+
+function playVoice(idx) {
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(sampleA);
+  u.lang = 'ko-KR';
+  u.voice = voices[idx];
+  u.rate = parseFloat(document.getElementById('rateA').value);
+  u.pitch = parseFloat(document.getElementById('pitchA').value);
+  window.speechSynthesis.speak(u);
+}
+
+function selectVoice(idx, speaker) {
+  // 이전 선택 해제
+  document.querySelectorAll('.voice-item').forEach(el => {
+    el.classList.remove('selected-' + speaker.toLowerCase());
+  });
+  
+  const el = document.getElementById('voice-' + idx);
+  el.classList.add('selected-' + speaker.toLowerCase());
+  
+  if (speaker === 'A') {
+    selectedA = idx;
+    document.getElementById('selAName').textContent = voices[idx].name;
+    updateSelParams();
+  } else {
+    selectedB = idx;
+    document.getElementById('selBName').textContent = voices[idx].name;
+    updateSelParams();
+  }
+}
+
+function updateSelParams() {
+  const rA = document.getElementById('rateA').value;
+  const pA = document.getElementById('pitchA').value;
+  const rB = document.getElementById('rateB').value;
+  const pB = document.getElementById('pitchB').value;
+  document.getElementById('selAParams').textContent = `rate: ${rA} / pitch: ${pA}`;
+  document.getElementById('selBParams').textContent = `rate: ${rB} / pitch: ${pB}`;
+}
+
+// 슬라이더 변경 시 params 업데이트
+['rateA','pitchA','rateB','pitchB'].forEach(id => {
+  document.getElementById(id).addEventListener('input', updateSelParams);
+});
+
+function testSpeak(speaker) {
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(speaker === 'A' ? sampleA : sampleB);
+  u.lang = 'ko-KR';
+  
+  if (speaker === 'A' && selectedA !== null) {
+    u.voice = voices[selectedA];
+    u.rate = parseFloat(document.getElementById('rateA').value);
+    u.pitch = parseFloat(document.getElementById('pitchA').value);
+  } else if (speaker === 'B' && selectedB !== null) {
+    u.voice = voices[selectedB];
+    u.rate = parseFloat(document.getElementById('rateB').value);
+    u.pitch = parseFloat(document.getElementById('pitchB').value);
+  }
+  
+  window.speechSynthesis.speak(u);
+}
+
+function testBoth() {
+  window.speechSynthesis.cancel();
+  
+  const uA = new SpeechSynthesisUtterance(sampleA);
+  uA.lang = 'ko-KR';
+  if (selectedA !== null) uA.voice = voices[selectedA];
+  uA.rate = parseFloat(document.getElementById('rateA').value);
+  uA.pitch = parseFloat(document.getElementById('pitchA').value);
+  
+  const uB = new SpeechSynthesisUtterance(sampleB);
+  uB.lang = 'ko-KR';
+  if (selectedB !== null) uB.voice = voices[selectedB];
+  uB.rate = parseFloat(document.getElementById('rateB').value);
+  uB.pitch = parseFloat(document.getElementById('pitchB').value);
+  
+  uA.onend = () => {
+    window.speechSynthesis.speak(uB);
+  };
+  
+  window.speechSynthesis.speak(uA);
+}
+
+if ('speechSynthesis' in window) {
+  speechSynthesis.onvoiceschanged = loadVoices;
+  loadVoices();
+}
+</script>
+</body>
+</html>
