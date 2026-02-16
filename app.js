@@ -585,12 +585,14 @@ function speak(text, speaker) {
     utterance.lang = 'ko-KR';
     
     if (speaker === 'B') {
-      utterance.rate = 1.25;
-      utterance.pitch = 0.85;
+      // B: 젊고 상냥한 남자 - 약간 느리고 낮은 톤
+      utterance.rate = 1.15;
+      utterance.pitch = 0.7;
       if (voiceB) utterance.voice = voiceB;
     } else {
-      utterance.rate = 1.25;
-      utterance.pitch = 1.65;
+      // A: 젊고 쾌활한 여자 - 빠르고 밝은 톤
+      utterance.rate = 1.3;
+      utterance.pitch = 1.55;
       if (voiceA) utterance.voice = voiceA;
     }
     
@@ -621,10 +623,10 @@ function listenAll(idx) {
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'ko-KR';
     if (isA) {
-      utterance.rate = 1.25; utterance.pitch = 1.65;
+      utterance.rate = 1.3; utterance.pitch = 1.55;
       if (voiceA) utterance.voice = voiceA;
     } else {
-      utterance.rate = 1.25; utterance.pitch = 0.85;
+      utterance.rate = 1.15; utterance.pitch = 0.7;
       if (voiceB) utterance.voice = voiceB;
     }
     utterance.onend = () => { i++; playNext(); };
@@ -671,8 +673,8 @@ function playWordsAudio() {
     if (i >= words.length) return;
     const utterance = new SpeechSynthesisUtterance(words[i].korean);
     utterance.lang = 'ko-KR';
-    utterance.rate = 1.25;
-    utterance.pitch = 1.65;
+    utterance.rate = 1.3;
+    utterance.pitch = 1.55;
     if (voiceA) utterance.voice = voiceA;
     utterance.onend = () => { i++; setTimeout(playNext, 400); };
     window.speechSynthesis.speak(utterance);
@@ -699,10 +701,10 @@ function playAllScenarios() {
     const u = new SpeechSynthesisUtterance(item.text);
     u.lang = 'ko-KR';
     if (item.isA) {
-      u.rate = 1.25; u.pitch = 1.65;
+      u.rate = 1.3; u.pitch = 1.55;
       if (voiceA) u.voice = voiceA;
     } else {
-      u.rate = 1.25; u.pitch = 0.85;
+      u.rate = 1.15; u.pitch = 0.7;
       if (voiceB) u.voice = voiceB;
     }
     u.onend = () => { i++; setTimeout(playNext, 500); };
