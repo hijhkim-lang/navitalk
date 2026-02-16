@@ -421,6 +421,28 @@ html, body { height: 100%; background: #111; font-family: 'Quicksand', sans-seri
   height: 100vh; color: #888; font-size: 16px;
 }
 
+/* ===== LOADING OVERLAY (language switch) ===== */
+.loading-overlay {
+  display: none; position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(26,58,74,0.85);
+  z-index: 200;
+  justify-content: center; align-items: center;
+  flex-direction: column; gap: 16px;
+}
+.loading-overlay.show { display: flex; }
+.loading-overlay p {
+  color: #c8dce6; font-size: 15px; font-weight: 600;
+}
+.loading-spinner {
+  width: 40px; height: 40px;
+  border: 4px solid rgba(255,255,255,0.2);
+  border-top-color: #4ec3e6;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
 @media (max-width: 340px) {
   .map-header h1 { font-size: 30px; }
   .scenario-topbar h1 { font-size: 24px; }

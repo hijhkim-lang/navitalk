@@ -7,20 +7,67 @@ let userSearchInput = '';
 let allScenarioData = [];
 let selectedMap = 'naver';
 
+// ===== LANGUAGE CONFIG =====
+// Note: All dialogues_xx.json files store translations in 'english' field
+// (because CSV→JSON conversion always maps last column to 'english')
+const langConfig = {
+  'en': { transKey: 'english', name: 'English',    searchPlaceholder: 'Enter a destination' },
+  'cn': { transKey: 'english', name: '中文',       searchPlaceholder: '输入目的地' },
+  'ja': { transKey: 'english', name: '日本語',     searchPlaceholder: '目的地を入力' },
+  'es': { transKey: 'english', name: 'Español',     searchPlaceholder: 'Ingrese un destino' },
+  'pt': { transKey: 'english', name: 'Português', searchPlaceholder: 'Digite um destino' },
+  'fr': { transKey: 'english', name: 'Français',     searchPlaceholder: 'Entrez une destination' },
+  'id': { transKey: 'english', name: 'Indonesia', searchPlaceholder: 'Masukkan tujuan' },
+  'ms': { transKey: 'english', name: 'Melayu',        searchPlaceholder: 'Masukkan destinasi' },
+  'th': { transKey: 'english', name: 'ภาษาไทย',         searchPlaceholder: 'ป้อนจุดหมายปลายทาง' },
+  'vi': { transKey: 'english', name: 'Tiếng Việt', searchPlaceholder: 'Nhập điểm đến' },
+  'de': { transKey: 'english', name: 'Deutsch',      searchPlaceholder: 'Reiseziel eingeben' }
+};
+
 // ===== DATA LOADING =====
-async function loadData() {
+async function loadCommonData() {
   try {
-    const [dRes, kRes, vRes] = await Promise.all([
-      fetch('dialogues.json'),
+    const [kRes, vRes] = await Promise.all([
       fetch('keywords.json'),
       fetch('vocabulary.json')
     ]);
-    appData.dialogues = await dRes.json();
     appData.keywords = await kRes.json();
     appData.vocabulary = await vRes.json();
-    console.log('Data loaded:', Object.keys(appData.dialogues).length, 'places');
+    console.log('Common data loaded: keywords + vocabulary');
   } catch(e) {
-    console.error('Data loading failed:', e);
+    console.error('Common data loading failed:', e);
+  }
+}
+
+async function loadDialogues(lang) {
+  const fileName = lang === 'en' ? 'dialogues_en.json' : `dialogues_${lang}.json`;
+  try {
+    const res = await fetch(fileName);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    appData.dialogues = await res.json();
+    console.log(`Dialogues loaded [${lang}]:`, Object.keys(appData.dialogues).length, 'places');
+    return true;
+  } catch(e) {
+    console.error(`Failed to load ${fileName}:`, e);
+    // Fallback 1: if dialogues_en.json fails, try dialogues.json (old name)
+    if (lang === 'en') {
+      try {
+        console.log('Trying fallback: dialogues.json');
+        const fallback = await fetch('dialogues.json');
+        if (!fallback.ok) throw new Error(`HTTP ${fallback.status}`);
+        appData.dialogues = await fallback.json();
+        console.log('Fallback dialogues.json loaded');
+        return true;
+      } catch(e2) {
+        console.error('Fallback dialogues.json also failed:', e2);
+      }
+    }
+    // Fallback 2: try English if other language fails
+    if (lang !== 'en') {
+      console.log('Falling back to English dialogues...');
+      return await loadDialogues('en');
+    }
+    return false;
   }
 }
 
@@ -58,11 +105,44 @@ function goHome() {
 }
 
 // ===== PAGE 1: Language Selection =====
-function selectLanguage(lang) {
-  if (lang !== 'en') return;
+async function selectLanguage(lang) {
   currentLang = lang;
-  showPage('page-map');
-  document.getElementById('searchInput').focus();
+  
+  // Show loading overlay
+  const overlay = document.getElementById('loadingOverlay');
+  const cfg = langConfig[lang] || langConfig['en'];
+  overlay.querySelector('p').textContent = `Loading ${cfg.name}...`;
+  overlay.classList.add('show');
+  
+  // Highlight selected button
+  document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active-lang'));
+  const clickedBtn = document.querySelector(`.lang-btn[onclick="selectLanguage('${lang}')"]`);
+  if (clickedBtn) clickedBtn.classList.add('active-lang');
+  
+  // Load dialogues for selected language
+  const success = await loadDialogues(lang);
+  overlay.classList.remove('show');
+  
+  if (success) {
+    // Update UI text for selected language
+    updateUILanguage(lang);
+    showPage('page-map');
+    document.getElementById('searchInput').focus();
+  } else {
+    alert('Failed to load data. Please try again.');
+  }
+}
+
+function updateUILanguage(lang) {
+  const cfg = langConfig[lang] || langConfig['en'];
+  // Update search placeholder
+  document.getElementById('searchInput').placeholder = cfg.searchPlaceholder;
+  // Reset search state
+  document.getElementById('searchInput').value = '';
+  document.getElementById('suggestions').innerHTML = '';
+  currentPlace = null;
+  currentPlaceKey = null;
+  userSearchInput = '';
 }
 
 // ===== PAGE 2: Search & Map =====
@@ -79,11 +159,12 @@ document.getElementById('searchInput').addEventListener('input', function() {
     return;
   }
 
-  // Search through keywords (English + Korean)
+  // Search through keywords (English + Korean + current language)
   const results = [];
   for (const [placeType, kw] of Object.entries(appData.keywords)) {
     const enKeywords = kw.en || [];
     const koKeywords = kw.ko || [];
+    const langKeywords = kw[currentLang] || [];
     let score = 0;
     for (const k of koKeywords) {
       if (k === query || k === this.value.trim()) { score = Math.max(score, 100); }
@@ -93,6 +174,13 @@ document.getElementById('searchInput').addEventListener('input', function() {
     for (const k of enKeywords) {
       if (k.toLowerCase() === query) { score = Math.max(score, 100); }
       else if (k.toLowerCase().includes(query) || query.includes(k.toLowerCase())) { score = Math.max(score, 30 + Math.min(k.length, query.length)); }
+    }
+    // Current language keywords (cn, ja, fr, etc.)
+    for (const k of langKeywords) {
+      const kLow = (typeof k === 'string') ? k.toLowerCase() : '';
+      if (kLow === query || k === this.value.trim()) { score = Math.max(score, 100); }
+      else if (this.value.trim().includes(k) || k.includes(this.value.trim())) { score = Math.max(score, 50 + Math.min(k.length, this.value.trim().length)); }
+      else if (kLow.includes(query) || query.includes(kLow)) { score = Math.max(score, 30 + Math.min(k.length, query.length)); }
     }
     if (score > 0 && appData.dialogues[placeType]) {
       const placeData = appData.dialogues[placeType];
@@ -409,6 +497,7 @@ function isVisitorSpeaker(spk) {
 }
 
 function renderDialogue(lines) {
+  const transKey = (langConfig[currentLang] || langConfig['en']).transKey;
   return lines.sort((a,b) => a.order - b.order).map((line, idx) => {
     const isA = isVisitorSpeaker(line.speaker);
     const cls = isA ? 'dial-a' : 'dial-b';
@@ -416,6 +505,8 @@ function renderDialogue(lines) {
     const label = isA ? 'A' : 'B';
     const labelKo = speakerKo(line.speaker);
     const ttsText = (line.tts || line.korean).replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    // Get translation: try language-specific key, then english, then empty
+    const translation = line[transKey] || line.english || '';
     
     return `
       <div class="dial-line ${cls}">
@@ -423,7 +514,7 @@ function renderDialogue(lines) {
         <button class="play-btn" data-tts="${ttsText}" data-spk="${label}">▶️</button>
         <div class="dial-korean">${line.korean}</div>
         <div class="dial-roman">${line.roman || ''}</div>
-        <div class="dial-english">${line.english || ''}</div>
+        <div class="dial-english">${translation}</div>
       </div>
     `;
   }).join('');
@@ -551,12 +642,16 @@ function showWords() {
   if (words.length === 0) {
     list.innerHTML = '<p style="color:#888; font-size:13px;">No vocabulary for this place.</p>';
   } else {
-    list.innerHTML = words.map(w => `
-      <div class="word-item">
-        <span class="word-kr">${w.korean}</span>
-        <span class="word-en">${w.english}</span>
-      </div>
-    `).join('');
+    list.innerHTML = words.map(w => {
+      // vocabulary.json uses language codes directly: w.en, w.cn, w.ja, etc.
+      const translation = w[currentLang] || w.en || '';
+      return `
+        <div class="word-item">
+          <span class="word-kr">${w.korean}</span>
+          <span class="word-en">${translation}</span>
+        </div>
+      `;
+    }).join('');
   }
   
   document.getElementById('wordsModal').classList.add('show');
@@ -644,7 +739,7 @@ function requestScenario() {
 }
 
 // ===== INIT =====
-loadData();
+loadCommonData();
 
 // Event delegation for play buttons
 document.addEventListener('click', function(e) {
