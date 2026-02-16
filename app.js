@@ -563,6 +563,7 @@ function showWords() {
 }
 
 function closeWords() {
+  window.speechSynthesis.cancel();
   document.getElementById('wordsModal').classList.remove('show');
 }
 
