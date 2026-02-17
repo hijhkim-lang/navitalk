@@ -129,24 +129,20 @@ html, body { height: 100%; background: #111; font-family: 'Quicksand', sans-seri
 }
 .map-header {
   text-align: center; margin-bottom: 8px;
-  padding: 14px 20px 10px;
-  background: rgba(0,0,0,0.35);
-  border-radius: 0 0 16px 16px;
-  width: 100%;
-  backdrop-filter: blur(2px);
+  padding-top: 10px;
 }
 .map-header h1 {
   font-weight: 800; font-size: 52px; color: #fff;
-  text-shadow: 2px 2px 6px rgba(0,80,160,0.5);
+  text-shadow: 2px 2px 8px rgba(0,0,0,0.7), 0 0 20px rgba(0,0,0,0.4);
   letter-spacing: 1px;
 }
 .map-header .tagline {
   font-weight: 700; font-size: 19px; color: #fff; margin-top: 6px;
-  text-shadow: 0 1px 8px rgba(0,0,0,0.5);
+  text-shadow: 1px 1px 6px rgba(0,0,0,0.7), 0 0 16px rgba(0,0,0,0.4);
 }
 .map-header .sub-tagline {
   font-weight: 500; font-size: 16px; color: rgba(255,255,255,0.85); margin-top: 3px;
-  text-shadow: 0 1px 5px rgba(0,0,0,0.4);
+  text-shadow: 1px 1px 5px rgba(0,0,0,0.7), 0 0 14px rgba(0,0,0,0.3);
 }
 
 .search-box {
