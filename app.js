@@ -59,7 +59,6 @@ function goHome() {
 
 // ===== PAGE 1: Language Selection =====
 function selectLanguage(lang) {
-  if (lang !== 'en') return;
   currentLang = lang;
   showPage('page-map');
   document.getElementById('searchInput').focus();
