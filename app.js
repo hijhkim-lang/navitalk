@@ -8,15 +8,90 @@ let allScenarioData = [];
 let selectedMap = 'naver';
 let hasKoreanVoice = false;
 
-// ===== TTS VOICE CHECK =====
+// ===== TTS MANAGER =====
+// Priority: Edge TTS (server-free) → Browser speechSynthesis → None
+const ttsManager = {
+  mode: 'checking',  // 'edge' | 'browser' | 'none' | 'checking'
+  currentAudio: null,
+  edgeChecked: false,
+  edgeAvailable: false,
+  browserAvailable: false,
+
+  // Stop all audio playback
+  stop() {
+    // Stop Edge TTS audio
+    if (this.currentAudio) {
+      try {
+        this.currentAudio.pause();
+        this.currentAudio.currentTime = 0;
+        if (this.currentAudio._blobUrl) URL.revokeObjectURL(this.currentAudio._blobUrl);
+      } catch(e) {}
+      this.currentAudio = null;
+    }
+    // Stop browser TTS
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
+    // Cancel any queued sequence
+    this._stopSequence = true;
+  },
+
+  // Check browser TTS availability
+  checkBrowserVoice() {
+    if (typeof speechSynthesis === 'undefined') return;
+    var voices = speechSynthesis.getVoices();
+    hasKoreanVoice = voices.some(function(v) { return v.lang.indexOf('ko') !== -1; });
+    this.browserAvailable = hasKoreanVoice;
+    if (!this.edgeAvailable && hasKoreanVoice) {
+      this.mode = 'browser';
+    }
+  },
+
+  // Initialize: test Edge TTS in background
+  async init() {
+    // Check browser TTS first (sync)
+    this.checkBrowserVoice();
+
+    // Test Edge TTS in background
+    if (typeof EdgeTTS !== 'undefined') {
+      try {
+        this.edgeAvailable = await EdgeTTS.isAvailable();
+      } catch(e) {
+        this.edgeAvailable = false;
+      }
+    }
+    this.edgeChecked = true;
+
+    if (this.edgeAvailable) {
+      this.mode = 'edge';
+      console.log('TTS Mode: Edge TTS (cloud voices)');
+    } else if (this.browserAvailable) {
+      this.mode = 'browser';
+      console.log('TTS Mode: Browser speechSynthesis');
+    } else {
+      this.mode = 'none';
+      console.log('TTS Mode: None (no TTS available)');
+    }
+    return this.mode;
+  },
+
+  // Is any TTS available?
+  isAvailable() {
+    return this.mode === 'edge' || this.mode === 'browser';
+  }
+};
+
+// Legacy browser voice check (for initial prompt)
 function checkKoreanVoice() {
-  var voices = speechSynthesis.getVoices();
-  hasKoreanVoice = voices.some(function(v) { return v.lang.indexOf('ko') !== -1; });
+  ttsManager.checkBrowserVoice();
 }
 if (typeof speechSynthesis !== 'undefined') {
   checkKoreanVoice();
   speechSynthesis.onvoiceschanged = checkKoreanVoice;
 }
+
+// Start Edge TTS check in background
+ttsManager.init();
 
 // ===== DATA LOADING =====
 async function loadData() {
@@ -42,7 +117,7 @@ function showPage(id) {
 }
 
 function goBack() {
-  window.speechSynthesis.cancel();
+  ttsManager.stop();
   document.getElementById('searchInput').value = '';
   document.getElementById('suggestions').innerHTML = '';
   showPage('page-map');
@@ -50,7 +125,7 @@ function goBack() {
 
 function goHome() {
   // 0. TTS 음성 즉시 정지
-  window.speechSynthesis.cancel();
+  ttsManager.stop();
   // 1. Service Worker 캐시 삭제
   if ('caches' in window) {
     caches.keys().then(function(names) {
@@ -87,7 +162,14 @@ const ttsPromptText = {
 function selectLanguage(lang) {
   currentLang = lang;
   
-  // 한국어 음성 체크 (재확인)
+  // Edge TTS 사용 가능하면 설치 안내 불필요 → 바로 진행
+  if (ttsManager.mode === 'edge') {
+    showPage('page-map');
+    document.getElementById('searchInput').focus();
+    return;
+  }
+  
+  // 브라우저 한국어 음성 체크 (재확인)
   checkKoreanVoice();
   
   // 음성 있으면 바로 진행
@@ -97,7 +179,21 @@ function selectLanguage(lang) {
     return;
   }
   
-  // 음성 없음 → 매번 안내 팝업 표시
+  // Edge TTS 아직 체크 중이면 잠시 대기 후 재확인
+  if (ttsManager.mode === 'checking') {
+    // Show brief loading then check again
+    setTimeout(() => {
+      if (ttsManager.mode === 'edge') {
+        showPage('page-map');
+        document.getElementById('searchInput').focus();
+      } else {
+        showTTSPrompt(lang);
+      }
+    }, 2000);
+    return;
+  }
+  
+  // 음성 없음 → 안내 팝업 표시
   showTTSPrompt(lang);
 }
 
@@ -503,11 +599,11 @@ function toggleDialogue(idx) {
   const box = document.getElementById('dial-' + idx);
   if (box.classList.contains('open')) {
     box.classList.remove('open');
-    window.speechSynthesis.cancel();
+    ttsManager.stop();
   } else {
     // Close all others
     document.querySelectorAll('.dialogue-box').forEach(b => b.classList.remove('open'));
-    window.speechSynthesis.cancel();
+    ttsManager.stop();
     box.classList.add('open');
     box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
@@ -515,7 +611,7 @@ function toggleDialogue(idx) {
 
 function closeDialogue(idx) {
   document.getElementById('dial-' + idx).classList.remove('open');
-  window.speechSynthesis.cancel();
+  ttsManager.stop();
 }
 
 // ===== TTS =====
@@ -526,9 +622,7 @@ function loadKoreanVoices() {
   const voices = window.speechSynthesis.getVoices();
   const koVoices = voices.filter(v => v.lang.startsWith('ko'));
   
-  // A: prefer female voices
   const femaleNames = ['Yuna', 'SunHi', 'Microsoft SunHi', 'Heami', 'Microsoft Heami', 'Google 한국의'];
-  // B: prefer male voices
   const maleNames = ['InJoon', 'Microsoft InJoon', 'Hyunsu', 'Microsoft Hyunsu'];
   
   let female = null, male = null;
@@ -541,44 +635,84 @@ function loadKoreanVoices() {
     if (v) { male = v; break; }
   }
   
-  if (female && male) {
-    voiceA = female;
-    voiceB = male;
-  } else if (koVoices.length >= 2) {
-    voiceA = koVoices[0];
-    voiceB = koVoices[1];
-  } else if (koVoices.length === 1) {
-    voiceA = koVoices[0];
-    voiceB = koVoices[0];
-  }
+  if (female && male) { voiceA = female; voiceB = male; }
+  else if (koVoices.length >= 2) { voiceA = koVoices[0]; voiceB = koVoices[1]; }
+  else if (koVoices.length === 1) { voiceA = koVoices[0]; voiceB = koVoices[0]; }
 }
 if ('speechSynthesis' in window) {
-  speechSynthesis.onvoiceschanged = loadKoreanVoices;
+  speechSynthesis.onvoiceschanged = () => { loadKoreanVoices(); ttsManager.checkBrowserVoice(); };
   loadKoreanVoices();
 }
 
-function speak(text, speaker) {
-  if ('speechSynthesis' in window) {
+// --- Browser TTS speak (fallback) ---
+function browserSpeak(text, speaker) {
+  return new Promise((resolve) => {
+    if (!('speechSynthesis' in window)) { resolve(); return; }
     window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'ko-KR';
-    
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'ko-KR';
     if (speaker === 'B') {
-      utterance.rate = 1.25;
-      utterance.pitch = 0.85;
-      if (voiceB) utterance.voice = voiceB;
+      u.rate = 1.25; u.pitch = 0.85;
+      if (voiceB) u.voice = voiceB;
     } else {
-      utterance.rate = 1.25;
-      utterance.pitch = 1.65;
-      if (voiceA) utterance.voice = voiceA;
+      u.rate = 1.25; u.pitch = 1.65;
+      if (voiceA) u.voice = voiceA;
     }
-    
-    // Use requestAnimationFrame for faster response after cancel
-    requestAnimationFrame(() => {
-      window.speechSynthesis.speak(utterance);
-    });
-  } else {
-    alert('TTS is not supported in this browser.');
+    u.onend = () => resolve();
+    u.onerror = () => resolve();
+    requestAnimationFrame(() => window.speechSynthesis.speak(u));
+  });
+}
+
+// --- Main speak: Edge TTS → Browser TTS → silent ---
+function speak(text, speaker) {
+  ttsManager.stop();
+
+  if (ttsManager.mode === 'edge') {
+    EdgeTTS.synthesize(text, speaker).then(blob => {
+      const url = URL.createObjectURL(blob);
+      const audio = new Audio(url);
+      audio._blobUrl = url;
+      ttsManager.currentAudio = audio;
+      audio.onended = () => { URL.revokeObjectURL(url); ttsManager.currentAudio = null; };
+      audio.onerror = () => { URL.revokeObjectURL(url); ttsManager.currentAudio = null; browserSpeak(text, speaker); };
+      audio.play().catch(() => browserSpeak(text, speaker));
+    }).catch(() => browserSpeak(text, speaker));
+  } else if (ttsManager.mode === 'browser') {
+    browserSpeak(text, speaker);
+  }
+}
+
+// --- Sequential playback (Edge TTS with prefetch + fallback) ---
+async function speakSequence(items) {
+  ttsManager._stopSequence = false;
+  for (let i = 0; i < items.length; i++) {
+    if (ttsManager._stopSequence) break;
+    const { text, speaker } = items[i];
+
+    if (ttsManager.mode === 'edge') {
+      try {
+        // Prefetch next item
+        if (items[i + 1]) EdgeTTS.synthesize(items[i + 1].text, items[i + 1].speaker).catch(() => {});
+        const blob = await EdgeTTS.synthesize(text, speaker);
+        if (ttsManager._stopSequence) break;
+        await new Promise((resolve) => {
+          const url = URL.createObjectURL(blob);
+          const audio = new Audio(url);
+          audio._blobUrl = url;
+          ttsManager.currentAudio = audio;
+          audio.onended = () => { URL.revokeObjectURL(url); ttsManager.currentAudio = null; resolve(); };
+          audio.onerror = () => { URL.revokeObjectURL(url); ttsManager.currentAudio = null; resolve(); };
+          audio.play().catch(() => resolve());
+        });
+        if (i < items.length - 1 && !ttsManager._stopSequence) await new Promise(r => setTimeout(r, 300));
+      } catch(e) {
+        if (!ttsManager._stopSequence) await browserSpeak(text, speaker);
+      }
+    } else if (ttsManager.mode === 'browser') {
+      await browserSpeak(text, speaker);
+      if (i < items.length - 1 && !ttsManager._stopSequence) await new Promise(r => setTimeout(r, 300));
+    }
   }
 }
 
@@ -586,30 +720,9 @@ function listenAll(idx) {
   if (!allScenarioData[idx]) return;
   const lines = allScenarioData[idx].lines;
   if (!lines) return;
-  
-  window.speechSynthesis.cancel();
-  const sorted = lines.sort((a,b) => a.order - b.order);
-  let i = 0;
-  
-  function playNext() {
-    if (i >= sorted.length) return;
-    const line = sorted[i];
-    const text = line.tts || line.korean;
-    const isA = isVisitorSpeaker(line.speaker);
-    
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'ko-KR';
-    if (isA) {
-      utterance.rate = 1.25; utterance.pitch = 1.65;
-      if (voiceA) utterance.voice = voiceA;
-    } else {
-      utterance.rate = 1.25; utterance.pitch = 0.85;
-      if (voiceB) utterance.voice = voiceB;
-    }
-    utterance.onend = () => { i++; playNext(); };
-    window.speechSynthesis.speak(utterance);
-  }
-  playNext();
+  ttsManager.stop();
+  const sorted = [...lines].sort((a,b) => a.order - b.order);
+  speakSequence(sorted.map(l => ({ text: l.tts || l.korean, speaker: isVisitorSpeaker(l.speaker) ? 'A' : 'B' })));
 }
 
 // ===== WORDS =====
@@ -633,58 +746,28 @@ function showWords() {
 }
 
 function closeWords() {
-  window.speechSynthesis.cancel();
+  ttsManager.stop();
   document.getElementById('wordsModal').classList.remove('show');
 }
 
 function playWordsAudio() {
   const words = appData.vocabulary[currentPlaceKey] || [];
   if (words.length === 0) return;
-  
-  let i = 0;
-  function playNext() {
-    if (i >= words.length) return;
-    const utterance = new SpeechSynthesisUtterance(words[i].korean);
-    utterance.lang = 'ko-KR';
-    utterance.rate = 1.25;
-    utterance.pitch = 1.65;
-    if (voiceA) utterance.voice = voiceA;
-    utterance.onend = () => { i++; setTimeout(playNext, 400); };
-    window.speechSynthesis.speak(utterance);
-  }
-  window.speechSynthesis.cancel();
-  playNext();
+  ttsManager.stop();
+  speakSequence(words.map(w => ({ text: w.korean, speaker: 'A' })));
 }
 
 // ===== PLAY ALL SCENARIOS =====
 function playAllScenarios() {
   if (!allScenarioData.length) return;
-  const allItems = [];
+  const items = [];
   for (const sd of allScenarioData) {
-    sd.lines.sort((a,b) => a.order - b.order).forEach(l => {
-      const isA = isVisitorSpeaker(l.speaker);
-      allItems.push({ text: l.tts || l.korean, isA });
+    [...sd.lines].sort((a,b) => a.order - b.order).forEach(l => {
+      items.push({ text: l.tts || l.korean, speaker: isVisitorSpeaker(l.speaker) ? 'A' : 'B' });
     });
   }
-  
-  let i = 0;
-  function playNext() {
-    if (i >= allItems.length) return;
-    const item = allItems[i];
-    const u = new SpeechSynthesisUtterance(item.text);
-    u.lang = 'ko-KR';
-    if (item.isA) {
-      u.rate = 1.25; u.pitch = 1.65;
-      if (voiceA) u.voice = voiceA;
-    } else {
-      u.rate = 1.25; u.pitch = 0.85;
-      if (voiceB) u.voice = voiceB;
-    }
-    u.onend = () => { i++; setTimeout(playNext, 500); };
-    window.speechSynthesis.speak(u);
-  }
-  window.speechSynthesis.cancel();
-  playNext();
+  ttsManager.stop();
+  speakSequence(items);
 }
 
 // ===== OPEN EXTERNAL LINK (PWA-safe) =====
