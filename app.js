@@ -176,15 +176,13 @@ const mapPageTexts = {
 
 const mapConfigs = {
   cn: [
-    { id: 'gaode', label: '高德地图', color: '#1677ff' },
-    { id: 'naver', label: 'Naver Map', color: '#03c75a' },
-    { id: 'kakao', label: 'Kakao Map', color: '#fee500', textColor: '#3c1e1e' },
-    { id: 'google', label: 'Google Map', color: '#ea4335' }
+    { id: 'naver', label: 'Naver Map(네이버)' },
+    { id: 'gaode', label: '高德地图' }
   ],
   _default: [
-    { id: 'naver', label: 'Naver Map', color: '#03c75a' },
-    { id: 'kakao', label: 'Kakao Map', color: '#fee500', textColor: '#3c1e1e' },
-    { id: 'google', label: 'Google Map', color: '#ea4335' }
+    { id: 'naver', label: 'Naver Map' },
+    { id: 'kakao', label: 'Kakao Map' },
+    { id: 'google', label: 'Google Map' }
   ]
 };
 
@@ -205,8 +203,7 @@ function updateMapPageTexts(lang) {
     var html = '';
     for (var i = 0; i < maps.length; i++) {
       var m = maps[i];
-      var tc = m.textColor || '#fff';
-      html += '<button class="map-btn" style="background:' + m.color + ';color:' + tc + ';" onclick="openMap(\'' + m.id + '\')">' + m.label + '</button>';
+      html += '<button class="map-btn" onclick="openMap(\'' + m.id + '\')">' + m.label + '</button>';
     }
     mapBtnList.innerHTML = html;
   }
