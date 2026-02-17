@@ -120,7 +120,7 @@ html, body { height: 100%; background: #111; font-family: 'Quicksand', sans-seri
 #page-map {
   width: 100%;
   background: #5aabde;
-  background-image: url('bg-dest.jpg');
+  background-image: url('bg-main.jpg');
   background-size: cover;
   background-position: center top;
   padding: 20px 20px 30px;
@@ -137,12 +137,12 @@ html, body { height: 100%; background: #111; font-family: 'Quicksand', sans-seri
   letter-spacing: 1px;
 }
 .map-header .tagline {
-  font-weight: 700; font-size: 19px; color: #e86a10; margin-top: 6px;
-  text-shadow: 1px 1px 2px rgba(255,255,255,0.5);
+  font-weight: 700; font-size: 19px; color: #fff; margin-top: 6px;
+  text-shadow: 0 1px 8px rgba(0,0,0,0.5);
 }
 .map-header .sub-tagline {
-  font-weight: 500; font-size: 16px; color: #d45e0a; margin-top: 3px;
-  text-shadow: 1px 1px 2px rgba(255,255,255,0.4);
+  font-weight: 500; font-size: 16px; color: rgba(255,255,255,0.85); margin-top: 3px;
+  text-shadow: 0 1px 5px rgba(0,0,0,0.4);
 }
 
 .search-box {
