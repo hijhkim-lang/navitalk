@@ -159,8 +159,48 @@ const ttsPromptText = {
   vi: { msg: "Chưa cài giọng tiếng Hàn.\nHãy cài đặt để nghe hội thoại.", install: "Cách cài đặt", skip: "Tiếp tục không có giọng nói" }
 };
 
+// ===== MAP PAGE MULTILINGUAL TEXT =====
+const mapPageTexts = {
+  en: { tagline: "Speak Korean at your next destination", sub: "Learn on the go while you travel", placeholder: "Enter a destination", mapLabel: "Select a map" },
+  cn: { tagline: "在下一个目的地，用韩语交流", sub: "边走边学，让旅途更有趣", placeholder: "输入目的地", mapLabel: "选择地图" },
+  ja: { tagline: "次の目的地で韓国語を話そう", sub: "旅しながら楽しく学ぼう", placeholder: "目的地を入力", mapLabel: "地図を選択" },
+  es: { tagline: "Habla coreano en tu próximo destino", sub: "Aprende mientras viajas", placeholder: "Ingresa un destino", mapLabel: "Selecciona un mapa" },
+  pt: { tagline: "Fale coreano no seu próximo destino", sub: "Aprenda enquanto viaja", placeholder: "Digite um destino", mapLabel: "Selecione um mapa" },
+  fr: { tagline: "Parlez coréen à votre prochaine destination", sub: "Apprenez en voyageant", placeholder: "Entrez une destination", mapLabel: "Choisissez une carte" },
+  de: { tagline: "Sprechen Sie Koreanisch am nächsten Reiseziel", sub: "Lernen Sie unterwegs", placeholder: "Reiseziel eingeben", mapLabel: "Karte auswählen" },
+  id: { tagline: "Bicara Korea di tujuan berikutnya", sub: "Belajar sambil jalan-jalan", placeholder: "Masukkan tujuan", mapLabel: "Pilih peta" },
+  ms: { tagline: "Cakap Korea di destinasi seterusnya", sub: "Belajar sambil melancong", placeholder: "Masukkan destinasi", mapLabel: "Pilih peta" },
+  th: { tagline: "พูดภาษาเกาหลีที่จุดหมายถัดไป", sub: "เรียนรู้ระหว่างเดินทาง", placeholder: "ป้อนจุดหมายปลายทาง", mapLabel: "เลือกแผนที่" },
+  vi: { tagline: "Nói tiếng Hàn tại điểm đến tiếp theo", sub: "Học trong khi du lịch", placeholder: "Nhập điểm đến", mapLabel: "Chọn bản đồ" }
+};
+
+function updateMapPageTexts(lang) {
+  var t = mapPageTexts[lang] || mapPageTexts.en;
+  var tagline = document.querySelector('#page-map .tagline');
+  var subTagline = document.querySelector('#page-map .sub-tagline');
+  var searchInput = document.getElementById('searchInput');
+  var mapLabel = document.querySelector('#page-map .map-section-label');
+  if (tagline) { tagline.textContent = t.tagline; tagline.className = 'tagline' + (lang === 'cn' ? ' tagline-cn' : ''); }
+  if (subTagline) { subTagline.textContent = t.sub; subTagline.className = 'sub-tagline' + (lang === 'cn' ? ' sub-tagline-cn' : ''); }
+  if (searchInput) searchInput.placeholder = t.placeholder;
+  if (mapLabel) mapLabel.textContent = t.mapLabel;
+  // Update map buttons based on language
+  var mapBtnList = document.getElementById('mapBtnList');
+  if (mapBtnList) {
+    if (lang === 'cn') {
+      mapBtnList.innerHTML = '<button class="map-btn" onclick="openMap(\'naver\')">Naver 地图</button>' +
+        '<button class="map-btn" onclick="openMap(\'gaode\')">高德地图</button>';
+    } else {
+      mapBtnList.innerHTML = '<button class="map-btn" onclick="openMap(\'naver\')">Naver Map</button>' +
+        '<button class="map-btn" onclick="openMap(\'kakao\')">Kakao Map</button>' +
+        '<button class="map-btn" onclick="openMap(\'google\')">Google Map</button>';
+    }
+  }
+}
+
 function selectLanguage(lang) {
   currentLang = lang;
+  updateMapPageTexts(lang);
   
   // Edge TTS 사용 가능하면 설치 안내 불필요 → 바로 진행
   if (ttsManager.mode === 'edge') {
@@ -378,9 +418,11 @@ function openMap(type) {
   }
   
   // No match found, just open map
-  const mapUrl = type === 'naver' 
-    ? 'https://map.naver.com/v5/search/' + encodeURIComponent(dest)
-    : 'https://map.kakao.com/?q=' + encodeURIComponent(dest);
+  let mapUrl;
+  if (type === 'naver') mapUrl = 'https://map.naver.com/v5/search/' + encodeURIComponent(dest);
+  else if (type === 'kakao') mapUrl = 'https://map.kakao.com/?q=' + encodeURIComponent(dest);
+  else if (type === 'gaode') mapUrl = 'https://uri.amap.com/search?keyword=' + encodeURIComponent(dest) + '&src=NaviTalk';
+  else mapUrl = 'https://www.google.com/maps/search/' + encodeURIComponent(dest);
   openExternal(mapUrl);
 }
 
@@ -537,7 +579,8 @@ function showScenarioPage() {
   // Update Navigate button to show selected map
   const navBtn = document.getElementById('navBtn');
   if (navBtn) {
-    const mapName = selectedMap === 'kakao' ? 'Kakao Map' : 'Naver Map';
+    const mapNames = {naver:'Naver Map', kakao:'Kakao Map', google:'Google Map', gaode:'高德地图'};
+    const mapName = mapNames[selectedMap] || 'Naver Map';
     navBtn.textContent = 'Navigate (' + mapName + ')';
   }
 }
@@ -785,9 +828,11 @@ function openExternal(url) {
 function navigateToDestination() {
   if (!currentPlaceKey) return;
   const name = userSearchInput || currentPlace.name_kr || currentPlaceKey;
-  const url = selectedMap === 'kakao' 
-    ? 'https://map.kakao.com/?q=' + encodeURIComponent(name)
-    : 'https://map.naver.com/v5/search/' + encodeURIComponent(name);
+  let url;
+  if (selectedMap === 'kakao') url = 'https://map.kakao.com/?q=' + encodeURIComponent(name);
+  else if (selectedMap === 'gaode') url = 'https://uri.amap.com/search?keyword=' + encodeURIComponent(name) + '&src=NaviTalk';
+  else if (selectedMap === 'google') url = 'https://www.google.com/maps/search/' + encodeURIComponent(name);
+  else url = 'https://map.naver.com/v5/search/' + encodeURIComponent(name);
   openExternal(url);
 }
 
