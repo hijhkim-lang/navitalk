@@ -7,67 +7,20 @@ let userSearchInput = '';
 let allScenarioData = [];
 let selectedMap = 'naver';
 
-// ===== LANGUAGE CONFIG =====
-// Note: All dialogues_xx.json files store translations in 'english' field
-// (because CSV→JSON conversion always maps last column to 'english')
-const langConfig = {
-  'en': { transKey: 'english', name: 'English',    searchPlaceholder: 'Enter a destination' },
-  'cn': { transKey: 'english', name: '中文',       searchPlaceholder: '输入目的地' },
-  'ja': { transKey: 'english', name: '日本語',     searchPlaceholder: '目的地を入力' },
-  'es': { transKey: 'english', name: 'Español',     searchPlaceholder: 'Ingrese un destino' },
-  'pt': { transKey: 'english', name: 'Português', searchPlaceholder: 'Digite um destino' },
-  'fr': { transKey: 'english', name: 'Français',     searchPlaceholder: 'Entrez une destination' },
-  'id': { transKey: 'english', name: 'Indonesia', searchPlaceholder: 'Masukkan tujuan' },
-  'ms': { transKey: 'english', name: 'Melayu',        searchPlaceholder: 'Masukkan destinasi' },
-  'th': { transKey: 'english', name: 'ภาษาไทย',         searchPlaceholder: 'ป้อนจุดหมายปลายทาง' },
-  'vi': { transKey: 'english', name: 'Tiếng Việt', searchPlaceholder: 'Nhập điểm đến' },
-  'de': { transKey: 'english', name: 'Deutsch',      searchPlaceholder: 'Reiseziel eingeben' }
-};
-
 // ===== DATA LOADING =====
-async function loadCommonData() {
+async function loadData() {
   try {
-    const [kRes, vRes] = await Promise.all([
+    const [dRes, kRes, vRes] = await Promise.all([
+      fetch('dialogues.json'),
       fetch('keywords.json'),
       fetch('vocabulary.json')
     ]);
+    appData.dialogues = await dRes.json();
     appData.keywords = await kRes.json();
     appData.vocabulary = await vRes.json();
-    console.log('Common data loaded: keywords + vocabulary');
+    console.log('Data loaded:', Object.keys(appData.dialogues).length, 'places');
   } catch(e) {
-    console.error('Common data loading failed:', e);
-  }
-}
-
-async function loadDialogues(lang) {
-  const fileName = lang === 'en' ? 'dialogues_en.json' : `dialogues_${lang}.json`;
-  try {
-    const res = await fetch(fileName);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    appData.dialogues = await res.json();
-    console.log(`Dialogues loaded [${lang}]:`, Object.keys(appData.dialogues).length, 'places');
-    return true;
-  } catch(e) {
-    console.error(`Failed to load ${fileName}:`, e);
-    // Fallback 1: if dialogues_en.json fails, try dialogues.json (old name)
-    if (lang === 'en') {
-      try {
-        console.log('Trying fallback: dialogues.json');
-        const fallback = await fetch('dialogues.json');
-        if (!fallback.ok) throw new Error(`HTTP ${fallback.status}`);
-        appData.dialogues = await fallback.json();
-        console.log('Fallback dialogues.json loaded');
-        return true;
-      } catch(e2) {
-        console.error('Fallback dialogues.json also failed:', e2);
-      }
-    }
-    // Fallback 2: try English if other language fails
-    if (lang !== 'en') {
-      console.log('Falling back to English dialogues...');
-      return await loadDialogues('en');
-    }
-    return false;
+    console.error('Data loading failed:', e);
   }
 }
 
@@ -105,44 +58,11 @@ function goHome() {
 }
 
 // ===== PAGE 1: Language Selection =====
-async function selectLanguage(lang) {
+function selectLanguage(lang) {
+  if (lang !== 'en') return;
   currentLang = lang;
-  
-  // Show loading overlay
-  const overlay = document.getElementById('loadingOverlay');
-  const cfg = langConfig[lang] || langConfig['en'];
-  overlay.querySelector('p').textContent = `Loading ${cfg.name}...`;
-  overlay.classList.add('show');
-  
-  // Highlight selected button
-  document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active-lang'));
-  const clickedBtn = document.querySelector(`.lang-btn[onclick="selectLanguage('${lang}')"]`);
-  if (clickedBtn) clickedBtn.classList.add('active-lang');
-  
-  // Load dialogues for selected language
-  const success = await loadDialogues(lang);
-  overlay.classList.remove('show');
-  
-  if (success) {
-    // Update UI text for selected language
-    updateUILanguage(lang);
-    showPage('page-map');
-    document.getElementById('searchInput').focus();
-  } else {
-    alert('Failed to load data. Please try again.');
-  }
-}
-
-function updateUILanguage(lang) {
-  const cfg = langConfig[lang] || langConfig['en'];
-  // Update search placeholder
-  document.getElementById('searchInput').placeholder = cfg.searchPlaceholder;
-  // Reset search state
-  document.getElementById('searchInput').value = '';
-  document.getElementById('suggestions').innerHTML = '';
-  currentPlace = null;
-  currentPlaceKey = null;
-  userSearchInput = '';
+  showPage('page-map');
+  document.getElementById('searchInput').focus();
 }
 
 // ===== PAGE 2: Search & Map =====
@@ -159,28 +79,19 @@ document.getElementById('searchInput').addEventListener('input', function() {
     return;
   }
 
-  // Search through keywords (English + Korean + current language)
+  // Search through keywords (all languages)
   const results = [];
   for (const [placeType, kw] of Object.entries(appData.keywords)) {
-    const enKeywords = kw.en || [];
-    const koKeywords = kw.ko || [];
-    const langKeywords = kw[currentLang] || [];
     let score = 0;
-    for (const k of koKeywords) {
-      if (k === query || k === this.value.trim()) { score = Math.max(score, 100); }
-      else if (this.value.trim().includes(k) || k.includes(this.value.trim())) { score = Math.max(score, 50 + Math.min(k.length, this.value.trim().length)); }
-      else if (k.includes(query) || query.includes(k)) { score = Math.max(score, 30 + Math.min(k.length, query.length)); }
-    }
-    for (const k of enKeywords) {
-      if (k.toLowerCase() === query) { score = Math.max(score, 100); }
-      else if (k.toLowerCase().includes(query) || query.includes(k.toLowerCase())) { score = Math.max(score, 30 + Math.min(k.length, query.length)); }
-    }
-    // Current language keywords (cn, ja, fr, etc.)
-    for (const k of langKeywords) {
-      const kLow = (typeof k === 'string') ? k.toLowerCase() : '';
-      if (kLow === query || k === this.value.trim()) { score = Math.max(score, 100); }
-      else if (this.value.trim().includes(k) || k.includes(this.value.trim())) { score = Math.max(score, 50 + Math.min(k.length, this.value.trim().length)); }
-      else if (kLow.includes(query) || query.includes(kLow)) { score = Math.max(score, 30 + Math.min(k.length, query.length)); }
+    // Search all language keywords
+    for (const [lang, keywords] of Object.entries(kw)) {
+      if (!Array.isArray(keywords)) continue;
+      for (const k of keywords) {
+        const kl = k.toLowerCase();
+        if (kl === query || k === this.value.trim()) { score = Math.max(score, 100); }
+        else if (this.value.trim().includes(k) || k.includes(this.value.trim())) { score = Math.max(score, 50 + Math.min(k.length, this.value.trim().length)); }
+        else if (kl.includes(query) || query.includes(kl)) { score = Math.max(score, 30 + Math.min(k.length, query.length)); }
+      }
     }
     if (score > 0 && appData.dialogues[placeType]) {
       const placeData = appData.dialogues[placeType];
@@ -234,7 +145,7 @@ function selectPlace(placeKey) {
   currentPlace = appData.dialogues[placeKey];
   document.getElementById('suggestions').classList.remove('show');
   inputEl.value = placeKey.replace(/_/g,' ');
-  // Don't auto-navigate — wait for user to click a map button
+  showScenarioPage();
 }
 
 function openMap(type) {
@@ -263,21 +174,17 @@ function openMap(type) {
   
   for (const [placeType, kw] of Object.entries(appData.keywords)) {
     if (!appData.dialogues[placeType]) continue;
-    const enKeywords = kw.en || [];
-    const koKeywords = kw.ko || [];
     
     let score = 0;
-    // Korean keyword matching with scoring
-    for (const k of koKeywords) {
-      if (k === dest) { score = Math.max(score, 100); }  // exact match
-      else if (dest.includes(k)) { score = Math.max(score, 50 + k.length); }  // input contains keyword
-      else if (k.includes(dest)) { score = Math.max(score, 30 + dest.length); }  // keyword contains input
-    }
-    // English keyword matching
-    for (const k of enKeywords) {
-      if (k.toLowerCase() === query) { score = Math.max(score, 100); }
-      else if (query.includes(k.toLowerCase())) { score = Math.max(score, 50 + k.length); }
-      else if (k.toLowerCase().includes(query)) { score = Math.max(score, 30 + query.length); }
+    // Search all language keywords
+    for (const [lang, keywords] of Object.entries(kw)) {
+      if (!Array.isArray(keywords)) continue;
+      for (const k of keywords) {
+        const kl = k.toLowerCase();
+        if (k === dest || kl === query) { score = Math.max(score, 100); }
+        else if (dest.includes(k) || query.includes(kl)) { score = Math.max(score, 50 + k.length); }
+        else if (k.includes(dest) || kl.includes(query)) { score = Math.max(score, 30 + Math.min(dest.length, query.length)); }
+      }
     }
     // Direct name match in dialogues
     const val = appData.dialogues[placeType];
@@ -454,13 +361,13 @@ function showScenarioPage() {
   
   // TTS voice guide link
   const guideText = {
-    en:'Improve Voice Quality', cn:'提高语音质量', ja:'音声品質を改善する',
-    es:'Mejorar calidad de voz', fr:'Améliorer la qualité vocale',
-    de:'Sprachqualität verbessern', pt:'Melhorar qualidade de voz',
+    en:'Improve Voice Quality', cn:'\u63D0\u9AD8\u8BED\u97F3\u8D28\u91CF', ja:'\u97F3\u58F0\u54C1\u8CEA\u3092\u6539\u5584\u3059\u308B',
+    es:'Mejorar calidad de voz', fr:'Am\u00E9liorer la qualit\u00E9 vocale',
+    de:'Sprachqualit\u00E4t verbessern', pt:'Melhorar qualidade de voz',
     id:'Tingkatkan Kualitas Suara', ms:'Tingkatkan Kualiti Suara',
-    th:'ปรับปรุงคุณภาพเสียง', vi:'Cải thiện chất lượng giọng nói'
+    th:'\u0E1B\u0E23\u0E31\u0E1A\u0E1B\u0E23\u0E38\u0E07\u0E04\u0E38\u0E13\u0E20\u0E32\u0E1E\u0E40\u0E2A\u0E35\u0E22\u0E07', vi:'C\u1EA3i thi\u1EC7n ch\u1EA5t l\u01B0\u1EE3ng gi\u1ECDng n\u00F3i'
   };
-  html += `<div style="text-align:center;margin:16px 0 8px;"><a href="tts-guide.html?lang=${currentLang}" target="_blank" style="font-size:12px;color:#888;text-decoration:none;">🔊 ${guideText[currentLang]||guideText.en}</a></div>`;
+  html += '<div style="text-align:center;margin:16px 0 8px;"><a href="tts-guide.html?lang=' + currentLang + '" target="_blank" style="font-size:12px;color:#888;text-decoration:none;">\uD83D\uDD0A ' + (guideText[currentLang]||guideText.en) + '</a></div>';
 
   document.getElementById('scenarioList').innerHTML = html;
   
@@ -507,7 +414,6 @@ function isVisitorSpeaker(spk) {
 }
 
 function renderDialogue(lines) {
-  const transKey = (langConfig[currentLang] || langConfig['en']).transKey;
   return lines.sort((a,b) => a.order - b.order).map((line, idx) => {
     const isA = isVisitorSpeaker(line.speaker);
     const cls = isA ? 'dial-a' : 'dial-b';
@@ -515,8 +421,6 @@ function renderDialogue(lines) {
     const label = isA ? 'A' : 'B';
     const labelKo = speakerKo(line.speaker);
     const ttsText = (line.tts || line.korean).replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-    // Get translation: try language-specific key, then english, then empty
-    const translation = line[transKey] || line.english || '';
     
     return `
       <div class="dial-line ${cls}">
@@ -524,7 +428,7 @@ function renderDialogue(lines) {
         <button class="play-btn" data-tts="${ttsText}" data-spk="${label}">▶️</button>
         <div class="dial-korean">${line.korean}</div>
         <div class="dial-roman">${line.roman || ''}</div>
-        <div class="dial-english">${translation}</div>
+        <div class="dial-english">${line.english || ''}</div>
       </div>
     `;
   }).join('');
@@ -595,18 +499,19 @@ function speak(text, speaker) {
     utterance.lang = 'ko-KR';
     
     if (speaker === 'B') {
-      // B: 젊고 상냥한 남자 - 낮은 톤
-      utterance.rate = 1.5;
-      utterance.pitch = 0.8;
+      utterance.rate = 1.25;
+      utterance.pitch = 0.85;
       if (voiceB) utterance.voice = voiceB;
     } else {
-      // A: 젊고 쾌활한 여자 - 밝은 톤
-      utterance.rate = 1.5;
-      utterance.pitch = 1.5;
+      utterance.rate = 1.25;
+      utterance.pitch = 1.65;
       if (voiceA) utterance.voice = voiceA;
     }
     
-    window.speechSynthesis.speak(utterance);
+    // Use requestAnimationFrame for faster response after cancel
+    requestAnimationFrame(() => {
+      window.speechSynthesis.speak(utterance);
+    });
   } else {
     alert('TTS is not supported in this browser.');
   }
@@ -630,10 +535,10 @@ function listenAll(idx) {
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'ko-KR';
     if (isA) {
-      utterance.rate = 1.5; utterance.pitch = 1.5;
+      utterance.rate = 1.25; utterance.pitch = 1.65;
       if (voiceA) utterance.voice = voiceA;
     } else {
-      utterance.rate = 1.5; utterance.pitch = 0.8;
+      utterance.rate = 1.25; utterance.pitch = 0.85;
       if (voiceB) utterance.voice = voiceB;
     }
     utterance.onend = () => { i++; playNext(); };
@@ -651,16 +556,12 @@ function showWords() {
   if (words.length === 0) {
     list.innerHTML = '<p style="color:#888; font-size:13px;">No vocabulary for this place.</p>';
   } else {
-    list.innerHTML = words.map(w => {
-      // vocabulary.json uses language codes directly: w.en, w.cn, w.ja, etc.
-      const translation = w[currentLang] || w.en || '';
-      return `
-        <div class="word-item">
-          <span class="word-kr">${w.korean}</span>
-          <span class="word-en">${translation}</span>
-        </div>
-      `;
-    }).join('');
+    list.innerHTML = words.map(w => `
+      <div class="word-item">
+        <span class="word-kr">${w.korean}</span>
+        <span class="word-en">${w.english}</span>
+      </div>
+    `).join('');
   }
   
   document.getElementById('wordsModal').classList.add('show');
@@ -680,8 +581,8 @@ function playWordsAudio() {
     if (i >= words.length) return;
     const utterance = new SpeechSynthesisUtterance(words[i].korean);
     utterance.lang = 'ko-KR';
-    utterance.rate = 1.5;
-    utterance.pitch = 1.5;
+    utterance.rate = 1.25;
+    utterance.pitch = 1.65;
     if (voiceA) utterance.voice = voiceA;
     utterance.onend = () => { i++; setTimeout(playNext, 400); };
     window.speechSynthesis.speak(utterance);
@@ -708,10 +609,10 @@ function playAllScenarios() {
     const u = new SpeechSynthesisUtterance(item.text);
     u.lang = 'ko-KR';
     if (item.isA) {
-      u.rate = 1.5; u.pitch = 1.5;
+      u.rate = 1.25; u.pitch = 1.65;
       if (voiceA) u.voice = voiceA;
     } else {
-      u.rate = 1.5; u.pitch = 0.8;
+      u.rate = 1.25; u.pitch = 0.85;
       if (voiceB) u.voice = voiceB;
     }
     u.onend = () => { i++; setTimeout(playNext, 500); };
@@ -748,7 +649,7 @@ function requestScenario() {
 }
 
 // ===== INIT =====
-loadCommonData();
+loadData();
 
 // Event delegation for play buttons
 document.addEventListener('click', function(e) {
