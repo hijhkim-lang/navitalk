@@ -452,6 +452,16 @@ function showScenarioPage() {
     });
   }
   
+  // TTS voice guide link
+  const guideText = {
+    en:'Improve Voice Quality', cn:'提高语音质量', ja:'音声品質を改善する',
+    es:'Mejorar calidad de voz', fr:'Améliorer la qualité vocale',
+    de:'Sprachqualität verbessern', pt:'Melhorar qualidade de voz',
+    id:'Tingkatkan Kualitas Suara', ms:'Tingkatkan Kualiti Suara',
+    th:'ปรับปรุงคุณภาพเสียง', vi:'Cải thiện chất lượng giọng nói'
+  };
+  html += `<div style="text-align:center;margin:16px 0 8px;"><a href="tts-guide.html?lang=${currentLang}" target="_blank" style="font-size:12px;color:#888;text-decoration:none;">🔊 ${guideText[currentLang]||guideText.en}</a></div>`;
+
   document.getElementById('scenarioList').innerHTML = html;
   
   showPage('page-scenario');

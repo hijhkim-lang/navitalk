@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TTS Voice Guide</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f6fa; min-height: 100vh; }
+
+.header {
+  background: linear-gradient(135deg, #2c3e50, #3498db);
+  color: #fff; padding: 20px 16px 16px; text-align: center;
+  position: sticky; top: 0; z-index: 10;
+}
+.header h1 { font-size: 18px; margin-bottom: 4px; }
+.header p { font-size: 12px; opacity: 0.8; }
+.back-btn {
+  position: absolute; left: 12px; top: 20px;
+  background: rgba(255,255,255,0.2); border: none; color: #fff;
+  width: 32px; height: 32px; border-radius: 50%; font-size: 18px; cursor: pointer;
+}
+
+.container { padding: 16px; max-width: 500px; margin: 0 auto; }
+
+/* 왜 필요한지 안내 */
+.why-box {
+  background: #fff; border-radius: 12px; padding: 16px; margin-bottom: 16px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  border-left: 4px solid #3498db;
+}
+.why-box h2 { font-size: 15px; color: #2c3e50; margin-bottom: 8px; }
+.why-box p { font-size: 13px; color: #666; line-height: 1.6; }
+
+/* 기기 선택 탭 */
+.device-tabs {
+  display: flex; gap: 8px; margin-bottom: 16px;
+}
+.device-tab {
+  flex: 1; padding: 12px 8px; border: 2px solid #ddd; border-radius: 10px;
+  background: #fff; text-align: center; cursor: pointer; transition: all 0.2s;
+}
+.device-tab.active { border-color: #3498db; background: #eef6ff; }
+.device-tab .icon { font-size: 24px; display: block; margin-bottom: 4px; }
+.device-tab .name { font-size: 12px; font-weight: 600; color: #333; }
+
+/* 단계 가이드 */
+.guide { display: none; }
+.guide.active { display: block; }
+
+.step {
+  background: #fff; border-radius: 12px; padding: 16px; margin-bottom: 12px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+.step-num {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px; border-radius: 50%;
+  background: #3498db; color: #fff; font-size: 14px; font-weight: 700;
+  margin-right: 8px; vertical-align: middle;
+}
+.step-title { font-size: 15px; font-weight: 700; color: #2c3e50; display: inline; vertical-align: middle; }
+.step-body { margin-top: 10px; }
+
+/* 경로 시뮬레이션 */
+.path-flow {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 4px;
+  margin: 8px 0;
+}
+.path-item {
+  background: #f0f0f0; padding: 6px 12px; border-radius: 8px;
+  font-size: 13px; font-weight: 500; color: #333;
+  display: flex; align-items: center; gap: 4px;
+}
+.path-item .p-icon { font-size: 16px; }
+.path-arrow { color: #bbb; font-size: 16px; }
+
+/* 메뉴 목업 */
+.menu-mock {
+  background: #f8f9fa; border: 1px solid #e0e0e0; border-radius: 10px;
+  overflow: hidden; margin: 8px 0;
+}
+.menu-item {
+  padding: 12px 14px; border-bottom: 1px solid #eee;
+  display: flex; align-items: center; gap: 10px;
+  font-size: 14px; color: #333;
+}
+.menu-item:last-child { border-bottom: none; }
+.menu-item.highlight { background: #eef6ff; font-weight: 600; color: #2980b9; }
+.menu-item .m-icon { font-size: 18px; }
+
+.step-note {
+  background: #fff8e1; border-radius: 8px; padding: 10px 12px;
+  margin-top: 8px; font-size: 12px; color: #856404; line-height: 1.5;
+}
+.step-note::before { content: "💡 "; }
+
+.step-desc { font-size: 13px; color: #555; line-height: 1.6; margin-top: 6px; }
+
+/* 완료 박스 */
+.done-box {
+  background: linear-gradient(135deg, #27ae60, #2ecc71);
+  border-radius: 12px; padding: 20px; text-align: center; color: #fff;
+  margin-top: 16px;
+}
+.done-box h3 { font-size: 16px; margin-bottom: 6px; }
+.done-box p { font-size: 13px; opacity: 0.9; }
+.done-box button {
+  margin-top: 12px; padding: 10px 24px; border: none; border-radius: 8px;
+  background: #fff; color: #27ae60; font-size: 14px; font-weight: 700; cursor: pointer;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <button class="back-btn" onclick="goBack()">←</button>
+  <h1 id="pageTitle">🔊 음성 품질 개선하기</h1>
+  <p id="pageSubtitle">한국어 TTS 음성을 추가 설치하면 더 자연스러운 발음을 들을 수 있어요</p>
+</div>
+
+<div class="container">
+
+  <div class="why-box">
+    <h2 id="whyTitle">왜 음성 설치가 필요한가요?</h2>
+    <p id="whyDesc">대부분의 스마트폰에는 한국어 음성이 1개만 기본 설치되어 있어요. 추가 음성을 설치하면 남녀 목소리가 구분되고, 발음도 더 자연스러워집니다.</p>
+  </div>
+
+  <!-- 기기 선택 -->
+  <div class="device-tabs">
+    <div class="device-tab active" onclick="showGuide('samsung')">
+      <span class="icon">📱</span>
+      <span class="name">Samsung</span>
+    </div>
+    <div class="device-tab" onclick="showGuide('android')">
+      <span class="icon">🤖</span>
+      <span class="name">Android</span>
+    </div>
+    <div class="device-tab" onclick="showGuide('iphone')">
+      <span class="icon">🍎</span>
+      <span class="name">iPhone</span>
+    </div>
+  </div>
+
+  <!-- Samsung 가이드 -->
+  <div class="guide active" id="guide-samsung">
+    <div class="step">
+      <span class="step-num">1</span>
+      <span class="step-title" data-i18n="s_step1_title">설정 앱을 엽니다</span>
+      <div class="step-body">
+        <div class="path-flow">
+          <span class="path-item"><span class="p-icon">⚙️</span> <span data-i18n="s_settings">설정</span></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <span class="step-num">2</span>
+      <span class="step-title" data-i18n="s_step2_title">일반관리로 이동</span>
+      <div class="step-body">
+        <div class="menu-mock">
+          <div class="menu-item"><span class="m-icon">🔗</span> <span data-i18n="s_connections">연결</span></div>
+          <div class="menu-item"><span class="m-icon">🔊</span> <span data-i18n="s_sounds">소리 및 진동</span></div>
+          <div class="menu-item highlight"><span class="m-icon">⚙️</span> <span data-i18n="s_general">일반관리</span></div>
+          <div class="menu-item"><span class="m-icon">♿</span> <span data-i18n="s_accessibility">접근성</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <span class="step-num">3</span>
+      <span class="step-title" data-i18n="s_step3_title">언어 및 입력을 선택</span>
+      <div class="step-body">
+        <div class="menu-mock">
+          <div class="menu-item highlight"><span class="m-icon">🌐</span> <span data-i18n="s_language">언어 및 입력</span></div>
+          <div class="menu-item"><span class="m-icon">📅</span> <span data-i18n="s_date">날짜 및 시간</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <span class="step-num">4</span>
+      <span class="step-title" data-i18n="s_step4_title">음성 합성(TTS)을 선택</span>
+      <div class="step-body">
+        <div class="menu-mock">
+          <div class="menu-item"><span class="m-icon">⌨️</span> <span data-i18n="s_keyboard">키보드</span></div>
+          <div class="menu-item highlight"><span class="m-icon">🔊</span> <span data-i18n="s_tts">음성 합성(TTS)</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <span class="step-num">5</span>
+      <span class="step-title" data-i18n="s_step5_title">Samsung TTS 옆 ⚙️ 클릭 → 음성 다운로드</span>
+      <div class="step-body">
+        <div class="step-desc" data-i18n="s_step5_desc">Samsung TTS 엔진을 선택한 후 톱니바퀴(⚙️)를 누르세요. "음성 설치" 또는 "음성 다운로드"에서 한국어(Korean)를 찾아 추가 음성을 다운로드합니다.</div>
+        <div class="step-note" data-i18n="s_step5_note">여러 한국어 음성이 있을 수 있어요. 모두 다운로드하면 남녀 목소리가 다양해집니다.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <span class="step-num">6</span>
+      <span class="step-title" data-i18n="s_step6_title">NaviTalk 새로고침</span>
+      <div class="step-body">
+        <div class="step-desc" data-i18n="s_step6_desc">설치가 끝나면 NaviTalk 앱으로 돌아와서 페이지를 새로고침하세요. 새 음성이 자동으로 적용됩니다.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 일반 Android 가이드 -->
+  <div class="guide" id="guide-android">
+    <div class="step">
+      <span class="step-num">1</span>
+      <span class="step-title" data-i18n="a_step1_title">설정 앱을 엽니다</span>
+      <div class="step-body">
+        <div class="path-flow">
+          <span class="path-item"><span class="p-icon">⚙️</span> <span data-i18n="a_settings">설정</span></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <span class="step-num">2</span>
+      <span class="step-title" data-i18n="a_step2_title">접근성 → 텍스트 음성 변환</span>
+      <div class="step-body">
+        <div class="menu-mock">
+          <div class="menu-item highlight"><span class="m-icon">♿</span> <span data-i18n="a_access">접근성</span></div>
+        </div>
+        <div class="path-flow" style="margin-top:6px">
+          <span class="path-item"><span class="p-icon">♿</span> <span data-i18n="a_access">접근성</span></span>
+          <span class="path-arrow">→</span>
+          <span class="path-item"><span class="p-icon">🔊</span> <span data-i18n="a_tts">텍스트 음성 변환</span></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <span class="step-num">3</span>
+      <span class="step-title" data-i18n="a_step3_title">Google TTS 엔진 ⚙️ 클릭</span>
+      <div class="step-body">
+        <div class="step-desc" data-i18n="a_step3_desc">Google 텍스트 음성 변환 엔진 옆의 톱니바퀴(⚙️)를 누릅니다.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <span class="step-num">4</span>
+      <span class="step-title" data-i18n="a_step4_title">음성 데이터 설치 → 한국어 선택</span>
+      <div class="step-body">
+        <div class="step-desc" data-i18n="a_step4_desc">"음성 데이터 설치"를 누르고, 한국어(Korean/한국어)를 찾아 추가 음성을 다운로드합니다.</div>
+        <div class="step-note" data-i18n="a_step4_note">Google TTS가 없다면 Play Store에서 "Google 텍스트 음성 변환"을 검색하여 설치하세요.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <span class="step-num">5</span>
+      <span class="step-title" data-i18n="a_step5_title">NaviTalk 새로고침</span>
+      <div class="step-body">
+        <div class="step-desc" data-i18n="a_step5_desc">설치가 끝나면 NaviTalk 앱으로 돌아와서 페이지를 새로고침하세요.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- iPhone 가이드 -->
+  <div class="guide" id="guide-iphone">
+    <div class="step">
+      <span class="step-num">1</span>
+      <span class="step-title" data-i18n="i_step1_title">설정 앱을 엽니다</span>
+      <div class="step-body">
+        <div class="path-flow">
+          <span class="path-item"><span class="p-icon">⚙️</span> <span data-i18n="i_settings">설정</span></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <span class="step-num">2</span>
+      <span class="step-title" data-i18n="i_step2_title">손쉬운 사용 → 음성 콘텐츠</span>
+      <div class="step-body">
+        <div class="path-flow">
+          <span class="path-item"><span class="p-icon">♿</span> <span data-i18n="i_access">손쉬운 사용</span></span>
+          <span class="path-arrow">→</span>
+          <span class="path-item"><span class="p-icon">🔊</span> <span data-i18n="i_spoken">음성 콘텐츠</span></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <span class="step-num">3</span>
+      <span class="step-title" data-i18n="i_step3_title">음성 → 한국어 선택</span>
+      <div class="step-body">
+        <div class="menu-mock">
+          <div class="menu-item highlight"><span class="m-icon">🗣</span> <span data-i18n="i_voices">음성</span></div>
+        </div>
+        <div class="step-desc" data-i18n="i_step3_desc">"음성"을 누른 후, 한국어(Korean)를 선택합니다. 여러 음성이 표시됩니다.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <span class="step-num">4</span>
+      <span class="step-title" data-i18n="i_step4_title">원하는 음성 다운로드</span>
+      <div class="step-body">
+        <div class="step-desc" data-i18n="i_step4_desc">목록에서 음성 이름을 탭하면 다운로드가 시작됩니다. "고품질"도 있으면 함께 다운로드하세요.</div>
+        <div class="step-note" data-i18n="i_step4_note">Yuna, Sora 등 여러 음성을 다운로드하면 남녀 목소리가 다양해집니다.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <span class="step-num">5</span>
+      <span class="step-title" data-i18n="i_step5_title">NaviTalk 새로고침</span>
+      <div class="step-body">
+        <div class="step-desc" data-i18n="i_step5_desc">설치가 끝나면 NaviTalk 앱(Safari)으로 돌아와서 페이지를 새로고침하세요.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 완료 -->
+  <div class="done-box">
+    <h3 id="doneTitle">✅ 설치 완료 후</h3>
+    <p id="doneDesc">NaviTalk에서 더 자연스러운 남녀 목소리로 대화를 들을 수 있습니다!</p>
+    <button onclick="goBack()" id="doneBtn">NaviTalk으로 돌아가기</button>
+  </div>
+
+</div>
+
+<script>
+// 다국어 번역
+const i18n = {
+  en: {
+    pageTitle: "🔊 Improve Voice Quality",
+    pageSubtitle: "Install additional Korean TTS voices for more natural pronunciation",
+    whyTitle: "Why install voices?",
+    whyDesc: "Most phones only have 1 Korean voice installed. Adding more voices enables male/female distinction and more natural pronunciation.",
+    doneTitle: "✅ After Installation",
+    doneDesc: "Enjoy more natural male & female voices in NaviTalk conversations!",
+    doneBtn: "Back to NaviTalk",
+    // Samsung
+    s_step1_title: "Open Settings", s_settings: "Settings",
+    s_step2_title: "Go to General Management",
+    s_connections: "Connections", s_sounds: "Sounds and vibration",
+    s_general: "General management", s_accessibility: "Accessibility",
+    s_step3_title: "Select Language and input",
+    s_language: "Language and input", s_date: "Date and time",
+    s_step4_title: "Select Text-to-speech (TTS)",
+    s_keyboard: "Keyboard", s_tts: "Text-to-speech",
+    s_step5_title: "Tap ⚙️ next to Samsung TTS → Download voices",
+    s_step5_desc: "Select Samsung TTS engine, tap the gear icon (⚙️). Find 'Install voice data' or 'Download voices' and download Korean voices.",
+    s_step5_note: "Download all available Korean voices for both male and female options.",
+    s_step6_title: "Refresh NaviTalk",
+    s_step6_desc: "Return to NaviTalk and refresh the page. New voices will be applied automatically.",
+    // Android
+    a_step1_title: "Open Settings", a_settings: "Settings",
+    a_step2_title: "Accessibility → Text-to-speech",
+    a_access: "Accessibility", a_tts: "Text-to-speech output",
+    a_step3_title: "Tap ⚙️ next to Google TTS engine",
+    a_step3_desc: "Tap the gear icon (⚙️) next to Google Text-to-Speech engine.",
+    a_step4_title: "Install voice data → Select Korean",
+    a_step4_desc: "Tap 'Install voice data' and find Korean to download additional voices.",
+    a_step4_note: "If Google TTS is not available, search 'Google Text-to-Speech' in Play Store.",
+    a_step5_title: "Refresh NaviTalk",
+    a_step5_desc: "Return to NaviTalk and refresh the page.",
+    // iPhone
+    i_step1_title: "Open Settings", i_settings: "Settings",
+    i_step2_title: "Accessibility → Spoken Content",
+    i_access: "Accessibility", i_spoken: "Spoken Content",
+    i_step3_title: "Voices → Select Korean",
+    i_voices: "Voices",
+    i_step3_desc: "Tap 'Voices', then select Korean. Multiple voices will appear.",
+    i_step4_title: "Download desired voices",
+    i_step4_desc: "Tap a voice name to download. Also download 'Enhanced' quality if available.",
+    i_step4_note: "Download Yuna, Sora and other voices for both male and female options.",
+    i_step5_title: "Refresh NaviTalk",
+    i_step5_desc: "Return to NaviTalk (Safari) and refresh the page.",
+  },
+  cn: {
+    pageTitle: "🔊 提高语音质量",
+    pageSubtitle: "安装韩语TTS语音，获得更自然的发音",
+    whyTitle: "为什么需要安装语音？",
+    whyDesc: "大多数手机只预装了1个韩语语音。安装更多语音后，可以区分男女声音，发音也更自然。",
+    doneTitle: "✅ 安装完成后",
+    doneDesc: "在NaviTalk中享受更自然的男女对话语音！",
+    doneBtn: "返回NaviTalk",
+    s_step1_title: "打开设置", s_settings: "设置",
+    s_step2_title: "进入常规管理",
+    s_connections: "连接", s_sounds: "声音和振动",
+    s_general: "常规管理", s_accessibility: "辅助功能",
+    s_step3_title: "选择语言和输入",
+    s_language: "语言和输入", s_date: "日期和时间",
+    s_step4_title: "选择文字转语音(TTS)",
+    s_keyboard: "键盘", s_tts: "文字转语音(TTS)",
+    s_step5_title: "点击Samsung TTS旁的⚙️ → 下载语音",
+    s_step5_desc: "选择Samsung TTS引擎，点击齿轮图标(⚙️)。找到"安装语音数据"或"下载语音"，下载韩语语音。",
+    s_step5_note: "建议下载所有可用的韩语语音，这样男女声音都有。",
+    s_step6_title: "刷新NaviTalk",
+    s_step6_desc: "返回NaviTalk应用，刷新页面即可自动使用新语音。",
+    a_step1_title: "打开设置", a_settings: "设置",
+    a_step2_title: "辅助功能 → 文字转语音",
+    a_access: "辅助功能", a_tts: "文字转语音输出",
+    a_step3_title: "点击Google TTS引擎旁的⚙️",
+    a_step3_desc: "点击Google文字转语音引擎旁的齿轮图标(⚙️)。",
+    a_step4_title: "安装语音数据 → 选择韩语",
+    a_step4_desc: "点击"安装语音数据"，找到韩语(Korean/한국어)下载。",
+    a_step4_note: "如果没有Google TTS，请在应用商店搜索"Google文字转语音"安装。",
+    a_step5_title: "刷新NaviTalk",
+    a_step5_desc: "返回NaviTalk应用，刷新页面即可。",
+    i_step1_title: "打开设置", i_settings: "设置",
+    i_step2_title: "辅助功能 → 朗读内容",
+    i_access: "辅助功能", i_spoken: "朗读内容",
+    i_step3_title: "声音 → 选择韩语",
+    i_voices: "声音",
+    i_step3_desc: "点击"声音"，然后选择韩语(Korean)。会显示多个语音。",
+    i_step4_title: "下载所需语音",
+    i_step4_desc: "点击语音名称即可下载。如有"高品质"选项，也一起下载。",
+    i_step4_note: "下载Yuna、Sora等多个语音，可获得男女不同声音。",
+    i_step5_title: "刷新NaviTalk",
+    i_step5_desc: "返回NaviTalk(Safari)，刷新页面即可。",
+  },
+  ja: {
+    pageTitle: "🔊 音声品質を改善する",
+    pageSubtitle: "韓国語TTS音声を追加インストールして、より自然な発音を",
+    whyTitle: "なぜ音声のインストールが必要？",
+    whyDesc: "ほとんどのスマートフォンには韓国語音声が1つしかインストールされていません。追加音声をインストールすると、男女の声が区別でき、発音もより自然になります。",
+    doneTitle: "✅ インストール完了後",
+    doneDesc: "NaviTalkでより自然な男女の声で会話を楽しめます！",
+    doneBtn: "NaviTalkに戻る",
+    s_step1_title: "設定を開く", s_settings: "設定",
+    s_step2_title: "一般管理へ移動",
+    s_connections: "接続", s_sounds: "サウンドとバイブ",
+    s_general: "一般管理", s_accessibility: "ユーザー補助",
+    s_step3_title: "言語と入力を選択",
+    s_language: "言語と入力", s_date: "日付と時刻",
+    s_step4_title: "テキスト読み上げ(TTS)を選択",
+    s_keyboard: "キーボード", s_tts: "テキスト読み上げ(TTS)",
+    s_step5_title: "Samsung TTS横の⚙️をタップ → 音声ダウンロード",
+    s_step5_desc: "Samsung TTSエンジンを選択し、歯車アイコン(⚙️)をタップ。「音声データのインストール」から韓国語音声をダウンロードします。",
+    s_step5_note: "利用可能な韓国語音声をすべてダウンロードすると、男女の声が豊富になります。",
+    s_step6_title: "NaviTalkを更新",
+    s_step6_desc: "NaviTalkアプリに戻り、ページを更新してください。新しい音声が自動的に適用されます。",
+    a_step1_title: "設定を開く", a_settings: "設定",
+    a_step2_title: "ユーザー補助 → テキスト読み上げ",
+    a_access: "ユーザー補助", a_tts: "テキスト読み上げ出力",
+    a_step3_title: "Google TTSエンジン横の⚙️をタップ",
+    a_step3_desc: "Googleテキスト読み上げエンジン横の歯車アイコン(⚙️)をタップします。",
+    a_step4_title: "音声データのインストール → 韓国語を選択",
+    a_step4_desc: "「音声データのインストール」をタップし、韓国語(Korean)を見つけてダウンロードします。",
+    a_step4_note: "Google TTSがない場合、Playストアで「Googleテキスト読み上げ」を検索してインストールしてください。",
+    a_step5_title: "NaviTalkを更新",
+    a_step5_desc: "NaviTalkアプリに戻り、ページを更新してください。",
+    i_step1_title: "設定を開く", i_settings: "設定",
+    i_step2_title: "アクセシビリティ → 読み上げコンテンツ",
+    i_access: "アクセシビリティ", i_spoken: "読み上げコンテンツ",
+    i_step3_title: "声 → 韓国語を選択",
+    i_voices: "声",
+    i_step3_desc: "「声」をタップし、韓国語(Korean)を選択します。複数の音声が表示されます。",
+    i_step4_title: "音声をダウンロード",
+    i_step4_desc: "音声名をタップするとダウンロードが始まります。「高品質」があれば一緒にダウンロードしてください。",
+    i_step4_note: "Yuna、Soraなど複数の音声をダウンロードすると、男女の声が豊富になります。",
+    i_step5_title: "NaviTalkを更新",
+    i_step5_desc: "NaviTalk(Safari)に戻り、ページを更新してください。",
+  }
+};
+
+// URL에서 언어 파라미터 가져오기
+function getLang() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get('lang') || 'en';
+}
+
+function applyLang() {
+  const lang = getLang();
+  const t = i18n[lang] || i18n['en'];
+  
+  // 고정 요소
+  document.getElementById('pageTitle').textContent = t.pageTitle;
+  document.getElementById('pageSubtitle').textContent = t.pageSubtitle;
+  document.getElementById('whyTitle').textContent = t.whyTitle;
+  document.getElementById('whyDesc').textContent = t.whyDesc;
+  document.getElementById('doneTitle').textContent = t.doneTitle;
+  document.getElementById('doneDesc').textContent = t.doneDesc;
+  document.getElementById('doneBtn').textContent = t.doneBtn;
+  
+  // data-i18n 속성으로 번역
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (t[key]) el.textContent = t[key];
+  });
+}
+
+function showGuide(device) {
+  document.querySelectorAll('.device-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.guide').forEach(g => g.classList.remove('active'));
+  
+  event.currentTarget.classList.add('active');
+  document.getElementById('guide-' + device).classList.add('active');
+}
+
+function goBack() {
+  if (window.history.length > 1) {
+    window.history.back();
+  } else {
+    window.location.href = './';
+  }
+}
+
+applyLang();
+</script>
+</body>
+</html>
