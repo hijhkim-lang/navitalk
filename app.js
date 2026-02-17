@@ -6,6 +6,17 @@ let currentPlaceKey = null;
 let userSearchInput = '';
 let allScenarioData = [];
 let selectedMap = 'naver';
+let hasKoreanVoice = false;
+
+// ===== TTS VOICE CHECK =====
+function checkKoreanVoice() {
+  var voices = speechSynthesis.getVoices();
+  hasKoreanVoice = voices.some(function(v) { return v.lang.indexOf('ko') !== -1; });
+}
+if (typeof speechSynthesis !== 'undefined') {
+  checkKoreanVoice();
+  speechSynthesis.onvoiceschanged = checkKoreanVoice;
+}
 
 // ===== DATA LOADING =====
 async function loadData() {
@@ -58,10 +69,65 @@ function goHome() {
 }
 
 // ===== PAGE 1: Language Selection =====
+const ttsPromptText = {
+  en: { msg: "Korean voice is not installed on your device.\nTo hear Korean dialogues, please install a Korean voice pack.", install: "How to Install", skip: "Continue without voice" },
+  ko: { msg: "한국어 음성이 설치되어 있지 않습니다.\n대화문을 듣기 위해 한국어 음성팩을 설치해주세요.", install: "설치 방법 보기", skip: "음성 없이 계속하기" },
+  cn: { msg: "您的设备未安装韩语语音。\n请安装韩语语音包以收听对话。", install: "查看安装方法", skip: "跳过，继续使用" },
+  ja: { msg: "韓国語の音声がインストールされていません。\n会話を聞くには韓国語音声をインストールしてください。", install: "インストール方法", skip: "音声なしで続ける" },
+  es: { msg: "No hay voz coreana instalada.\nInstale el paquete de voz coreana para escuchar los diálogos.", install: "Cómo instalar", skip: "Continuar sin voz" },
+  fr: { msg: "Aucune voix coréenne installée.\nInstallez le pack vocal coréen pour écouter les dialogues.", install: "Comment installer", skip: "Continuer sans voix" },
+  pt: { msg: "Voz coreana não instalada.\nInstale o pacote de voz coreana para ouvir os diálogos.", install: "Como instalar", skip: "Continuar sem voz" },
+  de: { msg: "Keine koreanische Stimme installiert.\nInstallieren Sie das koreanische Sprachpaket.", install: "Installationsanleitung", skip: "Ohne Stimme fortfahren" },
+  id: { msg: "Suara Korea belum terpasang.\nPasang paket suara Korea untuk mendengar dialog.", install: "Cara memasang", skip: "Lanjutkan tanpa suara" },
+  ms: { msg: "Suara Korea belum dipasang.\nSila pasang pakej suara Korea untuk mendengar dialog.", install: "Cara memasang", skip: "Teruskan tanpa suara" },
+  th: { msg: "ยังไม่ได้ติดตั้งเสียงภาษาเกาหลี\nกรุณาติดตั้งเพื่อฟังบทสนทนา", install: "วิธีติดตั้ง", skip: "ดำเนินต่อโดยไม่มีเสียง" },
+  vi: { msg: "Chưa cài giọng tiếng Hàn.\nHãy cài đặt để nghe hội thoại.", install: "Cách cài đặt", skip: "Tiếp tục không có giọng nói" }
+};
+
 function selectLanguage(lang) {
   currentLang = lang;
-  showPage('page-map');
-  document.getElementById('searchInput').focus();
+  
+  // 한국어 음성 체크 (재확인)
+  checkKoreanVoice();
+  
+  // 음성 있으면 바로 진행
+  if (hasKoreanVoice) {
+    showPage('page-map');
+    document.getElementById('searchInput').focus();
+    return;
+  }
+  
+  // 음성 없음 → 매번 안내 팝업 표시
+  showTTSPrompt(lang);
+}
+
+function showTTSPrompt(lang) {
+  // 기존 팝업 있으면 제거
+  var old = document.getElementById('ttsPrompt');
+  if (old) old.remove();
+  
+  var t = ttsPromptText[lang] || ttsPromptText.en;
+  
+  var overlay = document.createElement('div');
+  overlay.id = 'ttsPrompt';
+  overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;';
+  
+  var box = document.createElement('div');
+  box.style.cssText = 'background:#fff;border-radius:16px;padding:24px;max-width:340px;width:100%;text-align:center;box-shadow:0 8px 30px rgba(0,0,0,0.2);';
+  
+  box.innerHTML = '<div style="font-size:48px;margin-bottom:12px;">🔊</div>' +
+    '<div style="font-size:14px;color:#333;line-height:1.7;white-space:pre-line;margin-bottom:20px;">' + t.msg + '</div>' +
+    '<a href="tts-guide.html?lang=' + lang + '" target="_blank" style="display:block;padding:12px;background:#3498db;color:#fff;border-radius:10px;text-decoration:none;font-size:15px;font-weight:700;margin-bottom:10px;">' + t.install + '</a>' +
+    '<button id="ttsSkipBtn" style="display:block;width:100%;padding:10px;background:none;border:1px solid #ccc;border-radius:10px;color:#888;font-size:13px;cursor:pointer;">' + t.skip + '</button>';
+  
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+  
+  document.getElementById('ttsSkipBtn').addEventListener('click', function() {
+    overlay.remove();
+    showPage('page-map');
+    document.getElementById('searchInput').focus();
+  });
 }
 
 // ===== PAGE 2: Search & Map =====
