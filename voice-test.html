@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Voice Test</title>
+<style>
+body{font-family:-apple-system,sans-serif;padding:20px;background:#f5f5f5}
+h2{margin-bottom:10px}
+#result{background:#fff;padding:16px;border-radius:12px;margin-top:12px;font-size:14px;line-height:2;white-space:pre-wrap}
+button{padding:12px 24px;font-size:16px;border:none;border-radius:8px;background:#3498db;color:#fff;margin:6px;cursor:pointer}
+.ko{color:#e74c3c;font-weight:bold}
+</style>
+</head>
+<body>
+<h2>Korean TTS Voices</h2>
+<button onclick="check()">Check Voices</button>
+<button onclick="testAll()">Play All</button>
+<div id="result">Tap "Check Voices" to see available Korean voices.</div>
+<script>
+function check(){
+  var voices = speechSynthesis.getVoices();
+  var ko = voices.filter(function(v){return v.lang.indexOf('ko')!==-1;});
+  var all = voices.length;
+  var html = 'Total voices: ' + all + '\nKorean voices: ' + ko.length + '\n\n';
+  if(ko.length===0){
+    html += '(No Korean voices found. Try tapping again after 1 second.)';
+  }
+  for(var i=0;i<ko.length;i++){
+    var v=ko[i];
+    html += (i+1) + '. ' + v.name + '\n   lang=' + v.lang + '  local=' + v.localService + '\n\n';
+  }
+  html += '--- All voices ---\n';
+  for(var j=0;j<voices.length;j++){
+    html += voices[j].lang + ' : ' + voices[j].name + '\n';
+  }
+  document.getElementById('result').innerHTML = html;
+}
+function testAll(){
+  var voices = speechSynthesis.getVoices();
+  var ko = voices.filter(function(v){return v.lang.indexOf('ko')!==-1;});
+  if(ko.length===0){check();return;}
+  var text = '안녕하세요, 한국어 음성 테스트입니다.';
+  var i=0;
+  function playNext(){
+    if(i>=ko.length)return;
+    var u=new SpeechSynthesisUtterance(text);
+    u.voice=ko[i];
+    u.rate=1.0;
+    u.onend=function(){i++;playNext();};
+    document.getElementById('result').innerHTML='Playing: ' + ko[i].name;
+    speechSynthesis.speak(u);
+  }
+  speechSynthesis.cancel();
+  playNext();
+}
+setTimeout(check, 500);
+</script>
+</body>
+</html>
