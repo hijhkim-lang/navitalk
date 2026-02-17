@@ -8,8 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;700&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <style>
-  .tagline-cn, .sub-tagline-cn { font-family: 'ZCOOL KuaiLe', 'PingFang SC', 'Microsoft YaHei', sans-serif !important; }
-  #page-map { background-image: url('bg-main.jpg') !important; background-size: cover; background-position: center; }
+.tagline-cn,.sub-tagline-cn{font-family:'ZCOOL KuaiLe','PingFang SC','Microsoft YaHei',sans-serif !important}
 </style>
 </head>
 <body>
@@ -56,7 +55,7 @@
     </div>
     <div class="suggestions" id="suggestions"></div>
 
-    <p class="map-section-label">Select a map</p>
+    <p class="map-section-label" id="mapLabel">Select a map</p>
     <div class="map-btn-list" id="mapBtnList">
       <button class="map-btn" onclick="openMap('naver')">Naver Map</button>
       <button class="map-btn" onclick="openMap('kakao')">Kakao Map</button>

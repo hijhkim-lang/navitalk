@@ -159,7 +159,7 @@ const ttsPromptText = {
   vi: { msg: "Chưa cài giọng tiếng Hàn.\nHãy cài đặt để nghe hội thoại.", install: "Cách cài đặt", skip: "Tiếp tục không có giọng nói" }
 };
 
-// ===== MAP PAGE MULTILINGUAL TEXT =====
+// ===== MAP PAGE MULTILINGUAL TEXT & MAP CONFIG =====
 const mapPageTexts = {
   en: { tagline: "Speak Korean at your next destination", sub: "Learn on the go while you travel", placeholder: "Enter a destination", mapLabel: "Select a map" },
   cn: { tagline: "在下一个目的地，用韩语交流", sub: "边走边学，让旅途更有趣", placeholder: "输入目的地", mapLabel: "选择地图" },
@@ -174,27 +174,41 @@ const mapPageTexts = {
   vi: { tagline: "Nói tiếng Hàn tại điểm đến tiếp theo", sub: "Học trong khi du lịch", placeholder: "Nhập điểm đến", mapLabel: "Chọn bản đồ" }
 };
 
+const mapConfigs = {
+  cn: [
+    { id: 'gaode', label: '高德地图', color: '#1677ff' },
+    { id: 'naver', label: 'Naver Map', color: '#03c75a' },
+    { id: 'kakao', label: 'Kakao Map', color: '#fee500', textColor: '#3c1e1e' },
+    { id: 'google', label: 'Google Map', color: '#ea4335' }
+  ],
+  _default: [
+    { id: 'naver', label: 'Naver Map', color: '#03c75a' },
+    { id: 'kakao', label: 'Kakao Map', color: '#fee500', textColor: '#3c1e1e' },
+    { id: 'google', label: 'Google Map', color: '#ea4335' }
+  ]
+};
+
 function updateMapPageTexts(lang) {
   var t = mapPageTexts[lang] || mapPageTexts.en;
   var tagline = document.querySelector('#page-map .tagline');
   var subTagline = document.querySelector('#page-map .sub-tagline');
   var searchInput = document.getElementById('searchInput');
-  var mapLabel = document.querySelector('#page-map .map-section-label');
+  var mapLabel = document.getElementById('mapLabel');
+  var mapBtnList = document.getElementById('mapBtnList');
   if (tagline) { tagline.textContent = t.tagline; tagline.className = 'tagline' + (lang === 'cn' ? ' tagline-cn' : ''); }
   if (subTagline) { subTagline.textContent = t.sub; subTagline.className = 'sub-tagline' + (lang === 'cn' ? ' sub-tagline-cn' : ''); }
   if (searchInput) searchInput.placeholder = t.placeholder;
   if (mapLabel) mapLabel.textContent = t.mapLabel;
-  // Update map buttons based on language
-  var mapBtnList = document.getElementById('mapBtnList');
+  // Dynamic map buttons
+  var maps = mapConfigs[lang] || mapConfigs._default;
   if (mapBtnList) {
-    if (lang === 'cn') {
-      mapBtnList.innerHTML = '<button class="map-btn" onclick="openMap(\'naver\')">Naver 地图</button>' +
-        '<button class="map-btn" onclick="openMap(\'gaode\')">高德地图</button>';
-    } else {
-      mapBtnList.innerHTML = '<button class="map-btn" onclick="openMap(\'naver\')">Naver Map</button>' +
-        '<button class="map-btn" onclick="openMap(\'kakao\')">Kakao Map</button>' +
-        '<button class="map-btn" onclick="openMap(\'google\')">Google Map</button>';
+    var html = '';
+    for (var i = 0; i < maps.length; i++) {
+      var m = maps[i];
+      var tc = m.textColor || '#fff';
+      html += '<button class="map-btn" style="background:' + m.color + ';color:' + tc + ';" onclick="openMap(\'' + m.id + '\')">' + m.label + '</button>';
     }
+    mapBtnList.innerHTML = html;
   }
 }
 
@@ -418,11 +432,12 @@ function openMap(type) {
   }
   
   // No match found, just open map
-  let mapUrl;
+  var mapUrl;
   if (type === 'naver') mapUrl = 'https://map.naver.com/v5/search/' + encodeURIComponent(dest);
   else if (type === 'kakao') mapUrl = 'https://map.kakao.com/?q=' + encodeURIComponent(dest);
-  else if (type === 'gaode') mapUrl = 'https://uri.amap.com/search?keyword=' + encodeURIComponent(dest) + '&src=NaviTalk';
-  else mapUrl = 'https://www.google.com/maps/search/' + encodeURIComponent(dest);
+  else if (type === 'google') mapUrl = 'https://www.google.com/maps/search/' + encodeURIComponent(dest);
+  else if (type === 'gaode') mapUrl = 'https://www.amap.com/search?query=' + encodeURIComponent(dest);
+  else mapUrl = 'https://map.naver.com/v5/search/' + encodeURIComponent(dest);
   openExternal(mapUrl);
 }
 
@@ -828,10 +843,10 @@ function openExternal(url) {
 function navigateToDestination() {
   if (!currentPlaceKey) return;
   const name = userSearchInput || currentPlace.name_kr || currentPlaceKey;
-  let url;
+  var url;
   if (selectedMap === 'kakao') url = 'https://map.kakao.com/?q=' + encodeURIComponent(name);
-  else if (selectedMap === 'gaode') url = 'https://uri.amap.com/search?keyword=' + encodeURIComponent(name) + '&src=NaviTalk';
   else if (selectedMap === 'google') url = 'https://www.google.com/maps/search/' + encodeURIComponent(name);
+  else if (selectedMap === 'gaode') url = 'https://www.amap.com/search?query=' + encodeURIComponent(name);
   else url = 'https://map.naver.com/v5/search/' + encodeURIComponent(name);
   openExternal(url);
 }
