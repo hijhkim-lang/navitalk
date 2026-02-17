@@ -5,154 +5,232 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TTS Voice Guide</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;600;700&family=Noto+Sans+JP:wght@400;600;700&family=Noto+Sans+KR:wght@400;600;700&family=Noto+Sans:wght@400;600;700&display=swap');
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body {
-  font-family: 'Noto Sans', 'Noto Sans SC', 'Noto Sans JP', 'Noto Sans KR', sans-serif;
-  min-height: 100vh;
-  background: linear-gradient(180deg, #4a90d9 0%, #74b9ff 30%, #a0d2ff 50%, #d4e9ff 70%, #e8f4ff 100%);
-  position: relative; overflow-x: hidden;
-}
-.clouds { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: hidden; }
-.cloud { position: absolute; background: #fff; border-radius: 50%; opacity: 0.7; filter: blur(1px); }
-.cloud::before, .cloud::after { content: ''; position: absolute; background: #fff; border-radius: 50%; }
-.c1 { width: 180px; height: 55px; top: 8%; left: -5%; animation: drift 45s linear infinite; }
-.c1::before { width: 80px; height: 80px; top: -40px; left: 30px; }
-.c1::after { width: 100px; height: 70px; top: -30px; left: 70px; }
-.c2 { width: 220px; height: 60px; top: 15%; right: -10%; animation: drift-r 55s linear infinite; opacity: 0.5; }
-.c2::before { width: 90px; height: 85px; top: -45px; left: 40px; }
-.c2::after { width: 110px; height: 75px; top: -35px; left: 90px; }
-.c3 { width: 150px; height: 45px; top: 35%; left: 10%; animation: drift 60s linear infinite; animation-delay: -20s; opacity: 0.4; }
-.c3::before { width: 65px; height: 65px; top: -35px; left: 25px; }
-.c3::after { width: 80px; height: 55px; top: -25px; left: 55px; }
-.c4 { width: 200px; height: 50px; top: 55%; right: 5%; animation: drift-r 50s linear infinite; animation-delay: -15s; opacity: 0.3; }
-.c4::before { width: 75px; height: 75px; top: -40px; left: 35px; }
-.c4::after { width: 95px; height: 65px; top: -30px; left: 80px; }
-@keyframes drift { from { transform: translateX(0); } to { transform: translateX(110vw); } }
-@keyframes drift-r { from { transform: translateX(0); } to { transform: translateX(-110vw); } }
-
-.content { position: relative; z-index: 1; max-width: 460px; margin: 0 auto; padding: 16px; }
-.header { text-align: center; padding: 24px 0 16px; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.15); }
-.header h1 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
-.header p { font-size: 13px; opacity: 0.9; line-height: 1.5; }
-.back-btn {
-  position: fixed; left: 12px; top: 16px; z-index: 10;
-  background: rgba(255,255,255,0.3); backdrop-filter: blur(8px);
-  border: none; color: #fff; width: 36px; height: 36px;
-  border-radius: 50%; font-size: 20px; cursor: pointer;
-}
-.card {
-  background: rgba(255,255,255,0.92); backdrop-filter: blur(10px);
-  border-radius: 16px; padding: 18px; margin-bottom: 14px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.06), 0 0 0 1px rgba(255,255,255,0.4);
-}
-.card h2 { font-size: 15px; font-weight: 700; color: #2c3e50; margin-bottom: 8px; }
-.card p { font-size: 13px; color: #555; line-height: 1.7; }
-.tabs { display: flex; gap: 8px; margin-bottom: 14px; }
-.tab-btn {
-  flex: 1; padding: 12px 6px; border: none; border-radius: 12px;
-  background: rgba(255,255,255,0.7); backdrop-filter: blur(6px);
-  text-align: center; cursor: pointer; transition: all 0.25s;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.05); font-family: inherit;
-}
-.tab-btn .t-name { display: block; font-size: 14px; font-weight: 700; color: #555; }
-.tab-btn.active {
-  background: rgba(255,255,255,0.95);
-  box-shadow: 0 2px 10px rgba(74,144,217,0.25);
-  transform: translateY(-1px);
-}
-.tab-btn.active .t-name { color: #2980b9; }
-.step { margin-bottom: 14px; }
-.step-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-.step-num {
-  width: 26px; height: 26px; border-radius: 50%;
-  background: linear-gradient(135deg, #3498db, #2980b9);
-  color: #fff; font-size: 13px; font-weight: 700;
-  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-}
-.step-title { font-size: 14px; font-weight: 700; color: #2c3e50; }
-.path { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin: 6px 0 6px 36px; }
-.path-chip { background: #f0f4f8; padding: 5px 10px; border-radius: 6px; font-size: 13px; font-weight: 600; color: #34495e; }
-.path-chip.highlight { background: #d6eaf8; color: #2471a3; }
-.path-sep { color: #bbb; font-size: 14px; }
-.step-desc { margin-left: 36px; font-size: 13px; color: #555; line-height: 1.6; }
-.tip {
-  margin: 8px 0 0 36px; padding: 10px 12px;
-  background: #fef9e7; border-radius: 8px; border-left: 3px solid #f1c40f;
-  font-size: 12px; color: #7d6608; line-height: 1.5;
-}
-.guide-panel { display: none; }
-.guide-panel.active { display: block; }
-.done-card {
-  background: linear-gradient(135deg, rgba(39,174,96,0.9), rgba(46,204,113,0.9));
-  backdrop-filter: blur(10px); border-radius: 16px; padding: 24px; text-align: center; color: #fff;
-  margin-top: 8px; box-shadow: 0 4px 15px rgba(39,174,96,0.2);
-}
-.done-card h3 { font-size: 17px; margin-bottom: 6px; }
-.done-card p { font-size: 13px; opacity: 0.95; margin-bottom: 14px; }
-.done-btn {
-  padding: 10px 28px; border: none; border-radius: 10px;
-  background: #fff; color: #27ae60; font-size: 14px; font-weight: 700;
-  cursor: pointer; font-family: inherit;
-}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei','Helvetica Neue',sans-serif;min-height:100vh;background:linear-gradient(180deg,#4a90d9 0%,#74b9ff 30%,#a0d2ff 50%,#d4e9ff 70%,#e8f4ff 100%);overflow-x:hidden}
+.clouds{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden}
+.cloud{position:absolute;background:#fff;border-radius:50%;opacity:.7;filter:blur(1px)}
+.cloud::before,.cloud::after{content:'';position:absolute;background:#fff;border-radius:50%}
+.c1{width:180px;height:55px;top:8%;left:-5%;animation:drift 45s linear infinite}
+.c1::before{width:80px;height:80px;top:-40px;left:30px}
+.c1::after{width:100px;height:70px;top:-30px;left:70px}
+.c2{width:220px;height:60px;top:15%;right:-10%;animation:drift-r 55s linear infinite;opacity:.5}
+.c2::before{width:90px;height:85px;top:-45px;left:40px}
+.c2::after{width:110px;height:75px;top:-35px;left:90px}
+.c3{width:150px;height:45px;top:35%;left:10%;animation:drift 60s linear infinite;animation-delay:-20s;opacity:.4}
+.c3::before{width:65px;height:65px;top:-35px;left:25px}
+.c3::after{width:80px;height:55px;top:-25px;left:55px}
+.c4{width:200px;height:50px;top:55%;right:5%;animation:drift-r 50s linear infinite;animation-delay:-15s;opacity:.3}
+.c4::before{width:75px;height:75px;top:-40px;left:35px}
+.c4::after{width:95px;height:65px;top:-30px;left:80px}
+@keyframes drift{from{transform:translateX(0)}to{transform:translateX(110vw)}}
+@keyframes drift-r{from{transform:translateX(0)}to{transform:translateX(-110vw)}}
+.content{position:relative;z-index:1;max-width:460px;margin:0 auto;padding:16px}
+.header{text-align:center;padding:24px 0 16px;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.15)}
+.header h1{font-size:22px;font-weight:700;margin-bottom:6px}
+.header p{font-size:13px;opacity:.9;line-height:1.5}
+.back-btn{position:fixed;left:12px;top:16px;z-index:10;background:rgba(255,255,255,.3);backdrop-filter:blur(8px);border:none;color:#fff;width:36px;height:36px;border-radius:50%;font-size:20px;cursor:pointer}
+.card{background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-radius:16px;padding:18px;margin-bottom:14px;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.card h2{font-size:15px;font-weight:700;color:#2c3e50;margin-bottom:8px}
+.card p{font-size:13px;color:#555;line-height:1.7}
+.tabs{display:flex;gap:8px;margin-bottom:14px}
+.tab-btn{flex:1;padding:12px 6px;border:none;border-radius:12px;background:rgba(255,255,255,.7);text-align:center;cursor:pointer;transition:all .25s;box-shadow:0 1px 4px rgba(0,0,0,.05);font-family:inherit;font-size:14px;font-weight:700;color:#555}
+.tab-btn.active{background:rgba(255,255,255,.95);box-shadow:0 2px 10px rgba(74,144,217,.25);transform:translateY(-1px);color:#2980b9}
+.step-card{background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.step-head{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.step-num{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#3498db,#2980b9);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.step-title{font-size:14px;font-weight:700;color:#2c3e50}
+.path{display:flex;flex-wrap:wrap;align-items:center;gap:4px;margin:6px 0 6px 36px}
+.path-chip{background:#f0f4f8;padding:5px 10px;border-radius:6px;font-size:13px;font-weight:600;color:#34495e}
+.path-chip.hl{background:#d6eaf8;color:#2471a3}
+.path-sep{color:#bbb;font-size:14px}
+.step-desc{margin-left:36px;font-size:13px;color:#555;line-height:1.6}
+.tip{margin:8px 0 0 36px;padding:10px 12px;background:#fef9e7;border-radius:8px;border-left:3px solid #f1c40f;font-size:12px;color:#7d6608;line-height:1.5}
+.guide-panel{display:none}
+.guide-panel.active{display:block}
+.done-card{background:linear-gradient(135deg,rgba(39,174,96,.9),rgba(46,204,113,.9));border-radius:16px;padding:24px;text-align:center;color:#fff;margin-top:8px;box-shadow:0 4px 15px rgba(39,174,96,.2)}
+.done-card h3{font-size:17px;margin-bottom:6px}
+.done-card p{font-size:13px;opacity:.95;margin-bottom:14px}
+.done-btn{padding:10px 28px;border:none;border-radius:10px;background:#fff;color:#27ae60;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
 </style>
 </head>
 <body>
 <div class="clouds"><div class="cloud c1"></div><div class="cloud c2"></div><div class="cloud c3"></div><div class="cloud c4"></div></div>
-<button class="back-btn" id="backBtn">←</button>
+<button class="back-btn" id="backBtn">&larr;</button>
 <div class="content">
-  <div class="header"><h1 id="h-title"></h1><p id="h-sub"></p></div>
-  <div class="card"><h2 id="why-title"></h2><p id="why-desc"></p></div>
-  <div class="tabs">
-    <button class="tab-btn active" id="tab-samsung" data-tab="samsung"><span class="t-name">Samsung</span></button>
-    <button class="tab-btn" id="tab-android" data-tab="android"><span class="t-name">Android</span></button>
-    <button class="tab-btn" id="tab-iphone" data-tab="iphone"><span class="t-name">iPhone</span></button>
-  </div>
-  <div class="guide-panel active" id="panel-samsung"></div>
-  <div class="guide-panel" id="panel-android"></div>
-  <div class="guide-panel" id="panel-iphone"></div>
-  <div class="done-card"><h3 id="done-title"></h3><p id="done-desc"></p><button class="done-btn" id="done-btn"></button></div>
+<div class="header"><h1 id="hTitle"></h1><p id="hSub"></p></div>
+<div class="card"><h2 id="whyT"></h2><p id="whyD"></p></div>
+<div class="tabs">
+<button class="tab-btn active" data-tab="samsung">Samsung</button>
+<button class="tab-btn" data-tab="android">Android</button>
+<button class="tab-btn" data-tab="iphone">iPhone</button>
+</div>
+<div class="guide-panel active" id="panel-samsung"></div>
+<div class="guide-panel" id="panel-android"></div>
+<div class="guide-panel" id="panel-iphone"></div>
+<div class="done-card"><h3 id="doneT"></h3><p id="doneD"></p><button class="done-btn" id="doneBtn"></button></div>
 </div>
 <script>
-const T={en:{title:"🔊 Improve Voice Quality",sub:"Install additional Korean TTS voices for more natural pronunciation",whyT:"Why install additional voices?",whyD:"Most phones only have 1 Korean voice pre-installed. Adding more voices enables male/female voice distinction and more natural pronunciation.",doneT:"✅ After Installation",doneD:"Enjoy more natural male & female voices in NaviTalk!",doneB:"Back to NaviTalk",samsung:[{t:"Open Settings app",path:["Settings"],hi:0},{t:"Go to General management",path:["Settings","General management"],hi:1},{t:"Select Language and input",path:["General management","Language and input"],hi:1},{t:"Select Text-to-speech (TTS)",path:["Language and input","Text-to-speech"],hi:1},{t:"Tap ⚙️ next to Samsung TTS → Download voices",d:"Select Samsung TTS engine, tap the gear icon (⚙️). Find 'Install voice data' and download all Korean voices.",tip:"Download all available Korean voices for both male and female options."},{t:"Refresh NaviTalk",d:"Return to NaviTalk and refresh the page. New voices will be applied automatically."}],android:[{t:"Open Settings app",path:["Settings"],hi:0},{t:"Go to Accessibility",path:["Settings","Accessibility"],hi:1},{t:"Select Text-to-speech output",path:["Accessibility","Text-to-speech output"],hi:1},{t:"Tap ⚙️ next to Google TTS engine",d:"Tap the gear icon (⚙️) next to Google Text-to-Speech engine."},{t:"Install voice data → Select Korean",d:"Tap 'Install voice data' and find Korean to download additional voices.",tip:"If Google TTS is missing, search 'Google Text-to-Speech' in Play Store."},{t:"Refresh NaviTalk",d:"Return to NaviTalk and refresh the page."}],iphone:[{t:"Open Settings app",path:["Settings"],hi:0},{t:"Accessibility → Spoken Content",path:["Settings","Accessibility","Spoken Content"],hi:[1,2]},{t:"Tap Voices → Select Korean",d:"Tap 'Voices', then select Korean. Multiple voices will appear."},{t:"Download desired voices",d:"Tap a voice name to download. Also download 'Enhanced' quality if available.",tip:"Download Yuna, Sora and others for diverse male/female voices."},{t:"Refresh NaviTalk",d:"Return to NaviTalk (Safari) and refresh the page."}]},cn:{title:"🔊 提高语音质量",sub:"安装韩语TTS语音，获得更自然的发音体验",whyT:"为什么需要安装语音？",whyD:"大多数手机只预装了1个韩语语音。安装更多语音后，可以区分男女声音，发音也更加自然。",doneT:"✅ 安装完成后",doneD:"在NaviTalk中享受更自然的男女对话语音！",doneB:"返回NaviTalk",samsung:[{t:"打开设置",path:["设置"],hi:0},{t:"进入常规管理",path:["设置","常规管理"],hi:1},{t:"选择语言和输入",path:["常规管理","语言和输入"],hi:1},{t:"选择文字转语音(TTS)",path:["语言和输入","文字转语音"],hi:1},{t:"点击Samsung TTS旁的⚙️ → 下载语音",d:"选择Samsung TTS引擎后，点击齿轮图标(⚙️)。找到"安装语音数据"或"下载语音"，下载所有韩语语音。",tip:"建议下载所有可用的韩语语音，这样男女声音选择更丰富。"},{t:"刷新NaviTalk",d:"返回NaviTalk应用，刷新页面即可自动使用新语音。"}],android:[{t:"打开设置",path:["设置"],hi:0},{t:"进入辅助功能",path:["设置","辅助功能"],hi:1},{t:"选择文字转语音输出",path:["辅助功能","文字转语音输出"],hi:1},{t:"点击Google TTS引擎旁的⚙️",d:"点击Google文字转语音引擎旁的齿轮图标(⚙️)。"},{t:"安装语音数据 → 选择韩语",d:"点击"安装语音数据"，找到韩语(Korean/한국어)进行下载。",tip:"如果没有Google TTS，请在应用商店搜索"Google文字转语音"进行安装。"},{t:"刷新NaviTalk",d:"返回NaviTalk应用，刷新页面即可。"}],iphone:[{t:"打开设置",path:["设置"],hi:0},{t:"辅助功能 → 朗读内容",path:["设置","辅助功能","朗读内容"],hi:[1,2]},{t:"点击声音 → 选择韩语",d:"点击"声音"，然后选择韩语(Korean)。会显示多个语音选项。"},{t:"下载所需语音",d:"点击语音名称即可下载。如有"高品质"选项，建议一起下载。",tip:"下载Yuna、Sora等多个语音，可获得不同的男女声音。"},{t:"刷新NaviTalk",d:"返回NaviTalk(Safari)，刷新页面即可。"}]},ja:{title:"🔊 音声品質を改善する",sub:"韓国語TTS音声を追加インストールして、より自然な発音を体験",whyT:"なぜ音声のインストールが必要？",whyD:"ほとんどのスマートフォンには韓国語音声が1つしかプリインストールされていません。追加音声をインストールすると、男女の声を区別でき、発音もより自然になります。",doneT:"✅ インストール完了後",doneD:"NaviTalkでより自然な男女の声で会話を楽しめます！",doneB:"NaviTalkに戻る",samsung:[{t:"設定アプリを開く",path:["設定"],hi:0},{t:"一般管理へ移動",path:["設定","一般管理"],hi:1},{t:"言語と入力を選択",path:["一般管理","言語と入力"],hi:1},{t:"テキスト読み上げ(TTS)を選択",path:["言語と入力","テキスト読み上げ"],hi:1},{t:"Samsung TTS横の⚙️をタップ → 音声ダウンロード",d:"Samsung TTSエンジンを選択し、歯車アイコン(⚙️)をタップ。「音声データのインストール」から韓国語音声をすべてダウンロードします。",tip:"利用可能な韓国語音声をすべてダウンロードすると、男女の声が豊富になります。"},{t:"NaviTalkを更新",d:"NaviTalkアプリに戻り、ページを更新してください。新しい音声が自動的に適用されます。"}],android:[{t:"設定アプリを開く",path:["設定"],hi:0},{t:"ユーザー補助へ移動",path:["設定","ユーザー補助"],hi:1},{t:"テキスト読み上げ出力を選択",path:["ユーザー補助","テキスト読み上げ出力"],hi:1},{t:"Google TTSエンジン横の⚙️をタップ",d:"Googleテキスト読み上げエンジン横の歯車アイコン(⚙️)をタップします。"},{t:"音声データのインストール → 韓国語を選択",d:"「音声データのインストール」をタップし、韓国語(Korean)を見つけてダウンロードします。",tip:"Google TTSがない場合、Playストアで「Googleテキスト読み上げ」を検索してインストールしてください。"},{t:"NaviTalkを更新",d:"NaviTalkアプリに戻り、ページを更新してください。"}],iphone:[{t:"設定アプリを開く",path:["設定"],hi:0},{t:"アクセシビリティ → 読み上げコンテンツ",path:["設定","アクセシビリティ","読み上げコンテンツ"],hi:[1,2]},{t:"声をタップ → 韓国語を選択",d:"「声」をタップし、韓国語(Korean)を選択します。複数の音声が表示されます。"},{t:"音声をダウンロード",d:"音声名をタップするとダウンロードが始まります。「高品質」があれば一緒にダウンロードしてください。",tip:"Yuna、Soraなど複数の音声をダウンロードすると、男女の声が豊富になります。"},{t:"NaviTalkを更新",d:"NaviTalk(Safari)に戻り、ページを更新してください。"}]},es:{title:"🔊 Mejorar calidad de voz",sub:"Instale voces TTS coreanas para pronunciación más natural",whyT:"¿Por qué instalar voces?",whyD:"La mayoría de teléfonos solo tienen 1 voz coreana. Más voces permiten distinguir hombre/mujer.",doneT:"✅ Después de instalar",doneD:"¡Disfrute voces más naturales en NaviTalk!",doneB:"Volver a NaviTalk",samsung:[{t:"Abrir Configuración",path:["Configuración"],hi:0},{t:"Administración general",path:["Configuración","Administración general"],hi:1},{t:"Idioma y entrada",path:["Administración general","Idioma y entrada"],hi:1},{t:"Texto a voz (TTS)",path:["Idioma y entrada","Texto a voz"],hi:1},{t:"⚙️ Samsung TTS → Descargar voces",d:"Seleccione Samsung TTS, toque ⚙️ y descargue voces coreanas."},{t:"Actualizar NaviTalk",d:"Vuelva a NaviTalk y actualice la página."}],android:[{t:"Abrir Configuración",path:["Configuración"],hi:0},{t:"Accesibilidad",path:["Configuración","Accesibilidad"],hi:1},{t:"Salida de texto a voz",path:["Accesibilidad","Salida de texto a voz"],hi:1},{t:"⚙️ Google TTS",d:"Toque ⚙️ junto a Google TTS."},{t:"Instalar datos de voz → Coreano",d:"Descargue voces coreanas.",tip:"Si no tiene Google TTS, búsquelo en Play Store."},{t:"Actualizar NaviTalk",d:"Vuelva a NaviTalk y actualice."}],iphone:[{t:"Abrir Configuración",path:["Configuración"],hi:0},{t:"Accesibilidad → Contenido hablado",path:["Configuración","Accesibilidad","Contenido hablado"],hi:[1,2]},{t:"Voces → Coreano",d:"Seleccione coreano en la lista."},{t:"Descargar voces",d:"Toque el nombre para descargar."},{t:"Actualizar NaviTalk",d:"Vuelva a NaviTalk y actualice."}]},fr:{title:"🔊 Améliorer la qualité vocale",sub:"Installez des voix TTS coréennes pour une prononciation plus naturelle",whyT:"Pourquoi installer des voix ?",whyD:"La plupart des téléphones n'ont qu'une seule voix coréenne. Ajoutez-en pour distinguer homme/femme.",doneT:"✅ Après l'installation",doneD:"Profitez de voix plus naturelles dans NaviTalk !",doneB:"Retour à NaviTalk",samsung:[{t:"Ouvrir Paramètres",path:["Paramètres"],hi:0},{t:"Gestion générale",path:["Paramètres","Gestion générale"],hi:1},{t:"Langue et saisie",path:["Gestion générale","Langue et saisie"],hi:1},{t:"Synthèse vocale (TTS)",path:["Langue et saisie","Synthèse vocale"],hi:1},{t:"⚙️ Samsung TTS → Télécharger les voix",d:"Sélectionnez Samsung TTS, appuyez sur ⚙️ et téléchargez les voix coréennes."},{t:"Actualiser NaviTalk",d:"Revenez à NaviTalk et actualisez."}],android:[{t:"Ouvrir Paramètres",path:["Paramètres"],hi:0},{t:"Accessibilité",path:["Paramètres","Accessibilité"],hi:1},{t:"Synthèse vocale",path:["Accessibilité","Synthèse vocale"],hi:1},{t:"⚙️ Google TTS",d:"Appuyez sur ⚙️ à côté de Google TTS."},{t:"Installer données vocales → Coréen",d:"Téléchargez les voix coréennes."},{t:"Actualiser NaviTalk",d:"Revenez à NaviTalk et actualisez."}],iphone:[{t:"Ouvrir Réglages",path:["Réglages"],hi:0},{t:"Accessibilité → Contenu énoncé",path:["Réglages","Accessibilité","Contenu énoncé"],hi:[1,2]},{t:"Voix → Coréen",d:"Sélectionnez le coréen."},{t:"Télécharger les voix",d:"Appuyez sur le nom pour télécharger."},{t:"Actualiser NaviTalk",d:"Revenez à NaviTalk et actualisez."}]},pt:{title:"🔊 Melhorar qualidade de voz",sub:"Instale vozes TTS coreanas para pronúncia mais natural",whyT:"Por que instalar vozes?",whyD:"A maioria dos telefones tem apenas 1 voz coreana. Mais vozes permitem distinguir homem/mulher.",doneT:"✅ Após instalação",doneD:"Aproveite vozes mais naturais no NaviTalk!",doneB:"Voltar ao NaviTalk",samsung:[{t:"Abrir Configurações",path:["Configurações"],hi:0},{t:"Gerenciamento geral",path:["Configurações","Gerenciamento geral"],hi:1},{t:"Idioma e entrada",path:["Gerenciamento geral","Idioma e entrada"],hi:1},{t:"Texto para fala (TTS)",path:["Idioma e entrada","Texto para fala"],hi:1},{t:"⚙️ Samsung TTS → Baixar vozes",d:"Selecione Samsung TTS, toque ⚙️ e baixe vozes coreanas."},{t:"Atualizar NaviTalk",d:"Volte ao NaviTalk e atualize."}],android:[{t:"Abrir Configurações",path:["Configurações"],hi:0},{t:"Acessibilidade",path:["Configurações","Acessibilidade"],hi:1},{t:"Saída de texto para fala",path:["Acessibilidade","Saída TTS"],hi:1},{t:"⚙️ Google TTS",d:"Toque ⚙️ ao lado do Google TTS."},{t:"Instalar dados de voz → Coreano",d:"Baixe vozes coreanas."},{t:"Atualizar NaviTalk",d:"Volte ao NaviTalk e atualize."}],iphone:[{t:"Abrir Ajustes",path:["Ajustes"],hi:0},{t:"Acessibilidade → Conteúdo Falado",path:["Ajustes","Acessibilidade","Conteúdo Falado"],hi:[1,2]},{t:"Vozes → Coreano",d:"Selecione coreano na lista."},{t:"Baixar vozes",d:"Toque no nome para baixar."},{t:"Atualizar NaviTalk",d:"Volte ao NaviTalk e atualize."}]},de:{title:"🔊 Sprachqualität verbessern",sub:"Installieren Sie koreanische TTS-Stimmen für natürlichere Aussprache",whyT:"Warum Stimmen installieren?",whyD:"Die meisten Handys haben nur 1 koreanische Stimme. Mehr Stimmen ermöglichen Mann/Frau-Unterscheidung.",doneT:"✅ Nach der Installation",doneD:"Genießen Sie natürlichere Stimmen in NaviTalk!",doneB:"Zurück zu NaviTalk",samsung:[{t:"Einstellungen öffnen",path:["Einstellungen"],hi:0},{t:"Allgemeine Verwaltung",path:["Einstellungen","Allgemeine Verwaltung"],hi:1},{t:"Sprache und Eingabe",path:["Allgemeine Verwaltung","Sprache und Eingabe"],hi:1},{t:"Text-zu-Sprache (TTS)",path:["Sprache und Eingabe","Text-zu-Sprache"],hi:1},{t:"⚙️ Samsung TTS → Stimmen herunterladen",d:"Wählen Sie Samsung TTS, tippen Sie ⚙️ und laden Sie koreanische Stimmen herunter."},{t:"NaviTalk aktualisieren",d:"Kehren Sie zu NaviTalk zurück und aktualisieren Sie."}],android:[{t:"Einstellungen öffnen",path:["Einstellungen"],hi:0},{t:"Bedienungshilfen",path:["Einstellungen","Bedienungshilfen"],hi:1},{t:"Text-zu-Sprache-Ausgabe",path:["Bedienungshilfen","Text-zu-Sprache"],hi:1},{t:"⚙️ Google TTS",d:"Tippen Sie ⚙️ neben Google TTS."},{t:"Sprachdaten installieren → Koreanisch",d:"Laden Sie koreanische Stimmen herunter."},{t:"NaviTalk aktualisieren",d:"Kehren Sie zu NaviTalk zurück und aktualisieren Sie."}],iphone:[{t:"Einstellungen öffnen",path:["Einstellungen"],hi:0},{t:"Bedienungshilfen → Gesprochene Inhalte",path:["Einstellungen","Bedienungshilfen","Gesprochene Inhalte"],hi:[1,2]},{t:"Stimmen → Koreanisch",d:"Wählen Sie Koreanisch."},{t:"Stimmen herunterladen",d:"Tippen Sie auf den Namen zum Herunterladen."},{t:"NaviTalk aktualisieren",d:"Kehren Sie zu NaviTalk zurück und aktualisieren Sie."}]},id:{title:"🔊 Tingkatkan Kualitas Suara",sub:"Instal suara TTS Korea untuk pengucapan lebih alami",whyT:"Mengapa perlu menginstal suara?",whyD:"Kebanyakan ponsel hanya memiliki 1 suara Korea. Menambah suara memungkinkan perbedaan pria/wanita.",doneT:"✅ Setelah Instalasi",doneD:"Nikmati suara lebih alami di NaviTalk!",doneB:"Kembali ke NaviTalk",samsung:[{t:"Buka Pengaturan",path:["Pengaturan"],hi:0},{t:"Manajemen umum",path:["Pengaturan","Manajemen umum"],hi:1},{t:"Bahasa dan masukan",path:["Manajemen umum","Bahasa dan masukan"],hi:1},{t:"Teks ke ucapan (TTS)",path:["Bahasa dan masukan","Teks ke ucapan"],hi:1},{t:"⚙️ Samsung TTS → Unduh suara",d:"Pilih Samsung TTS, ketuk ⚙️ dan unduh suara Korea."},{t:"Segarkan NaviTalk",d:"Kembali ke NaviTalk dan segarkan halaman."}],android:[{t:"Buka Pengaturan",path:["Pengaturan"],hi:0},{t:"Aksesibilitas",path:["Pengaturan","Aksesibilitas"],hi:1},{t:"Output teks ke ucapan",path:["Aksesibilitas","Output TTS"],hi:1},{t:"⚙️ Google TTS",d:"Ketuk ⚙️ di sebelah Google TTS."},{t:"Instal data suara → Korea",d:"Unduh suara Korea."},{t:"Segarkan NaviTalk",d:"Kembali ke NaviTalk dan segarkan."}],iphone:[{t:"Buka Pengaturan",path:["Pengaturan"],hi:0},{t:"Aksesibilitas → Konten Lisan",path:["Pengaturan","Aksesibilitas","Konten Lisan"],hi:[1,2]},{t:"Suara → Korea",d:"Pilih Korea dari daftar."},{t:"Unduh suara",d:"Ketuk nama suara untuk mengunduh."},{t:"Segarkan NaviTalk",d:"Kembali ke NaviTalk dan segarkan."}]},ms:{title:"🔊 Tingkatkan Kualiti Suara",sub:"Pasang suara TTS Korea untuk sebutan lebih semula jadi",whyT:"Mengapa perlu memasang suara?",whyD:"Kebanyakan telefon hanya mempunyai 1 suara Korea. Menambah suara membolehkan perbezaan lelaki/perempuan.",doneT:"✅ Selepas Pemasangan",doneD:"Nikmati suara lebih semula jadi di NaviTalk!",doneB:"Kembali ke NaviTalk",samsung:[{t:"Buka Tetapan",path:["Tetapan"],hi:0},{t:"Pengurusan am",path:["Tetapan","Pengurusan am"],hi:1},{t:"Bahasa dan input",path:["Pengurusan am","Bahasa dan input"],hi:1},{t:"Teks ke pertuturan (TTS)",path:["Bahasa dan input","Teks ke pertuturan"],hi:1},{t:"⚙️ Samsung TTS → Muat turun suara",d:"Pilih Samsung TTS, ketik ⚙️ dan muat turun suara Korea."},{t:"Segar semula NaviTalk",d:"Kembali ke NaviTalk dan segar semula."}],android:[{t:"Buka Tetapan",path:["Tetapan"],hi:0},{t:"Kebolehcapaian",path:["Tetapan","Kebolehcapaian"],hi:1},{t:"Output teks ke pertuturan",path:["Kebolehcapaian","Output TTS"],hi:1},{t:"⚙️ Google TTS",d:"Ketik ⚙️ di sebelah Google TTS."},{t:"Pasang data suara → Korea",d:"Muat turun suara Korea."},{t:"Segar semula NaviTalk",d:"Kembali ke NaviTalk dan segar semula."}],iphone:[{t:"Buka Tetapan",path:["Tetapan"],hi:0},{t:"Kebolehcapaian → Kandungan Dilafaz",path:["Tetapan","Kebolehcapaian","Kandungan Dilafaz"],hi:[1,2]},{t:"Suara → Korea",d:"Pilih Korea dari senarai."},{t:"Muat turun suara",d:"Ketik nama suara untuk muat turun."},{t:"Segar semula NaviTalk",d:"Kembali ke NaviTalk dan segar semula."}]},th:{title:"🔊 ปรับปรุงคุณภาพเสียง",sub:"ติดตั้งเสียง TTS ภาษาเกาหลีเพิ่มเติม",whyT:"ทำไมต้องติดตั้งเสียง?",whyD:"โทรศัพท์ส่วนใหญ่มีเสียงเกาหลีเพียง 1 เสียง การเพิ่มเสียงช่วยแยกเสียงชาย/หญิง",doneT:"✅ หลังติดตั้ง",doneD:"เพลิดเพลินกับเสียงที่เป็นธรรมชาติใน NaviTalk!",doneB:"กลับไป NaviTalk",samsung:[{t:"เปิดการตั้งค่า",path:["การตั้งค่า"],hi:0},{t:"การจัดการทั่วไป",path:["การตั้งค่า","การจัดการทั่วไป"],hi:1},{t:"ภาษาและการป้อนข้อมูล",path:["การจัดการทั่วไป","ภาษาและการป้อนข้อมูล"],hi:1},{t:"การแปลงข้อความเป็นคำพูด",path:["ภาษา","TTS"],hi:1},{t:"⚙️ Samsung TTS → ดาวน์โหลดเสียง",d:"เลือก Samsung TTS แตะ ⚙️ ดาวน์โหลดเสียงเกาหลี"},{t:"รีเฟรช NaviTalk",d:"กลับไป NaviTalk แล้วรีเฟรช"}],android:[{t:"เปิดการตั้งค่า",path:["การตั้งค่า"],hi:0},{t:"การเข้าถึง",path:["การตั้งค่า","การเข้าถึง"],hi:1},{t:"เอาต์พุต TTS",path:["การเข้าถึง","เอาต์พุต TTS"],hi:1},{t:"⚙️ Google TTS",d:"แตะ ⚙️ ข้าง Google TTS"},{t:"ติดตั้งข้อมูลเสียง → เกาหลี",d:"ดาวน์โหลดเสียงเกาหลี"},{t:"รีเฟรช NaviTalk",d:"กลับไป NaviTalk แล้วรีเฟรช"}],iphone:[{t:"เปิดการตั้งค่า",path:["การตั้งค่า"],hi:0},{t:"การช่วยการเข้าถึง → เนื้อหาที่พูด",path:["การตั้งค่า","การช่วยการเข้าถึง","เนื้อหาที่พูด"],hi:[1,2]},{t:"เสียง → เกาหลี",d:"เลือกเกาหลีจากรายการ"},{t:"ดาวน์โหลดเสียง",d:"แตะชื่อเสียงเพื่อดาวน์โหลด"},{t:"รีเฟรช NaviTalk",d:"กลับไป NaviTalk แล้วรีเฟรช"}]},vi:{title:"🔊 Cải thiện chất lượng giọng nói",sub:"Cài đặt giọng TTS tiếng Hàn để phát âm tự nhiên hơn",whyT:"Tại sao cần cài giọng nói?",whyD:"Hầu hết điện thoại chỉ có 1 giọng tiếng Hàn. Thêm giọng giúp phân biệt nam/nữ.",doneT:"✅ Sau khi cài đặt",doneD:"Thưởng thức giọng nói tự nhiên hơn trong NaviTalk!",doneB:"Quay lại NaviTalk",samsung:[{t:"Mở Cài đặt",path:["Cài đặt"],hi:0},{t:"Quản lý chung",path:["Cài đặt","Quản lý chung"],hi:1},{t:"Ngôn ngữ và nhập liệu",path:["Quản lý chung","Ngôn ngữ và nhập liệu"],hi:1},{t:"Chuyển văn bản thành giọng nói",path:["Ngôn ngữ","TTS"],hi:1},{t:"⚙️ Samsung TTS → Tải giọng nói",d:"Chọn Samsung TTS, nhấn ⚙️ và tải giọng tiếng Hàn."},{t:"Làm mới NaviTalk",d:"Quay lại NaviTalk và làm mới trang."}],android:[{t:"Mở Cài đặt",path:["Cài đặt"],hi:0},{t:"Trợ năng",path:["Cài đặt","Trợ năng"],hi:1},{t:"Đầu ra TTS",path:["Trợ năng","Đầu ra TTS"],hi:1},{t:"⚙️ Google TTS",d:"Nhấn ⚙️ bên cạnh Google TTS."},{t:"Cài dữ liệu giọng nói → Tiếng Hàn",d:"Tải giọng tiếng Hàn."},{t:"Làm mới NaviTalk",d:"Quay lại NaviTalk và làm mới."}],iphone:[{t:"Mở Cài đặt",path:["Cài đặt"],hi:0},{t:"Trợ năng → Nội dung được đọc",path:["Cài đặt","Trợ năng","Nội dung được đọc"],hi:[1,2]},{t:"Giọng nói → Tiếng Hàn",d:"Chọn tiếng Hàn từ danh sách."},{t:"Tải giọng nói",d:"Nhấn tên giọng để tải."},{t:"Làm mới NaviTalk",d:"Quay lại NaviTalk và làm mới."}]}};
+var T = {};
 
-const lang=new URLSearchParams(window.location.search).get('lang')||'en';
-const t=T[lang]||T['en'];
-document.getElementById('h-title').textContent=t.title;
-document.getElementById('h-sub').textContent=t.sub;
-document.getElementById('why-title').textContent=t.whyT;
-document.getElementById('why-desc').textContent=t.whyD;
-document.getElementById('done-title').textContent=t.doneT;
-document.getElementById('done-desc').textContent=t.doneD;
-document.getElementById('done-btn').textContent=t.doneB;
+T.en = {
+  title: "\uD83D\uDD0A Improve Voice Quality",
+  sub: "Install additional Korean TTS voices for more natural pronunciation",
+  whyT: "Why install additional voices?",
+  whyD: "Most phones only have 1 Korean voice pre-installed. Adding more voices enables male/female voice distinction and more natural pronunciation.",
+  doneT: "\u2705 After Installation",
+  doneD: "Enjoy more natural male & female voices in NaviTalk!",
+  doneB: "Back to NaviTalk",
+  samsung: [
+    {t:"Open Settings app", path:["Settings"], hi:[0]},
+    {t:"Go to General management", path:["Settings","General management"], hi:[1]},
+    {t:"Select Language and input", path:["General management","Language and input"], hi:[1]},
+    {t:"Select Text-to-speech (TTS)", path:["Language and input","Text-to-speech"], hi:[1]},
+    {t:"Tap the gear icon next to Samsung TTS, then download voices", d:"Select Samsung TTS engine, tap the gear icon. Find Install voice data and download all Korean voices.", tip:"Download all available Korean voices for both male and female options."},
+    {t:"Refresh NaviTalk", d:"Return to NaviTalk and refresh the page. New voices will be applied automatically."}
+  ],
+  android: [
+    {t:"Open Settings app", path:["Settings"], hi:[0]},
+    {t:"Go to Accessibility", path:["Settings","Accessibility"], hi:[1]},
+    {t:"Select Text-to-speech output", path:["Accessibility","Text-to-speech output"], hi:[1]},
+    {t:"Tap the gear icon next to Google TTS engine", d:"Tap the gear icon next to Google Text-to-Speech engine."},
+    {t:"Install voice data, select Korean", d:"Tap Install voice data and find Korean to download additional voices.", tip:"If Google TTS is missing, search Google Text-to-Speech in Play Store."},
+    {t:"Refresh NaviTalk", d:"Return to NaviTalk and refresh the page."}
+  ],
+  iphone: [
+    {t:"Open Settings app", path:["Settings"], hi:[0]},
+    {t:"Accessibility, then Spoken Content", path:["Settings","Accessibility","Spoken Content"], hi:[1,2]},
+    {t:"Tap Voices, select Korean", d:"Tap Voices, then select Korean. Multiple voices will appear."},
+    {t:"Download desired voices", d:"Tap a voice name to download. Also download Enhanced quality if available.", tip:"Download Yuna, Sora and others for diverse male/female voices."},
+    {t:"Refresh NaviTalk", d:"Return to NaviTalk (Safari) and refresh the page."}
+  ]
+};
 
-function renderSteps(steps,panelId){
-  const panel=document.getElementById(panelId);let html='';
-  steps.forEach((s,i)=>{
-    html+='<div class="card step">';
-    html+='<div class="step-head"><span class="step-num">'+(i+1)+'</span><span class="step-title">'+s.t+'</span></div>';
-    if(s.path){html+='<div class="path">';s.path.forEach((p,j)=>{if(j>0)html+='<span class="path-sep">→</span>';const isHi=Array.isArray(s.hi)?s.hi.includes(j):s.hi===j;html+='<span class="path-chip'+(isHi?' highlight':'')+'">'+p+'</span>';});html+='</div>';}
-    if(s.d)html+='<div class="step-desc">'+s.d+'</div>';
-    if(s.tip)html+='<div class="tip">'+s.tip+'</div>';
-    html+='</div>';
-  });
-  panel.innerHTML=html;
+T.cn = {
+  title: "\uD83D\uDD0A \u63D0\u9AD8\u8BED\u97F3\u8D28\u91CF",
+  sub: "\u5B89\u88C5\u97E9\u8BEDTTS\u8BED\u97F3\uFF0C\u83B7\u5F97\u66F4\u81EA\u7136\u7684\u53D1\u97F3\u4F53\u9A8C",
+  whyT: "\u4E3A\u4EC0\u4E48\u9700\u8981\u5B89\u88C5\u8BED\u97F3\uFF1F",
+  whyD: "\u5927\u591A\u6570\u624B\u673A\u53EA\u9884\u88C5\u4E861\u4E2A\u97E9\u8BED\u8BED\u97F3\u3002\u5B89\u88C5\u66F4\u591A\u8BED\u97F3\u540E\uFF0C\u53EF\u4EE5\u533A\u5206\u7537\u5973\u58F0\u97F3\uFF0C\u53D1\u97F3\u4E5F\u66F4\u52A0\u81EA\u7136\u3002",
+  doneT: "\u2705 \u5B89\u88C5\u5B8C\u6210\u540E",
+  doneD: "\u5728NaviTalk\u4E2D\u4EAB\u53D7\u66F4\u81EA\u7136\u7684\u7537\u5973\u5BF9\u8BDD\u8BED\u97F3\uFF01",
+  doneB: "\u8FD4\u56DENaviTalk",
+  samsung: [
+    {t:"\u6253\u5F00\u8BBE\u7F6E", path:["\u8BBE\u7F6E"], hi:[0]},
+    {t:"\u8FDB\u5165\u5E38\u89C4\u7BA1\u7406", path:["\u8BBE\u7F6E","\u5E38\u89C4\u7BA1\u7406"], hi:[1]},
+    {t:"\u9009\u62E9\u8BED\u8A00\u548C\u8F93\u5165", path:["\u5E38\u89C4\u7BA1\u7406","\u8BED\u8A00\u548C\u8F93\u5165"], hi:[1]},
+    {t:"\u9009\u62E9\u6587\u5B57\u8F6C\u8BED\u97F3(TTS)", path:["\u8BED\u8A00\u548C\u8F93\u5165","\u6587\u5B57\u8F6C\u8BED\u97F3"], hi:[1]},
+    {t:"\u70B9\u51FBSamsung TTS\u65C1\u7684\u2699\uFE0F \u2192 \u4E0B\u8F7D\u8BED\u97F3", d:"\u9009\u62E9Samsung TTS\u5F15\u64CE\u540E\uFF0C\u70B9\u51FB\u9F7F\u8F6E\u56FE\u6807\u3002\u627E\u5230\u5B89\u88C5\u8BED\u97F3\u6570\u636E\u6216\u4E0B\u8F7D\u8BED\u97F3\uFF0C\u4E0B\u8F7D\u6240\u6709\u97E9\u8BED\u8BED\u97F3\u3002", tip:"\u5EFA\u8BAE\u4E0B\u8F7D\u6240\u6709\u53EF\u7528\u7684\u97E9\u8BED\u8BED\u97F3\uFF0C\u8FD9\u6837\u7537\u5973\u58F0\u97F3\u9009\u62E9\u66F4\u4E30\u5BCC\u3002"},
+    {t:"\u5237\u65B0NaviTalk", d:"\u8FD4\u56DENaviTalk\u5E94\u7528\uFF0C\u5237\u65B0\u9875\u9762\u5373\u53EF\u81EA\u52A8\u4F7F\u7528\u65B0\u8BED\u97F3\u3002"}
+  ],
+  android: [
+    {t:"\u6253\u5F00\u8BBE\u7F6E", path:["\u8BBE\u7F6E"], hi:[0]},
+    {t:"\u8FDB\u5165\u8F85\u52A9\u529F\u80FD", path:["\u8BBE\u7F6E","\u8F85\u52A9\u529F\u80FD"], hi:[1]},
+    {t:"\u9009\u62E9\u6587\u5B57\u8F6C\u8BED\u97F3\u8F93\u51FA", path:["\u8F85\u52A9\u529F\u80FD","\u6587\u5B57\u8F6C\u8BED\u97F3\u8F93\u51FA"], hi:[1]},
+    {t:"\u70B9\u51FBGoogle TTS\u5F15\u64CE\u65C1\u7684\u2699\uFE0F", d:"\u70B9\u51FBGoogle\u6587\u5B57\u8F6C\u8BED\u97F3\u5F15\u64CE\u65C1\u7684\u9F7F\u8F6E\u56FE\u6807\u3002"},
+    {t:"\u5B89\u88C5\u8BED\u97F3\u6570\u636E \u2192 \u9009\u62E9\u97E9\u8BED", d:"\u70B9\u51FB\u5B89\u88C5\u8BED\u97F3\u6570\u636E\uFF0C\u627E\u5230\u97E9\u8BED(Korean/\uD55C\uAD6D\uC5B4)\u8FDB\u884C\u4E0B\u8F7D\u3002", tip:"\u5982\u679C\u6CA1\u6709Google TTS\uFF0C\u8BF7\u5728\u5E94\u7528\u5546\u5E97\u641C\u7D22Google\u6587\u5B57\u8F6C\u8BED\u97F3\u8FDB\u884C\u5B89\u88C5\u3002"},
+    {t:"\u5237\u65B0NaviTalk", d:"\u8FD4\u56DENaviTalk\u5E94\u7528\uFF0C\u5237\u65B0\u9875\u9762\u5373\u53EF\u3002"}
+  ],
+  iphone: [
+    {t:"\u6253\u5F00\u8BBE\u7F6E", path:["\u8BBE\u7F6E"], hi:[0]},
+    {t:"\u8F85\u52A9\u529F\u80FD \u2192 \u6717\u8BFB\u5185\u5BB9", path:["\u8BBE\u7F6E","\u8F85\u52A9\u529F\u80FD","\u6717\u8BFB\u5185\u5BB9"], hi:[1,2]},
+    {t:"\u70B9\u51FB\u58F0\u97F3 \u2192 \u9009\u62E9\u97E9\u8BED", d:"\u70B9\u51FB\u58F0\u97F3\uFF0C\u7136\u540E\u9009\u62E9\u97E9\u8BED(Korean)\u3002\u4F1A\u663E\u793A\u591A\u4E2A\u8BED\u97F3\u9009\u9879\u3002"},
+    {t:"\u4E0B\u8F7D\u6240\u9700\u8BED\u97F3", d:"\u70B9\u51FB\u8BED\u97F3\u540D\u79F0\u5373\u53EF\u4E0B\u8F7D\u3002\u5982\u6709\u9AD8\u54C1\u8D28\u9009\u9879\uFF0C\u5EFA\u8BAE\u4E00\u8D77\u4E0B\u8F7D\u3002", tip:"\u4E0B\u8F7DYuna\u3001Sora\u7B49\u591A\u4E2A\u8BED\u97F3\uFF0C\u53EF\u83B7\u5F97\u4E0D\u540C\u7684\u7537\u5973\u58F0\u97F3\u3002"},
+    {t:"\u5237\u65B0NaviTalk", d:"\u8FD4\u56DENaviTalk(Safari)\uFF0C\u5237\u65B0\u9875\u9762\u5373\u53EF\u3002"}
+  ]
+};
+
+T.ja = {
+  title: "\uD83D\uDD0A \u97F3\u58F0\u54C1\u8CEA\u3092\u6539\u5584\u3059\u308B",
+  sub: "\u97D3\u56FD\u8BEDTTS\u97F3\u58F0\u3092\u8FFD\u52A0\u30A4\u30F3\u30B9\u30C8\u30FC\u30EB\u3057\u3066\u3001\u3088\u308A\u81EA\u7136\u306A\u767A\u97F3\u3092\u4F53\u9A13",
+  whyT: "\u306A\u305C\u97F3\u58F0\u306E\u30A4\u30F3\u30B9\u30C8\u30FC\u30EB\u304C\u5FC5\u8981\uFF1F",
+  whyD: "\u307B\u3068\u3093\u3069\u306E\u30B9\u30DE\u30FC\u30C8\u30D5\u30A9\u30F3\u306B\u306F\u97D3\u56FD\u8BED\u97F3\u58F0\u304C1\u3064\u3057\u304B\u30D7\u30EA\u30A4\u30F3\u30B9\u30C8\u30FC\u30EB\u3055\u308C\u3066\u3044\u307E\u305B\u3093\u3002\u8FFD\u52A0\u97F3\u58F0\u3092\u30A4\u30F3\u30B9\u30C8\u30FC\u30EB\u3059\u308B\u3068\u3001\u7537\u5973\u306E\u58F0\u3092\u533A\u5225\u3067\u304D\u3001\u767A\u97F3\u3082\u3088\u308A\u81EA\u7136\u306B\u306A\u308A\u307E\u3059\u3002",
+  doneT: "\u2705 \u30A4\u30F3\u30B9\u30C8\u30FC\u30EB\u5B8C\u4E86\u5F8C",
+  doneD: "NaviTalk\u3067\u3088\u308A\u81EA\u7136\u306A\u7537\u5973\u306E\u58F0\u3067\u4F1A\u8A71\u3092\u697D\u3057\u3081\u307E\u3059\uFF01",
+  doneB: "NaviTalk\u306B\u623B\u308B",
+  samsung: [
+    {t:"\u8A2D\u5B9A\u30A2\u30D7\u30EA\u3092\u958B\u304F", path:["\u8A2D\u5B9A"], hi:[0]},
+    {t:"\u4E00\u822C\u7BA1\u7406\u3078\u79FB\u52D5", path:["\u8A2D\u5B9A","\u4E00\u822C\u7BA1\u7406"], hi:[1]},
+    {t:"\u8A00\u8A9E\u3068\u5165\u529B\u3092\u9078\u629E", path:["\u4E00\u822C\u7BA1\u7406","\u8A00\u8A9E\u3068\u5165\u529B"], hi:[1]},
+    {t:"\u30C6\u30AD\u30B9\u30C8\u8AAD\u307F\u4E0A\u3052(TTS)\u3092\u9078\u629E", path:["\u8A00\u8A9E\u3068\u5165\u529B","\u30C6\u30AD\u30B9\u30C8\u8AAD\u307F\u4E0A\u3052"], hi:[1]},
+    {t:"Samsung TTS\u6A2A\u306E\u2699\uFE0F\u3092\u30BF\u30C3\u30D7 \u2192 \u97F3\u58F0\u30C0\u30A6\u30F3\u30ED\u30FC\u30C9", d:"Samsung TTS\u30A8\u30F3\u30B8\u30F3\u3092\u9078\u629E\u3057\u3001\u6B6F\u8ECA\u30A2\u30A4\u30B3\u30F3\u3092\u30BF\u30C3\u30D7\u3002\u97F3\u58F0\u30C7\u30FC\u30BF\u306E\u30A4\u30F3\u30B9\u30C8\u30FC\u30EB\u304B\u3089\u97D3\u56FD\u8BED\u97F3\u58F0\u3092\u3059\u3079\u3066\u30C0\u30A6\u30F3\u30ED\u30FC\u30C9\u3057\u307E\u3059\u3002", tip:"\u5229\u7528\u53EF\u80FD\u306A\u97D3\u56FD\u8BED\u97F3\u58F0\u3092\u3059\u3079\u3066\u30C0\u30A6\u30F3\u30ED\u30FC\u30C9\u3059\u308B\u3068\u3001\u7537\u5973\u306E\u58F0\u304C\u8C4A\u5BCC\u306B\u306A\u308A\u307E\u3059\u3002"},
+    {t:"NaviTalk\u3092\u66F4\u65B0", d:"NaviTalk\u30A2\u30D7\u30EA\u306B\u623B\u308A\u3001\u30DA\u30FC\u30B8\u3092\u66F4\u65B0\u3057\u3066\u304F\u3060\u3055\u3044\u3002\u65B0\u3057\u3044\u97F3\u58F0\u304C\u81EA\u52D5\u7684\u306B\u9069\u7528\u3055\u308C\u307E\u3059\u3002"}
+  ],
+  android: [
+    {t:"\u8A2D\u5B9A\u30A2\u30D7\u30EA\u3092\u958B\u304F", path:["\u8A2D\u5B9A"], hi:[0]},
+    {t:"\u30E6\u30FC\u30B6\u30FC\u88DC\u52A9\u3078\u79FB\u52D5", path:["\u8A2D\u5B9A","\u30E6\u30FC\u30B6\u30FC\u88DC\u52A9"], hi:[1]},
+    {t:"\u30C6\u30AD\u30B9\u30C8\u8AAD\u307F\u4E0A\u3052\u51FA\u529B\u3092\u9078\u629E", path:["\u30E6\u30FC\u30B6\u30FC\u88DC\u52A9","\u30C6\u30AD\u30B9\u30C8\u8AAD\u307F\u4E0A\u3052\u51FA\u529B"], hi:[1]},
+    {t:"Google TTS\u30A8\u30F3\u30B8\u30F3\u6A2A\u306E\u2699\uFE0F\u3092\u30BF\u30C3\u30D7", d:"Google\u30C6\u30AD\u30B9\u30C8\u8AAD\u307F\u4E0A\u3052\u30A8\u30F3\u30B8\u30F3\u6A2A\u306E\u6B6F\u8ECA\u30A2\u30A4\u30B3\u30F3\u3092\u30BF\u30C3\u30D7\u3057\u307E\u3059\u3002"},
+    {t:"\u97F3\u58F0\u30C7\u30FC\u30BF\u306E\u30A4\u30F3\u30B9\u30C8\u30FC\u30EB \u2192 \u97D3\u56FD\u8BED\u3092\u9078\u629E", d:"\u97F3\u58F0\u30C7\u30FC\u30BF\u306E\u30A4\u30F3\u30B9\u30C8\u30FC\u30EB\u3092\u30BF\u30C3\u30D7\u3057\u3001\u97D3\u56FD\u8BED(Korean)\u3092\u898B\u3064\u3051\u3066\u30C0\u30A6\u30F3\u30ED\u30FC\u30C9\u3057\u307E\u3059\u3002", tip:"Google TTS\u304C\u306A\u3044\u5834\u5408\u3001Play\u30B9\u30C8\u30A2\u3067Google\u30C6\u30AD\u30B9\u30C8\u8AAD\u307F\u4E0A\u3052\u3092\u691C\u7D22\u3057\u3066\u30A4\u30F3\u30B9\u30C8\u30FC\u30EB\u3057\u3066\u304F\u3060\u3055\u3044\u3002"},
+    {t:"NaviTalk\u3092\u66F4\u65B0", d:"NaviTalk\u30A2\u30D7\u30EA\u306B\u623B\u308A\u3001\u30DA\u30FC\u30B8\u3092\u66F4\u65B0\u3057\u3066\u304F\u3060\u3055\u3044\u3002"}
+  ],
+  iphone: [
+    {t:"\u8A2D\u5B9A\u30A2\u30D7\u30EA\u3092\u958B\u304F", path:["\u8A2D\u5B9A"], hi:[0]},
+    {t:"\u30A2\u30AF\u30BB\u30B7\u30D3\u30EA\u30C6\u30A3 \u2192 \u8AAD\u307F\u4E0A\u3052\u30B3\u30F3\u30C6\u30F3\u30C4", path:["\u8A2D\u5B9A","\u30A2\u30AF\u30BB\u30B7\u30D3\u30EA\u30C6\u30A3","\u8AAD\u307F\u4E0A\u3052\u30B3\u30F3\u30C6\u30F3\u30C4"], hi:[1,2]},
+    {t:"\u58F0\u3092\u30BF\u30C3\u30D7 \u2192 \u97D3\u56FD\u8BED\u3092\u9078\u629E", d:"\u58F0\u3092\u30BF\u30C3\u30D7\u3057\u3001\u97D3\u56FD\u8BED(Korean)\u3092\u9078\u629E\u3057\u307E\u3059\u3002\u8907\u6570\u306E\u97F3\u58F0\u304C\u8868\u793A\u3055\u308C\u307E\u3059\u3002"},
+    {t:"\u97F3\u58F0\u3092\u30C0\u30A6\u30F3\u30ED\u30FC\u30C9", d:"\u97F3\u58F0\u540D\u3092\u30BF\u30C3\u30D7\u3059\u308B\u3068\u30C0\u30A6\u30F3\u30ED\u30FC\u30C9\u304C\u59CB\u307E\u308A\u307E\u3059\u3002\u9AD8\u54C1\u8CEA\u304C\u3042\u308C\u3070\u4E00\u7DD2\u306B\u30C0\u30A6\u30F3\u30ED\u30FC\u30C9\u3057\u3066\u304F\u3060\u3055\u3044\u3002", tip:"Yuna\u3001Sora\u306A\u3069\u8907\u6570\u306E\u97F3\u58F0\u3092\u30C0\u30A6\u30F3\u30ED\u30FC\u30C9\u3059\u308B\u3068\u3001\u7537\u5973\u306E\u58F0\u304C\u8C4A\u5BCC\u306B\u306A\u308A\u307E\u3059\u3002"},
+    {t:"NaviTalk\u3092\u66F4\u65B0", d:"NaviTalk(Safari)\u306B\u623B\u308A\u3001\u30DA\u30FC\u30B8\u3092\u66F4\u65B0\u3057\u3066\u304F\u3060\u3055\u3044\u3002"}
+  ]
+};
+
+// Fallback for other languages: use English
+var lang = (new URLSearchParams(window.location.search).get('lang')) || 'en';
+var t = T[lang] || T['en'];
+
+document.getElementById('hTitle').textContent = t.title;
+document.getElementById('hSub').textContent = t.sub;
+document.getElementById('whyT').textContent = t.whyT;
+document.getElementById('whyD').textContent = t.whyD;
+document.getElementById('doneT').textContent = t.doneT;
+document.getElementById('doneD').textContent = t.doneD;
+document.getElementById('doneBtn').textContent = t.doneB;
+
+function renderSteps(steps, panelId) {
+  var panel = document.getElementById(panelId);
+  var html = '';
+  for (var i = 0; i < steps.length; i++) {
+    var s = steps[i];
+    html += '<div class="step-card">';
+    html += '<div class="step-head"><span class="step-num">' + (i + 1) + '</span><span class="step-title">' + s.t + '</span></div>';
+    if (s.path) {
+      html += '<div class="path">';
+      for (var j = 0; j < s.path.length; j++) {
+        if (j > 0) html += '<span class="path-sep">\u2192</span>';
+        var isHl = s.hi && s.hi.indexOf(j) !== -1;
+        html += '<span class="path-chip' + (isHl ? ' hl' : '') + '">' + s.path[j] + '</span>';
+      }
+      html += '</div>';
+    }
+    if (s.d) html += '<div class="step-desc">' + s.d + '</div>';
+    if (s.tip) html += '<div class="tip">' + s.tip + '</div>';
+    html += '</div>';
+  }
+  panel.innerHTML = html;
 }
-renderSteps(t.samsung,'panel-samsung');
-renderSteps(t.android,'panel-android');
-renderSteps(t.iphone,'panel-iphone');
 
-document.querySelectorAll('.tab-btn').forEach(function(btn){
-  btn.addEventListener('click',function(){
-    var tab=this.getAttribute('data-tab');
-    document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
-    document.querySelectorAll('.guide-panel').forEach(function(p){p.classList.remove('active');});
+renderSteps(t.samsung, 'panel-samsung');
+renderSteps(t.android, 'panel-android');
+renderSteps(t.iphone, 'panel-iphone');
+
+// Tab switching
+var tabBtns = document.querySelectorAll('.tab-btn');
+for (var i = 0; i < tabBtns.length; i++) {
+  tabBtns[i].addEventListener('click', function() {
+    var tab = this.getAttribute('data-tab');
+    for (var j = 0; j < tabBtns.length; j++) tabBtns[j].classList.remove('active');
+    var panels = document.querySelectorAll('.guide-panel');
+    for (var j = 0; j < panels.length; j++) panels[j].classList.remove('active');
     this.classList.add('active');
-    document.getElementById('panel-'+tab).classList.add('active');
+    document.getElementById('panel-' + tab).classList.add('active');
   });
+}
+
+document.getElementById('backBtn').addEventListener('click', function() {
+  if (window.history.length > 1) window.history.back();
+  else window.location.href = './';
 });
-document.getElementById('backBtn').addEventListener('click',function(){if(window.history.length>1)window.history.back();else window.location.href='./';});
-document.getElementById('done-btn').addEventListener('click',function(){if(window.history.length>1)window.history.back();else window.location.href='./';});
+document.getElementById('doneBtn').addEventListener('click', function() {
+  if (window.history.length > 1) window.history.back();
+  else window.location.href = './';
+});
 </script>
 </body>
 </html>
